@@ -1,0 +1,29 @@
+{
+  "history": [],
+  "params": {
+    "momentum_weight_bps": 2000,
+    "thin_book_penalty_bps": 150,
+    "variance_weight_bps": 8000
+  },
+  "pending": [
+    {
+      "decision_id": 87,
+      "expected_edge_micro": "274920",
+      "mid_at_decision": "2250000",
+      "opened_at_ms": 1786291844000,
+      "predicted": "down",
+      "signal_name": "imbalance_bps"
+    }
+  ],
+  "settled_count": 2,
+  "stats": {
+    "imbalance_bps": {
+      "correct": 0,
+      "hit_rate_bps": 0,
+      "samples": 2,
+      "sum_edge_error_micro": "-400424",
+      "sum_realized_bps": "454"
+    }
+  },
+  "unscored_flat": 1
+}

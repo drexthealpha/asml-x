@@ -1,0 +1,21 @@
+ASML-X runtime
+  mode        observe
+  chain       1952 (verified)
+  venue       0x7092050f3c4e72a2df8610ae2cc8c39dca3b7f52
+  guard       0xe64b6e937fd0d855161a5f6f0aa1a3e01cb54c24
+  cycles      4
+
+cycle 0 block 37814315 | 5 live orders | 11 candidates | chose: take order 4 Sell 0.500000 base at 1.800000
+  thesis (6003 bps): spread 512 bps observed, volatility not yet estimable, fewer than three mid observations so far; depth is ask-heavy by 7254 bps
+  risk:   approved, 0 candidate(s) refused by risk
+cycle 1 block 37814328 | 5 live orders | 11 candidates | chose: take order 4 Sell 0.500000 base at 1.800000
+  thesis (6003 bps): spread 512 bps observed, volatility not yet estimable, fewer than three mid observations so far; depth is ask-heavy by 7254 bps
+  risk:   approved, 0 candidate(s) refused by risk
+cycle 2 block 37814342 | 5 live orders | 11 candidates | chose: take order 4 Sell 0.500000 base at 1.800000
+  thesis (5336 bps): spread 512 bps is more than twice realized volatility 0 bps, so quoting is paid for the risk it takes; depth is ask-heavy by 7254 bps
+  risk:   approved, 0 candidate(s) refused by risk
+cycle 3 block 37814362 | 5 live orders | 11 candidates | chose: take order 4 Sell 0.500000 base at 1.800000
+  thesis (5336 bps): spread 512 bps is more than twice realized volatility 0 bps, so quoting is paid for the risk it takes; depth is ask-heavy by 7254 bps
+  risk:   approved, 0 candidate(s) refused by risk
+
+journal entries total: 31

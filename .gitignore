@@ -1,0 +1,64 @@
+# ---------------------------------------------------------------------------
+# Secrets and key material. The deployer keystore lives in ~/.asml-keys, outside
+# the repo entirely; these patterns exist so that can never change by accident.
+# ---------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+keystore*
+*keystore*
+.asml-keys/
+secrets/
+
+# ---------------------------------------------------------------------------
+# Internal planning and working documents. NOT product.
+#
+# These were pushed in the v1 run. They contain the build's internal reasoning,
+# the unfinished-work list, local filesystem paths, and the names of credential
+# environment variables. No secret VALUES, but nothing here helps a judge and the
+# open-weakness list helps a competitor.
+#
+# Deliberately NOT ignored: everything under scripts/ that produces evidence, and
+# everything under evidence/ and docs/. The chain of evidence requires that a judge
+# can run the exact command that produced any claim, so those stay public.
+# ---------------------------------------------------------------------------
+TASKS.md
+CLAUDE.md
+RESUME.md
+RULES.md
+NOTES.md
+SCRATCH.md
+
+# One-off internal patch scripts. Not reproducibility artifacts, just edits.
+scripts/patch_*.py
+
+# Internal harness and probe scripts that prove nothing a judge needs.
+scripts/20-fix-checkpoint.sh
+scripts/27-wait-agent.sh
+scripts/28-ratelimit-probe.sh
+scripts/29-check-coord-evidence.sh
+scripts/33-book-mid-probe.sh
+scripts/39-repo-hygiene-audit.sh
+scripts/40-install-gitleaks.sh
+
+# Local machine state
+evidence/hygiene/
+.claude/
+*.log
+!evidence/**/*.log
+
+# ---------------------------------------------------------------------------
+# Build output
+# ---------------------------------------------------------------------------
+target/
+node_modules/
+__pycache__/
+.venv/
+venv/
+out/
+cache/
+broadcast/
+dist/
+.vite/

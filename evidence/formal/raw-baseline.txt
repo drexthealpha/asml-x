@@ -1,0 +1,14 @@
+No files changed, compilation skipped
+[31mSkipped console2.json due to parsing failure: KeyError: 'metadata'[0m
+[31mSkipped IERC20Min.json due to parsing failure: KeyError: 'ast'[0m
+[31mSkipped OrderBookVenue.json due to parsing failure: KeyError: 'ast'[0m
+
+Running 7 tests for test/RiskGuardSymbolic.t.sol:RiskGuardSymbolic
+[32m[PASS][0m check_grossAlwaysEqualsSumOfParts(uint256,uint256,uint256) (paths: 16, time: 4.37s, bounds: [])
+[32m[PASS][0m check_grossCapHoldsAcrossMarkets(uint256,uint256) (paths: 5, time: 2.32s, bounds: [])
+[32m[PASS][0m check_killedBlocksEveryAdd(uint256) (paths: 2, time: 0.54s, bounds: [])
+[32m[PASS][0m check_noSequenceOfAddsCanBreakACap(uint256,uint256) (paths: 5, time: 1.54s, bounds: [])
+[32m[PASS][0m check_onlyOwnerCanRaiseCaps(address,uint256) (paths: 2, time: 0.22s, bounds: [])
+[32m[PASS][0m check_onlyOwnerCanRevive(address) (paths: 2, time: 0.36s, bounds: [])
+[32m[PASS][0m check_unconfiguredMarketAlwaysFailsClosed(bytes32,uint256) (paths: 4, time: 0.98s, bounds: [])
+Symbolic test result: 7 passed; 0 failed; time: 11.25s

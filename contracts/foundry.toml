@@ -1,0 +1,26 @@
+[profile.default]
+src = "src"
+out = "out"
+libs = ["lib"]
+solc = "0.8.28"
+optimizer = true
+optimizer_runs = 200
+evm_version = "cancun"
+# Required by halmos: it reads the solidity AST out of the build artifacts. Without
+# this, artifacts are written without an `ast` key, halmos skips every file with
+# "KeyError: 'ast'", finds no tests, and exits in a way that looks like success to
+# a naive parser.
+ast = true
+
+remappings = [
+    "forge-std/=lib/forge-std/src/",
+    "ds-test/=lib/forge-std/lib/ds-test/src/",
+]
+
+[invariant]
+runs = 128
+depth = 64
+fail_on_revert = false
+
+[rpc_endpoints]
+xlayer_testnet = "https://testrpc.xlayer.tech"

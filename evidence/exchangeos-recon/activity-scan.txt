@@ -1,0 +1,16 @@
+blocks sampled:      300
+blocks with any tx:  300
+total transactions:  410
+tx per block avg:    1.37
+
+top 20 transaction TARGETS (candidate live venues):
+     300  0x4200000000000000000000000000000000000015
+      60  0x7338fa942f343a305fe42c357e8ae671ef1358e1
+      45  0xf6d088123a3c17e6047ae9338b8cf072ad448907
+       2  0x0000000071727de22e5e9d8baf0edac6f37da032
+       1  0x5ff137d4b0fdcd49dca30c7cf57e578a026d2789
+       1  0x4799871265f37309c3305f16c489bd5082e35760
+       1  0x9ef6468c5f37b976e57d52054c693269479a784d
+
+distinct target contracts: 7
+distinct senders: 51

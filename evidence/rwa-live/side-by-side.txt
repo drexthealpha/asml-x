@@ -1,0 +1,149 @@
+Side-by-side: crypto market versus RWA-linked market
+Captured 2026-08-09 11:55:13 UTC, chain 1952
+
+############ CASE 1: instrument HEALTHY ############
+Expectation: both markets permit. An RWA market with a fresh oracle, no pause,
+no divergence and no window nearby SHOULD behave like any other market.
+
+setup: touchOracle -> 0x1
+setup: observeMarketPrice(1.00e18) -> 0x1
+setup: setPaused(false) -> 0x1
+setup: setWindowSchedule(0,0) -> 0x1
+setup: setRwaPolicy(3600,43200,300) -> 0x1
+
+ASML-X runtime
+  mode        sidebyside
+  chain       1952 (verified)
+  venue       0x7092050f3c4e72a2df8610ae2cc8c39dca3b7f52
+  guard       0xe64b6e937fd0d855161a5f6f0aa1a3e01cb54c24
+  cycles      5
+
+Live inputs, block 37817704
+  crypto book: 5 live orders, spread Some(512) bps, imbalance Some(-7254) bps
+  rwa vault:   oracle age 26s, paused false, until window 0s, divergence 0 bps, yield index 1.000000
+
+Identical order: Buy 2.000000 base at 1.000000
+
+  CRYPTO market (tBASE/tQUOTE, Spot):
+    APPROVED
+
+  RWA market (RWA/tQUOTE, RwaLinked):
+    APPROVED
+
+DIVERGENT TREATMENT: false
+RWA-SPECIFIC REASON: false
+
+Both markets agreed on this order at this moment. That is the honest
+state of the instrument right now, not a failure of the layer: with a
+fresh oracle, no pause, no divergence and no window nearby, an RWA
+market SHOULD behave like any other. Run scripts/23-rwa-live-triggers.sh
+to move the instrument into a refusing state and re-run this.
+
+Onchain RwaRiskGuard.rwaTradeableFlag(): true
+Offchain risk engine agrees: true
+
+############ CASE 2: issuer PAUSES the instrument ############
+Expectation: the crypto market is unaffected; the RWA market refuses, naming
+the issuer pause. Nothing about the crypto book changed.
+
+trigger: setPaused(true) -> 0x1
+
+ASML-X runtime
+  mode        sidebyside
+  chain       1952 (verified)
+  venue       0x7092050f3c4e72a2df8610ae2cc8c39dca3b7f52
+  guard       0xe64b6e937fd0d855161a5f6f0aa1a3e01cb54c24
+  cycles      5
+
+Live inputs, block 37817716
+  crypto book: 5 live orders, spread Some(512) bps, imbalance Some(-7254) bps
+  rwa vault:   oracle age 39s, paused true, until window 0s, divergence 0 bps, yield index 1.000000
+
+Identical order: Buy 2.000000 base at 1.000000
+
+  CRYPTO market (tBASE/tQUOTE, Spot):
+    APPROVED
+
+  RWA market (RWA/tQUOTE, RwaLinked):
+    REFUSED: RwaIssuerPaused (rwa-specific: true)
+
+DIVERGENT TREATMENT: true
+RWA-SPECIFIC REASON: true
+
+The same order is permitted on the crypto market and refused on the
+RWA market, and the refusal names an RWA-specific cause. A generic bot
+has no vocabulary for this refusal.
+
+Onchain RwaRiskGuard.rwaTradeableFlag(): false
+Offchain risk engine agrees: true
+
+############ CASE 3: oracle and market DIVERGE ############
+Expectation: crypto unaffected; RWA refuses on divergence rather than on pause,
+so the refusal tracks the actual cause.
+
+trigger: setPaused(false) -> 0x1
+trigger: observeMarketPrice(1.12e18) = 1200 bps -> 0x1
+
+ASML-X runtime
+  mode        sidebyside
+  chain       1952 (verified)
+  venue       0x7092050f3c4e72a2df8610ae2cc8c39dca3b7f52
+  guard       0xe64b6e937fd0d855161a5f6f0aa1a3e01cb54c24
+  cycles      5
+
+Live inputs, block 37817735
+  crypto book: 5 live orders, spread Some(512) bps, imbalance Some(-7254) bps
+  rwa vault:   oracle age 64s, paused false, until window 0s, divergence 1200 bps, yield index 1.000000
+
+Identical order: Buy 2.000000 base at 1.000000
+
+  CRYPTO market (tBASE/tQUOTE, Spot):
+    APPROVED
+
+  RWA market (RWA/tQUOTE, RwaLinked):
+    REFUSED: RwaOracleMarketDivergence { got_bps: 1200, limit_bps: 300 } (rwa-specific: true)
+
+DIVERGENT TREATMENT: true
+RWA-SPECIFIC REASON: true
+
+The same order is permitted on the crypto market and refused on the
+RWA market, and the refusal names an RWA-specific cause. A generic bot
+has no vocabulary for this refusal.
+
+Onchain RwaRiskGuard.rwaTradeableFlag(): false
+Offchain risk engine agrees: true
+
+############ restore ############
+restore: observeMarketPrice(1.00e18) -> 0x1
+restore: touchOracle -> 0x1
+
+ASML-X runtime
+  mode        sidebyside
+  chain       1952 (verified)
+  venue       0x7092050f3c4e72a2df8610ae2cc8c39dca3b7f52
+  guard       0xe64b6e937fd0d855161a5f6f0aa1a3e01cb54c24
+  cycles      5
+
+Live inputs, block 37817768
+  crypto book: 5 live orders, spread Some(512) bps, imbalance Some(-7254) bps
+  rwa vault:   oracle age 15s, paused false, until window 0s, divergence 0 bps, yield index 1.000000
+
+Identical order: Buy 2.000000 base at 1.000000
+
+  CRYPTO market (tBASE/tQUOTE, Spot):
+    APPROVED
+
+  RWA market (RWA/tQUOTE, RwaLinked):
+    APPROVED
+
+DIVERGENT TREATMENT: false
+RWA-SPECIFIC REASON: false
+
+Both markets agreed on this order at this moment. That is the honest
+state of the instrument right now, not a failure of the layer: with a
+fresh oracle, no pause, no divergence and no window nearby, an RWA
+market SHOULD behave like any other. Run scripts/23-rwa-live-triggers.sh
+to move the instrument into a refusing state and re-run this.
+
+Onchain RwaRiskGuard.rwaTradeableFlag(): true
+Offchain risk engine agrees: true

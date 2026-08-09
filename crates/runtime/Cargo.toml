@@ -1,0 +1,23 @@
+[package]
+name = "runtime"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "asml"
+path = "src/main.rs"
+
+[dependencies]
+core-types.workspace = true
+chain-client.workspace = true
+market-intel.workspace = true
+decision-engine.workspace = true
+risk-engine.workspace = true
+executor.workspace = true
+journal.workspace = true
+learning.workspace = true
+serde_json.workspace = true
+
+[lints]
+workspace = true

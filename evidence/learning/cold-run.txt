@@ -1,0 +1,89 @@
+ASML-X runtime
+  mode        learn
+  chain       1952 (verified)
+  venue       0x7092050f3c4e72a2df8610ae2cc8c39dca3b7f52
+  guard       0xe64b6e937fd0d855161a5f6f0aa1a3e01cb54c24
+  cycles      14
+
+learning loop
+  state file      /mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/evidence/learned-state.json
+  settled so far  0
+  params at start Params { momentum_weight_bps: 2000, variance_weight_bps: 8000, capital_cost_bps: 20, thin_book_penalty_bps: 150, min_confidence_bps: 3000, max_take_fraction_bps: 5000 }
+  no parameter changes yet: 0 settled outcomes, 5 needed before any move
+
+cycle 0 block 37828500 | 11 candidates | chose take order 4 Sell 0.500000 base at 1.800000 | predicts Down | momentum 2000 | pending 0
+  settled decision 32: predicted Down, realized 0 bps, correct false, edge error -81360
+cycle 1 block 37828519 | 11 candidates | chose take order 4 Sell 0.500000 base at 1.800000 | predicts Down | momentum 2000 | pending 0
+  settled decision 33: predicted Down, realized 0 bps, correct false, edge error -81360
+cycle 2 block 37828543 | 11 candidates | chose take order 4 Sell 0.500000 base at 1.800000 | predicts Down | momentum 2000 | pending 0
+  settled decision 34: predicted Down, realized 0 bps, correct false, edge error -81360
+cycle 3 block 37828562 | 11 candidates | chose take order 4 Sell 0.500000 base at 1.800000 | predicts Down | momentum 2000 | pending 0
+  settled decision 35: predicted Down, realized 0 bps, correct false, edge error -81360
+cycle 4 block 37828581 | 11 candidates | chose take order 4 Sell 0.500000 base at 1.800000 | predicts Down | momentum 2000 | pending 0
+  settled decision 36: predicted Down, realized 0 bps, correct false, edge error -81360
+  PARAM CHANGE momentum_weight_bps 2000 -> 1800 because imbalance_bps hit rate 0 bps over 5 settled outcomes, below a coin flip
+  PARAM CHANGE thin_book_penalty_bps 150 -> 175 because mean edge error -81360 micro over 5 outcomes, decisions overestimated their own edge
+cycle 5 block 37828602 | 11 candidates | chose take order 4 Sell 0.500000 base at 1.800000 | predicts Down | momentum 1800 | pending 0
+  settled decision 37: predicted Down, realized 0 bps, correct false, edge error -70920
+  PARAM CHANGE momentum_weight_bps 1800 -> 1620 because imbalance_bps hit rate 0 bps over 6 settled outcomes, below a coin flip
+  PARAM CHANGE thin_book_penalty_bps 175 -> 200 because mean edge error -79620 micro over 6 outcomes, decisions overestimated their own edge
+cycle 6 block 37828628 | 11 candidates | chose take order 4 Sell 0.500000 base at 1.800000 | predicts Down | momentum 1620 | pending 0
+  settled decision 38: predicted Down, realized 0 bps, correct false, edge error -61560
+  PARAM CHANGE momentum_weight_bps 1620 -> 1458 because imbalance_bps hit rate 0 bps over 7 settled outcomes, below a coin flip
+  PARAM CHANGE thin_book_penalty_bps 200 -> 225 because mean edge error -77040 micro over 7 outcomes, decisions overestimated their own edge
+cycle 7 block 37828649 | 11 candidates | chose take order 4 Sell 0.500000 base at 1.800000 | predicts Down | momentum 1458 | pending 0
+  settled decision 39: predicted Down, realized 0 bps, correct false, edge error -53010
+  PARAM CHANGE momentum_weight_bps 1458 -> 1313 because imbalance_bps hit rate 0 bps over 8 settled outcomes, below a coin flip
+  PARAM CHANGE thin_book_penalty_bps 225 -> 250 because mean edge error -74036 micro over 8 outcomes, decisions overestimated their own edge
+cycle 8 block 37828673 | 11 candidates | chose take order 4 Sell 0.500000 base at 1.800000 | predicts Down | momentum 1313 | pending 0
+  settled decision 40: predicted Down, realized 0 bps, correct false, edge error -45450
+  PARAM CHANGE momentum_weight_bps 1313 -> 1182 because imbalance_bps hit rate 0 bps over 9 settled outcomes, below a coin flip
+  PARAM CHANGE thin_book_penalty_bps 250 -> 275 because mean edge error -70860 micro over 9 outcomes, decisions overestimated their own edge
+cycle 9 block 37828693 | 11 candidates | chose take order 4 Sell 0.500000 base at 1.800000 | predicts Down | momentum 1182 | pending 0
+  settled decision 41: predicted Down, realized 0 bps, correct false, edge error -38610
+  PARAM CHANGE momentum_weight_bps 1182 -> 1064 because imbalance_bps hit rate 0 bps over 10 settled outcomes, below a coin flip
+  PARAM CHANGE thin_book_penalty_bps 275 -> 300 because mean edge error -67635 micro over 10 outcomes, decisions overestimated their own edge
+cycle 10 block 37828719 | 11 candidates | chose take order 4 Sell 0.500000 base at 1.800000 | predicts Down | momentum 1064 | pending 0
+  settled decision 42: predicted Down, realized 0 bps, correct false, edge error -32400
+  PARAM CHANGE momentum_weight_bps 1064 -> 958 because imbalance_bps hit rate 0 bps over 11 settled outcomes, below a coin flip
+  PARAM CHANGE thin_book_penalty_bps 300 -> 325 because mean edge error -64431 micro over 11 outcomes, decisions overestimated their own edge
+cycle 11 block 37828743 | 11 candidates | chose take order 4 Sell 0.500000 base at 1.800000 | predicts Down | momentum 958 | pending 0
+  settled decision 43: predicted Down, realized 0 bps, correct false, edge error -26910
+  PARAM CHANGE momentum_weight_bps 958 -> 863 because imbalance_bps hit rate 0 bps over 12 settled outcomes, below a coin flip
+  PARAM CHANGE thin_book_penalty_bps 325 -> 350 because mean edge error -61305 micro over 12 outcomes, decisions overestimated their own edge
+cycle 12 block 37828758 | 11 candidates | chose take order 4 Sell 0.250000 base at 1.800000 | predicts Down | momentum 863 | pending 0
+  settled decision 44: predicted Down, realized 0 bps, correct false, edge error -10980
+  PARAM CHANGE momentum_weight_bps 863 -> 777 because imbalance_bps hit rate 0 bps over 13 settled outcomes, below a coin flip
+  PARAM CHANGE thin_book_penalty_bps 350 -> 375 because mean edge error -57433 micro over 13 outcomes, decisions overestimated their own edge
+cycle 13 block 37828779 | 11 candidates | chose take order 4 Sell 0.250000 base at 1.800000 | predicts Down | momentum 777 | pending 0
+
+=== learning summary ===
+  settled outcomes      13
+  imbalance samples     13
+  imbalance correct     0
+  imbalance hit rate    0 bps
+  mean edge error       -57433 micro
+  final params          Params { momentum_weight_bps: 777, variance_weight_bps: 8000, capital_cost_bps: 20, thin_book_penalty_bps: 375, min_confidence_bps: 3000, max_take_fraction_bps: 5000 }
+  parameter changes     18
+    momentum_weight_bps 2000 -> 1800 (5 samples, hit rate 0 bps)
+    thin_book_penalty_bps 150 -> 175 (5 samples, hit rate 0 bps)
+    momentum_weight_bps 1800 -> 1620 (6 samples, hit rate 0 bps)
+    thin_book_penalty_bps 175 -> 200 (6 samples, hit rate 0 bps)
+    momentum_weight_bps 1620 -> 1458 (7 samples, hit rate 0 bps)
+    thin_book_penalty_bps 200 -> 225 (7 samples, hit rate 0 bps)
+    momentum_weight_bps 1458 -> 1313 (8 samples, hit rate 0 bps)
+    thin_book_penalty_bps 225 -> 250 (8 samples, hit rate 0 bps)
+    momentum_weight_bps 1313 -> 1182 (9 samples, hit rate 0 bps)
+    thin_book_penalty_bps 250 -> 275 (9 samples, hit rate 0 bps)
+    momentum_weight_bps 1182 -> 1064 (10 samples, hit rate 0 bps)
+    thin_book_penalty_bps 275 -> 300 (10 samples, hit rate 0 bps)
+    momentum_weight_bps 1064 -> 958 (11 samples, hit rate 0 bps)
+    thin_book_penalty_bps 300 -> 325 (11 samples, hit rate 0 bps)
+    momentum_weight_bps 958 -> 863 (12 samples, hit rate 0 bps)
+    thin_book_penalty_bps 325 -> 350 (12 samples, hit rate 0 bps)
+    momentum_weight_bps 863 -> 777 (13 samples, hit rate 0 bps)
+    thin_book_penalty_bps 350 -> 375 (13 samples, hit rate 0 bps)
+  after 13 settled outcomes I changed thin_book_penalty_bps from 350 to 375 because mean edge error -57433 micro over 13 outcomes, decisions overestimated their own edge
+
+  NOTE: hit rate on 13 samples is not a performance claim. It is evidence
+  that outcomes are measured and parameters respond to them.

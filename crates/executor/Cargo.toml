@@ -1,0 +1,12 @@
+[package]
+name = "executor"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+core-types.workspace = true
+risk-engine.workspace = true
+
+[lints]
+workspace = true

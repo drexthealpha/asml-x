@@ -1,0 +1,24 @@
+Compiling 3 files with Solc 0.8.28
+Solc 0.8.28 finished in 8.55s
+Compiler run successful!
+warning[block-timestamp]: usage of `block.timestamp` in a comparison may be manipulated by validators
+    ╭▸ src/RwaVault.sol:126:16
+    │
+126 │         return ((block.timestamp - epochStart) % windowPeriod) < windowLength;
+    │                ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    │
+    ╰ help: https://book.getfoundry.sh/reference/forge/forge-lint#block-timestamp
+
+[31mSkipped console2.json due to parsing failure: KeyError: 'metadata'[0m
+[31mSkipped IERC20Min.json due to parsing failure: KeyError: 'ast'[0m
+[31mSkipped OrderBookVenue.json due to parsing failure: KeyError: 'ast'[0m
+
+Running 7 tests for test/RwaSymbolic.t.sol:RwaRiskGuardSymbolic
+[32m[PASS][0m check_divergenceBoundaryIsExact(uint256) (paths: 8, time: 1.64s, bounds: [])
+[32m[PASS][0m check_inheritedCapsSurviveTheOverride(uint256,uint256) (paths: 5, time: 3.22s, bounds: [])
+[32m[PASS][0m check_killedRefusesEveryAmountOnTheRwaPath(uint256) (paths: 3, time: 0.56s, bounds: [])
+[32m[PASS][0m check_onlyOwnerCanLoosenTheRwaPolicy(address,uint256) (paths: 2, time: 0.30s, bounds: [])
+[32m[PASS][0m check_pausedRefusesEveryAmount(uint256) (paths: 2, time: 0.81s, bounds: [])
+[32m[PASS][0m check_reduceIsNeverBlockedByRwaConditions(uint256,uint256) (paths: 3, time: 1.57s, bounds: [])
+[32m[PASS][0m check_yieldIndexIsMonotonic(uint256,uint256) (paths: 2, time: 0.55s, bounds: [])
+Symbolic test result: 7 passed; 0 failed; time: 9.74s

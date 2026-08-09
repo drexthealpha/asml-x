@@ -1,0 +1,31 @@
+Phase 7 live learning with a simulated moving market
+Captured 2026-08-09 15:49:54 UTC, chain 1952
+Counterparty flow is SIMULATED by scripts/31: real onchain orders at drifting
+prices, because chain 1952 has no other participants.
+
+---------- market round 0: bid 1900000000000000000 ask 2100000000000000000 ----------
+  post bid: 0x1
+  post ask: 0x1
+  running 3 learning cycles against the new price level
+cycle 0 block 37831788 | 51 candidates | chose take order 9 Sell 1.000000 base at 2.300000 | predicts Down | momentum 2000 | pending 0
+cycle 1 block 37831839 | 51 candidates | chose take order 9 Sell 1.000000 base at 2.300000 | predicts Down | momentum 2000 | pending 1
+cycle 2 block 37831884 | 51 candidates | chose take order 9 Sell 1.000000 base at 2.300000 | predicts Down | momentum 2000 | pending 1
+
+---------- market round 1: bid 2100000000000000000 ask 2300000000000000000 ----------
+  post bid: 0x1
+  post ask: 0x1
+  running 3 learning cycles against the new price level
+cycle 0 block 37831922 | 55 candidates | chose take order 9 Sell 1.000000 base at 2.300000 | predicts Down | momentum 2000 | pending 1
+cycle 1 block 37831980 | 55 candidates | chose take order 9 Sell 1.000000 base at 2.300000 | predicts Down | momentum 2000 | pending 1
+cycle 2 block 37832026 | 55 candidates | chose take order 9 Sell 1.000000 base at 2.300000 | predicts Down | momentum 2000 | pending 1
+
+---------- market round 2: bid 2300000000000000000 ask 2500000000000000000 ----------
+  post bid: 0x1
+  post ask: 0x1
+  running 3 learning cycles against the new price level
+cycle 0 block 37832087 | 59 candidates | chose take order 9 Sell 1.000000 base at 2.300000 | predicts Down | momentum 2000 | pending 0
+cycle 1 block 37832178 | 59 candidates | chose take order 9 Sell 1.000000 base at 2.300000 | predicts Down | momentum 2000 | pending 0
+cycle 2 block 37832255 | 59 candidates | chose take order 9 Sell 1.000000 base at 2.300000 | predicts Down | momentum 2000 | pending 0
+
+---------- market round 3: bid 2150000000000000000 ask 2350000000000000000 ----------
+  post bid: 

@@ -1,0 +1,37 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/core-types",
+    "crates/risk-engine",
+    "crates/executor",
+    "crates/chain-client",
+    "crates/journal",
+    "crates/market-intel",
+    "crates/decision-engine",
+    "crates/runtime",
+    "crates/coordination-api",
+    "crates/learning",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+
+[workspace.dependencies]
+core-types = { path = "crates/core-types" }
+risk-engine = { path = "crates/risk-engine" }
+executor = { path = "crates/executor" }
+chain-client = { path = "crates/chain-client" }
+journal = { path = "crates/journal" }
+market-intel = { path = "crates/market-intel" }
+decision-engine = { path = "crates/decision-engine" }
+learning = { path = "crates/learning" }
+proptest = "1"
+serde_json = "1"
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+
+[workspace.lints.clippy]
+float_arithmetic = "deny"

@@ -1,0 +1,22 @@
+params      {"momentum_weight_bps": 777, "thin_book_penalty_bps": 375, "variance_weight_bps": 8000}
+settled     13
+stats       {"imbalance_bps": {"correct": 0, "hit_rate_bps": 0, "samples": 13, "sum_edge_error_micro": "-746640", "sum_realized_bps": "0"}}
+changes     18
+    momentum_weight_bps 2000 -> 1800 | imbalance_bps hit rate 0 bps over 5 settled outcomes, below a coin flip
+    thin_book_penalty_bps 150 -> 175 | mean edge error -81360 micro over 5 outcomes, decisions overestimated their own edge
+    momentum_weight_bps 1800 -> 1620 | imbalance_bps hit rate 0 bps over 6 settled outcomes, below a coin flip
+    thin_book_penalty_bps 175 -> 200 | mean edge error -79620 micro over 6 outcomes, decisions overestimated their own edge
+    momentum_weight_bps 1620 -> 1458 | imbalance_bps hit rate 0 bps over 7 settled outcomes, below a coin flip
+    thin_book_penalty_bps 200 -> 225 | mean edge error -77040 micro over 7 outcomes, decisions overestimated their own edge
+    momentum_weight_bps 1458 -> 1313 | imbalance_bps hit rate 0 bps over 8 settled outcomes, below a coin flip
+    thin_book_penalty_bps 225 -> 250 | mean edge error -74036 micro over 8 outcomes, decisions overestimated their own edge
+    momentum_weight_bps 1313 -> 1182 | imbalance_bps hit rate 0 bps over 9 settled outcomes, below a coin flip
+    thin_book_penalty_bps 250 -> 275 | mean edge error -70860 micro over 9 outcomes, decisions overestimated their own edge
+    momentum_weight_bps 1182 -> 1064 | imbalance_bps hit rate 0 bps over 10 settled outcomes, below a coin flip
+    thin_book_penalty_bps 275 -> 300 | mean edge error -67635 micro over 10 outcomes, decisions overestimated their own edge
+    momentum_weight_bps 1064 -> 958 | imbalance_bps hit rate 0 bps over 11 settled outcomes, below a coin flip
+    thin_book_penalty_bps 300 -> 325 | mean edge error -64431 micro over 11 outcomes, decisions overestimated their own edge
+    momentum_weight_bps 958 -> 863 | imbalance_bps hit rate 0 bps over 12 settled outcomes, below a coin flip
+    thin_book_penalty_bps 325 -> 350 | mean edge error -61305 micro over 12 outcomes, decisions overestimated their own edge
+    momentum_weight_bps 863 -> 777 | imbalance_bps hit rate 0 bps over 13 settled outcomes, below a coin flip
+    thin_book_penalty_bps 350 -> 375 | mean edge error -57433 micro over 13 outcomes, decisions overestimated their own edge

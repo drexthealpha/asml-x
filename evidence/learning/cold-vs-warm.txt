@@ -1,0 +1,12 @@
+cold run started from default params:
+  params at start Params { momentum_weight_bps: 2000, variance_weight_bps: 8000, capital_cost_bps: 20, thin_book_penalty_bps: 150, min_confidence_bps: 3000, max_take_fraction_bps: 5000 }
+cold run settled-so-far at start:
+  settled so far  0
+
+warm run started from LEARNED params:
+  params at start Params { momentum_weight_bps: 777, variance_weight_bps: 8000, capital_cost_bps: 20, thin_book_penalty_bps: 375, min_confidence_bps: 3000, max_take_fraction_bps: 5000 }
+warm run settled-so-far at start:
+  settled so far  13
+
+If the two 'params at start' lines differ, learned state survived the restart
+and was actually loaded, which is the whole claim.

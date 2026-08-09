@@ -1,0 +1,146 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  rust:
+    name: Rust (fmt, clippy, test)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        run: |
+          rustup toolchain install stable --profile minimal --component rustfmt,clippy
+          rustup default stable
+          rustc --version && cargo --version
+
+      - name: Cache cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: cargo-${{ runner.os }}-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: cargo-${{ runner.os }}-
+
+      - name: Format check
+        run: cargo fmt --all -- --check
+
+      # -D warnings is deliberate: a warning allowed to accumulate is a warning nobody
+      # reads. identity_op is allowed explicitly because the risk-engine tests use
+      # expressions like `1 * MICRO` for readability. Allowed on purpose, not silently.
+      - name: Clippy
+        run: cargo clippy --workspace --all-targets -- -D warnings -A clippy::identity_op
+
+      - name: Test
+        run: cargo test --workspace --verbose
+
+      - name: Build release
+        run: cargo build --release --workspace
+
+  contracts:
+    name: Solidity (forge test + invariants)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: stable
+
+      - name: Show versions
+        run: forge --version && cast --version
+
+      # forge-std is vendored under contracts/lib. If the checkout did not bring it,
+      # install it, because a missing dependency makes forge report zero tests rather
+      # than an error, which reads as success to a careless eye.
+      - name: Ensure forge-std present
+        working-directory: contracts
+        run: |
+          if [ ! -d lib/forge-std ]; then
+            forge install foundry-rs/forge-std --no-commit || true
+          fi
+          test -d lib/forge-std
+
+      - name: Build
+        working-directory: contracts
+        run: forge build
+
+      - name: Test
+        working-directory: contracts
+        run: forge test -vv
+
+      # Guard against a vacuous run. forge exits 0 when it finds no tests at all, so
+      # assert a floor on the count. This project has 50; anything under 40 means the
+      # suite did not really run.
+      - name: Assert the suite was not vacuous
+        working-directory: contracts
+        run: |
+          COUNT=$(forge test 2>&1 | grep -oE '[0-9]+ tests passed' | tail -1 | awk '{print $1}')
+          echo "tests passed: ${COUNT:-0}"
+          if [ "${COUNT:-0}" -lt 40 ]; then
+            echo "Too few tests ran (${COUNT:-0}). Treating as a failure."
+            exit 1
+          fi
+
+  python:
+    name: Python (external agent syntax)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      # The external agent is not unit tested: it is an integration client that needs a
+      # live chain and a running server, neither of which exists in CI. Compile-checking
+      # it is the honest limit of what CI can assert here.
+      - name: Compile check
+        run: python3 -m py_compile agents/external_agent.py
+
+  secrets:
+    name: No secrets committed
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # The deployer keystore lives outside the repo, in WSL home. This job exists so a
+      # future commit cannot quietly change that.
+      - name: Scan the tree for key material
+        run: |
+          set -e
+          BAD=$(git ls-files | grep -iE 'keystore|\.env$|\.pass$|id_rsa|secret' | grep -v '\.example$' || true)
+          if [ -n "$BAD" ]; then
+            echo "Secret-looking files are tracked:"
+            echo "$BAD"
+            exit 1
+          fi
+          echo "No key material tracked."
+
+      # A hand-rolled 64-hex grep was tried first and was the wrong tool: it flagged
+      # vendored forge-std fixtures, public keccak market ids in deployments.json, and
+      # zero-padded batch ids. A scanner that cries wolf teaches reviewers to ignore it,
+      # so this uses the standard scanner instead.
+      #
+      # v3, not v2: GitHub removes Node 20 from hosted runners on 16 Sept 2026, after
+      # which gitleaks-action@v2 stops working regardless of any opt-out flag.
+      - name: Gitleaks
+        uses: gitleaks/gitleaks-action@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

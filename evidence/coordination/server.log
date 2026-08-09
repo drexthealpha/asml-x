@@ -1,0 +1,8 @@
+ASML-X coordination API
+  listening   http://127.0.0.1:8737
+  chain       1952 (verified)
+  endpoints   GET /health  GET /thesis  GET /capacity
+              POST /quote  POST /accept
+  auth        x-api-key header, demo keys: demo-agent-key-1, demo-agent-key-2
+  quote ttl   15000 ms, rate limit 20/min per caller
+

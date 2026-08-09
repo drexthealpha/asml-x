@@ -1,0 +1,55 @@
+RWA live trigger proofs, chain 1952, 2026-08-09 11:31:37 UTC
+vault 0x3BF12df3BB0b6f0dF8c57089ab78e402bf698F84
+guard 0x401Ef3E4b9b838A021109c3BBebb7FDC70Cb9278
+
+--- A. healthy instrument: exposure should be ACCEPTED ---
+  state: tradeable=true age=7 paused=false untilWindow=0 divergence=0 exposure=0
+  add 5e18 -> ACCEPTED
+  state: tradeable=true age=32 paused=false untilWindow=0 divergence=0 exposure=5000000000000000000
+
+--- B. ISSUER PAUSE: exposure should be REFUSED ---
+  setPaused(true): 0x1 0x88085ad1e74e4a09257d915baabc8d6fede353fb8fad7a04a60858b640319b59
+  state: tradeable=false age=55 paused=true untilWindow=0 divergence=0 exposure=5000000000000000000
+  add 1e18 -> REFUSED(IssuerPaused)
+
+--- C. DE-RISK WHILE PAUSED: must still be ACCEPTED (the asymmetry) ---
+  reduceExposure 1e18: 0x1 0xd2ae42fd8c466cd4b40bdb26117cfb43fd128b264294186c40d4992d95313cdf
+  state: tradeable=false age=80 paused=true untilWindow=0 divergence=0 exposure=4000000000000000000
+
+--- D. unpause, then ORACLE DIVERGENCE: should be REFUSED ---
+  setPaused(false): 0x1 0x4e1f7757850cee550ac854ca68a0ef1999c16abae708d1e87cfa72d76dc66f2f
+  observeMarketPrice(1.10e18) against oracle 1.00e18 = 1000 bps: 0x1 0x9db29cfa3388181806d14c0eace17fe224984cd519d4e14e9946796da1899f53
+  state: tradeable=false age=108 paused=false untilWindow=0 divergence=1000 exposure=4000000000000000000
+  add 1e18 -> REFUSED(OracleMarketDivergence)
+
+--- E. divergence back inside tolerance: should be ACCEPTED ---
+  observeMarketPrice(1.02e18) = 200 bps: 0x1 0xdb4f1fd29fff2d1376929a988789e626ac7f44503afd430565679990d162609a
+  state: tradeable=true age=139 paused=false untilWindow=0 divergence=200 exposure=4000000000000000000
+  add 1e18 -> ACCEPTED
+
+--- F. STALE ORACLE: tighten maxOracleAge to 1s, wait, should be REFUSED ---
+  (threshold tightened rather than waiting an hour; the staleness itself is real)
+  setRwaPolicy(maxOracleAge=1, buffer=43200, maxDiv=300): 0x1 0x941c6a976243585e7bdde60b8d7f568b0c0e4c4fd22d5df73aa0dee556e053e7
+  state after 8s: tradeable=false age=180 paused=false untilWindow=0 divergence=200 exposure=5000000000000000000
+  add 1e18 -> REFUSED(OracleStale)
+  touchOracle to refresh: 0x1 0xde72e7ed5af8e20dcec9af51875ac336a341b3e3c600a3e3ac8e3cafc0bf3da6
+  state: tradeable=false age=10 paused=false untilWindow=0 divergence=200 exposure=5000000000000000000
+  add 1e18 immediately after refresh -> REFUSED(OracleStale)
+
+--- G. REDEMPTION WINDOW PROXIMITY ---
+  setWindowSchedule(period=120s, length=20s): 0x1 0xfc0ccce60903596aeae3c383f93b9ade49dfe2b21da53eb59e684a007e14026f
+  setRwaPolicy(maxOracleAge=3600, buffer=100s, maxDiv=300): 0x1 0x38142f5ecf7be0bdb5f6ca0ecfa76c0c3e0509feab7257a584a1dfdf318a83b4
+  state: tradeable=false age=62 paused=false untilWindow=47 divergence=200 exposure=5000000000000000000
+  secondsUntilWindow=28, buffer=100
+  add 1e18 -> REFUSED(RedemptionWindowTooClose)
+  note: when untilWindow is 0 a window is OPEN and trading is permitted, which is
+  the correct behaviour, not a missed refusal.
+
+--- H. restore a sane policy and confirm the instrument trades again ---
+  setWindowSchedule(0,0): 0x1 0x68fe4a16cef4529b569a27b6c1ae71f1ac591628aaf0ffff94347f67344cb3c2
+  setRwaPolicy(3600,43200,300): 0x1 0x647b97147399195e55cbd36bfd8768c0805c013f166df44487ef796f7390a3b1
+  touchOracle: 0x1 0x5d4554a550fd6e53e47474c7644dbfc31587134db8f7c5a86cb2e81b88c065b2
+  state: tradeable=true age=10 paused=false untilWindow=0 divergence=200 exposure=5000000000000000000
+  add 1e18 -> ACCEPTED
+
+  gross=6000000000000000000 sumOfParts=6000000000000000000

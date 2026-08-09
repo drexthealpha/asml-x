@@ -1,0 +1,7 @@
+# Seeds for failure cases proptest has generated in the past. It is
+# automatically read and these particular cases re-run before any
+# novel cases are generated.
+#
+# It is recommended to check this file in to source control so that
+# everyone who runs the test benefits from these saved cases.
+cc 23c2da97b6946706685914a429008b0e0f1f63bc6ba527ccf02642eca8c4a4dc # shrinks to intent = OrderIntent { market: MarketId("M1"), kind: Spot, side: Sell, size_micro: 100000, limit_price_micro: 100000, decision_id: 1 }, (pf, mark_age) = (Portfolio { positions: [Position { market: MarketId("M1"), kind: RwaLinked, net_size_micro: 0, mark_price_micro: Stamped { value: 1000000, observed_at_ms: 0 } }], free_margin_micro: 6000000, realized_pnl_today_micro: 0, consecutive_losses: 0 }, 10001), actions = 0

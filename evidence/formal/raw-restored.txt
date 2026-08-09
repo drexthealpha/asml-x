@@ -1,0 +1,16 @@
+Compiling 4 files with Solc 0.8.28
+Solc 0.8.28 finished in 12.21s
+Compiler run successful!
+[31mSkipped console2.json due to parsing failure: KeyError: 'metadata'[0m
+[31mSkipped IERC20Min.json due to parsing failure: KeyError: 'ast'[0m
+[31mSkipped OrderBookVenue.json due to parsing failure: KeyError: 'ast'[0m
+
+Running 7 tests for test/RiskGuardSymbolic.t.sol:RiskGuardSymbolic
+[32m[PASS][0m check_grossAlwaysEqualsSumOfParts(uint256,uint256,uint256) (paths: 18, time: 4.73s, bounds: [])
+[32m[PASS][0m check_grossCapHoldsAcrossMarkets(uint256,uint256) (paths: 5, time: 2.13s, bounds: [])
+[32m[PASS][0m check_killedBlocksEveryAdd(uint256) (paths: 2, time: 0.57s, bounds: [])
+[32m[PASS][0m check_noSequenceOfAddsCanBreakACap(uint256,uint256) (paths: 5, time: 1.52s, bounds: [])
+[32m[PASS][0m check_onlyOwnerCanRaiseCaps(address,uint256) (paths: 2, time: 0.24s, bounds: [])
+[32m[PASS][0m check_onlyOwnerCanRevive(address) (paths: 2, time: 0.59s, bounds: [])
+[32m[PASS][0m check_unconfiguredMarketAlwaysFailsClosed(bytes32,uint256) (paths: 5, time: 0.72s, bounds: [])
+Symbolic test result: 7 passed; 0 failed; time: 11.23s

@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ASML-X: autonomous market brain on X Layer</title>
+<style>
+  :root {
+    --bg: #0b0d10; --panel: #14181d; --line: #232a32; --text: #e6edf3;
+    --muted: #8b949e; --ok: #3fb950; --warn: #d29922; --bad: #f85149;
+    --accent: #58a6ff; --mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  @media (prefers-color-scheme: light) {
+    :root { --bg:#ffffff; --panel:#f6f8fa; --line:#d0d7de; --text:#1f2328;
+            --muted:#656d76; --accent:#0969da; }
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--text);
+         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+         font-size:14px; line-height:1.5; }
+  header { padding:16px 20px; border-bottom:1px solid var(--line);
+           display:flex; align-items:baseline; gap:16px; flex-wrap:wrap; }
+  h1 { font-size:16px; margin:0; font-weight:600; }
+  .sub { color:var(--muted); font-size:12px; }
+  main { padding:16px 20px 40px; display:grid; gap:16px;
+         grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); }
+  .panel { background:var(--panel); border:1px solid var(--line); border-radius:6px;
+           padding:14px 16px; min-width:0; }
+  .panel h2 { font-size:12px; text-transform:uppercase; letter-spacing:.06em;
+              color:var(--muted); margin:0 0 10px; font-weight:600; }
+  .wide { grid-column: 1 / -1; }
+  table { width:100%; border-collapse:collapse; font-family:var(--mono); font-size:12px; }
+  th, td { text-align:left; padding:4px 8px 4px 0; vertical-align:top;
+           border-bottom:1px solid var(--line); }
+  th { color:var(--muted); font-weight:500; }
+  .scroll { overflow-x:auto; }
+  .kv { display:grid; grid-template-columns:auto 1fr; gap:2px 12px;
+        font-family:var(--mono); font-size:12px; }
+  .kv dt { color:var(--muted); }
+  .kv dd { margin:0; word-break:break-all; }
+  .badge { display:inline-block; padding:1px 6px; border-radius:3px; font-size:11px;
+           font-family:var(--mono); border:1px solid var(--line); }
+  .ok { color:var(--ok); border-color:var(--ok); }
+  .warn { color:var(--warn); border-color:var(--warn); }
+  .bad { color:var(--bad); border-color:var(--bad); }
+  .muted { color:var(--muted); }
+  a { color:var(--accent); }
+  .bar { height:6px; background:var(--line); border-radius:3px; overflow:hidden; margin-top:3px; }
+  .bar > i { display:block; height:100%; background:var(--ok); }
+  .bar.hot > i { background:var(--warn); }
+  .bar.over > i { background:var(--bad); }
+  .empty { color:var(--muted); font-style:italic; padding:8px 0; }
+  .stale { border-color:var(--bad); }
+  .stale h2 { color:var(--bad); }
+  code { font-family:var(--mono); }
+  .chosen { color:var(--ok); }
+  .rejected { color:var(--muted); }
+  footer { padding:16px 20px; border-top:1px solid var(--line); color:var(--muted);
+           font-size:12px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>ASML-X</h1>
+  <span class="sub">autonomous market brain &middot; X Layer testnet chain 1952 &middot;
+    <span id="dataState" class="badge warn">loading</span></span>
+</header>
+
+<main>
+  <section class="panel" id="p-chain">
+    <h2>Chain and deployment</h2>
+    <dl class="kv" id="chainKv"></dl>
+  </section>
+
+  <section class="panel" id="p-risk">
+    <h2>Risk and limit utilisation</h2>
+    <div id="riskBox"></div>
+  </section>
+
+  <section class="panel" id="p-rwa">
+    <h2>RWA instrument</h2>
+    <div id="rwaBox"></div>
+  </section>
+
+  <section class="panel" id="p-learn">
+    <h2>Learning</h2>
+    <div id="learnBox"></div>
+  </section>
+
+  <section class="panel wide" id="p-thesis">
+    <h2>Current thesis and signals</h2>
+    <div id="thesisBox"></div>
+  </section>
+
+  <section class="panel wide" id="p-cands">
+    <h2>Scored candidate set, including rejects</h2>
+    <div class="scroll"><table id="candTable"></table></div>
+  </section>
+
+  <section class="panel wide" id="p-journal">
+    <h2>Decision journal, newest first</h2>
+    <div class="scroll"><table id="journalTable"></table></div>
+  </section>
+
+  <section class="panel wide" id="p-numbers">
+    <h2>Measured numbers</h2>
+    <dl class="kv" id="numbersKv"></dl>
+  </section>
+</main>
+
+<footer>
+  Every number on this page is read from
+  <code>evidence/journal.jsonl</code>, <code>evidence/learned-state.json</code> and
+  <code>deployments.json</code> at load time, with two exceptions labelled
+  <span class="badge warn">from docs/verified</span> in the measured-numbers panel. If the
+  runtime has not written a journal, panels say so rather than showing plausible values;
+  <code>ui/nodata-check/</code> is that state captured deliberately.
+  Labels: <span class="badge ok">DEMONSTRATED</span> means shown true with an evidence
+  link. <span class="badge warn">INFERRED</span> means assumed from structure.
+</footer>
+
+<script>
+const EXPLORER = "https://www.oklink.com/x-layer-testnet";
+const $ = (id) => document.getElementById(id);
+
+function badge(text, cls) { return `<span class="badge ${cls || ''}">${text}</span>`; }
+function esc(s) {
+  return String(s ?? "").replace(/[&<>"']/g, c =>
+    ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
+}
+function micro(v) {
+  if (v === null || v === undefined || v === "") return "n/a";
+  const n = BigInt(v);
+  const neg = n < 0n; const a = neg ? -n : n;
+  return (neg ? "-" : "") + (a / 1000000n) + "." + String(a % 1000000n).padStart(6, "0");
+}
+function txLink(h) {
+  return h ? `<a href="${EXPLORER}/tx/${esc(h)}" target="_blank" rel="noopener">${esc(h.slice(0,14))}…</a>` : '<span class="muted">none</span>';
+}
+function addrLink(a) {
+  return a ? `<a href="${EXPLORER}/address/${esc(a)}" target="_blank" rel="noopener"><code>${esc(a)}</code></a>` : '<span class="muted">not deployed</span>';
+}
+
+/** Mark a panel as having no data, rather than rendering a plausible blank. */
+function markStale(panelId, message) {
+  const p = $(panelId);
+  if (p) p.classList.add("stale");
+  return `<p class="empty">${esc(message)}</p>`;
+}
+
+async function loadJson(path) {
+  const r = await fetch(path, { cache: "no-store" });
+  if (!r.ok) throw new Error(`${path} returned ${r.status}`);
+  return r.json();
+}
+async function loadJsonl(path) {
+  const r = await fetch(path, { cache: "no-store" });
+  if (!r.ok) throw new Error(`${path} returned ${r.status}`);
+  const text = await r.text();
+  return text.split("\n").filter(l => l.trim()).map(l => {
+    try { return JSON.parse(l); } catch { return null; }
+  }).filter(Boolean);
+}
+
+function renderChain(dep) {
+  if (!dep) { $("chainKv").innerHTML = markStale("p-chain", "deployments.json not readable"); return; }
+  const rows = [
+    ["chain id", "1952 " + badge("DEMONSTRATED", "ok")],
+    ["rpc", "<code>https://testrpc.xlayer.tech</code>"],
+    ["execution layer", "OP Stack Bedrock " + badge("DEMONSTRATED", "ok")],
+    ["venue", addrLink(dep.venue)],
+    ["risk guard", addrLink(dep.riskGuard)],
+    ["batch executor", addrLink(dep.batchExecutor)],
+    ["rwa vault", addrLink(dep.rwaVault) + " " + badge("SELF-DEPLOYED STAND-IN", "warn")],
+    ["rwa risk guard", addrLink(dep.rwaRiskGuard)],
+    ["exchange os", badge("INFERRED, migration target only", "warn") +
+      ' <span class="muted">no testnet surface exists, see docs/verified/exchangeos-availability.md</span>'],
+  ];
+  $("chainKv").innerHTML = rows.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("");
+}
+
+function renderRisk(entries) {
+  if (!entries.length) { $("riskBox").innerHTML = markStale("p-risk", "no journal entries, runtime has not run"); return; }
+  const last = entries[entries.length - 1];
+  const verdict = last.risk_verdict || "";
+  let cls = "ok";
+  if (/halt/i.test(verdict)) cls = "bad";
+  else if (/refus/i.test(verdict)) cls = "warn";
+
+  const refusals = entries.filter(e => /refused/i.test(e.risk_verdict || "")).length;
+  const halts = entries.filter(e => /halt/i.test(e.risk_verdict || "")).length;
+
+  // Refusal counts per reason, read from the candidate records.
+  const reasons = {};
+  for (const e of entries) {
+    for (const c of e.candidates || []) {
+      const r = c.rejection_reason || "";
+      const m = r.match(/risk refused: (\w+)/);
+      if (m) reasons[m[1]] = (reasons[m[1]] || 0) + 1;
+    }
+  }
+  const reasonRows = Object.entries(reasons).sort((a,b) => b[1]-a[1])
+    .map(([k,v]) => `<tr><td>${esc(k)}</td><td>${v}</td></tr>`).join("");
+
+  $("riskBox").innerHTML = `
+    <dl class="kv">
+      <dt>latest verdict</dt><dd>${badge(esc(verdict.slice(0,60)), cls)}</dd>
+      <dt>cycles journalled</dt><dd>${entries.length}</dd>
+      <dt>cycles with a refusal</dt><dd>${refusals}</dd>
+      <dt>cycles halted</dt><dd>${halts}</dd>
+    </dl>
+    ${reasonRows ? `<table><tr><th>risk refusal</th><th>count</th></tr>${reasonRows}</table>`
+                 : '<p class="empty">no risk refusals recorded in this journal</p>'}`;
+}
+
+function renderRwa(entries) {
+  const rwaEntries = entries.filter(e => /rwa/i.test(JSON.stringify(e.candidates || [])) || /Rwa/.test(e.risk_verdict || ""));
+  const refusals = {};
+  for (const e of entries) {
+    for (const c of e.candidates || []) {
+      const m = (c.rejection_reason || "").match(/Rwa\w+/);
+      if (m) refusals[m[0]] = (refusals[m[0]] || 0) + 1;
+    }
+  }
+  const rows = Object.entries(refusals).map(([k,v]) => `<tr><td>${esc(k)}</td><td>${v}</td></tr>`).join("");
+  $("rwaBox").innerHTML = `
+    <p>${badge("SELF-DEPLOYED STAND-IN", "warn")} not a live third-party protocol.
+    Provenance per <code>ADR-009</code>.</p>
+    <p class="muted">Four refusals a generic bot lacks: issuer pause, stale oracle,
+    redemption window proximity, oracle versus market divergence. All four proven live,
+    see <code>evidence/rwa-live/live-triggers.txt</code>.</p>
+    ${rows ? `<table><tr><th>rwa refusal seen in journal</th><th>count</th></tr>${rows}</table>`
+           : '<p class="empty">no RWA refusals in this journal; run scripts/24-side-by-side.sh</p>'}`;
+}
+
+function renderLearning(state) {
+  if (!state) { $("learnBox").innerHTML = markStale("p-learn", "learned-state.json not readable, learning has not run"); return; }
+  const hist = state.history || [];
+  const stats = state.stats || {};
+  const sig = stats["imbalance_bps"] || {};
+  const rows = hist.slice(-6).reverse().map(c =>
+    `<tr><td>${esc(c.parameter)}</td><td>${c.from} &rarr; ${c.to}</td>
+     <td class="muted">${esc(c.trigger)}</td></tr>`).join("");
+  $("learnBox").innerHTML = `
+    <dl class="kv">
+      <dt>settled outcomes</dt><dd>${state.settled_count ?? 0}</dd>
+      <dt>unscored (flat market)</dt><dd>${state.unscored_flat ?? 0}</dd>
+      <dt>imbalance samples</dt><dd>${sig.samples ?? 0}</dd>
+      <dt>imbalance hit rate</dt><dd>${sig.hit_rate_bps ?? "n/a"} bps</dd>
+      <dt>momentum weight</dt><dd>${state.params?.momentum_weight_bps ?? "n/a"}</dd>
+      <dt>thin book penalty</dt><dd>${state.params?.thin_book_penalty_bps ?? "n/a"}</dd>
+      <dt>parameter changes</dt><dd>${hist.length}</dd>
+    </dl>
+    ${rows ? `<table><tr><th>parameter</th><th>change</th><th>because</th></tr>${rows}</table>`
+           : '<p class="empty">no parameter changes yet</p>'}
+    <p class="muted">${badge("NOT A PERFORMANCE CLAIM", "warn")} sample sizes are single
+    digits and there is no realized PnL.</p>`;
+}
+
+function renderThesis(entries) {
+  if (!entries.length) { $("thesisBox").innerHTML = markStale("p-thesis", "no journal entries"); return; }
+  const last = entries[entries.length - 1];
+  const sig = (last.signals || []).map(s =>
+    `<tr><td>${esc(s.name)}</td><td>${micro(s.value_micro)}</td>
+     <td>&plusmn;${micro(s.confidence_halfwidth_micro)}</td>
+     <td>${s.input_age_ms} ms</td></tr>`).join("");
+  $("thesisBox").innerHTML = `
+    <dl class="kv">
+      <dt>block</dt><dd>${last.block_number}</dd>
+      <dt>market</dt><dd>${esc(last.market)}</dd>
+      <dt>confidence</dt><dd>${last.thesis_confidence_bps} bps</dd>
+      <dt>thesis</dt><dd>${esc(last.thesis)}</dd>
+      <dt>action</dt><dd>${esc(last.action || "none")}</dd>
+    </dl>
+    <table><tr><th>signal</th><th>value</th><th>confidence</th><th>input age</th></tr>${sig}</table>
+    <p class="muted">The thesis text is generated from these numbers by ordinary code, not
+    by a language model. Stated plainly: an LLM narrating this loop would add words, not
+    intelligence.</p>`;
+}
+
+function renderCandidates(entries) {
+  if (!entries.length) { $("candTable").innerHTML = ""; $("p-cands").innerHTML += markStale("p-cands", "no journal entries"); return; }
+  const withCands = entries.filter(e => (e.candidates || []).length).pop();
+  if (!withCands) { $("candTable").innerHTML = `<tr><td>${markStale("p-cands", "no scored candidates recorded")}</td></tr>`; return; }
+  const cands = [...withCands.candidates].sort((a,b) => Number(BigInt(b.score_micro) - BigInt(a.score_micro)));
+  const head = `<tr><th>candidate</th><th>score</th><th>edge</th><th>variance</th>
+                <th>capital</th><th>exec risk</th><th>outcome</th></tr>`;
+  const body = cands.map(c => `
+    <tr class="${c.chosen ? 'chosen' : 'rejected'}">
+      <td>${esc(c.label)}</td>
+      <td>${micro(c.score_micro)}</td>
+      <td>${micro(c.expected_edge_micro)}</td>
+      <td>${micro(c.variance_penalty_micro)}</td>
+      <td>${micro(c.capital_cost_micro)}</td>
+      <td>${micro(c.execution_risk_penalty_micro)}</td>
+      <td>${c.chosen ? badge("CHOSEN","ok") : esc(c.rejection_reason || "")}</td>
+    </tr>`).join("");
+  $("candTable").innerHTML = head + body;
+}
+
+function renderJournal(entries) {
+  if (!entries.length) { $("journalTable").innerHTML = `<tr><td>${markStale("p-journal","journal.jsonl is empty or missing")}</td></tr>`; return; }
+  const head = `<tr><th>id</th><th>block</th><th>action</th><th>candidates</th>
+                <th>risk verdict</th><th>tx</th></tr>`;
+  const body = entries.slice(-40).reverse().map(e => `
+    <tr>
+      <td>${e.decision_id}</td>
+      <td>${e.block_number}</td>
+      <td>${esc(e.action || "none")}</td>
+      <td>${(e.candidates || []).length}</td>
+      <td>${esc((e.risk_verdict || "").slice(0,52))}</td>
+      <td>${txLink(e.tx_hash)}</td>
+    </tr>`).join("");
+  $("journalTable").innerHTML = head + body;
+}
+
+function renderNumbers(entries, state) {
+  const withTx = entries.filter(e => e.tx_hash);
+  const candCounts = entries.map(e => (e.candidates || []).length).filter(n => n > 0);
+  const rows = [
+    ["journalled decisions", entries.length],
+    ["onchain actions", withTx.length],
+    ["candidates per decision", candCounts.length ? `${Math.min(...candCounts)} to ${Math.max(...candCounts)}` : "n/a"],
+    // These two are NOT read live: they are measured values transcribed from
+    // docs/verified/chain-1952-reality.md. Labelled as such, because the footer claims
+    // nothing on this page is hardcoded and that claim has to survive inspection.
+    ["block time", "~1.0 s " + badge("from docs/verified", "warn")],
+    ["gas price", "20,000,001 wei " + badge("from docs/verified", "warn")],
+    ["settled learning outcomes", state?.settled_count ?? 0],
+    ["risk refusals recorded", entries.filter(e => /refused/i.test(e.risk_verdict||"")).length],
+  ];
+  $("numbersKv").innerHTML = rows.map(([k,v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("");
+}
+
+(async function main() {
+  let entries = [], dep = null, state = null;
+  const problems = [];
+
+  try { dep = await loadJson("../deployments.json"); }
+  catch (e) { problems.push("deployments.json: " + e.message); }
+  try { entries = await loadJsonl("../evidence/journal.jsonl"); }
+  catch (e) { problems.push("journal.jsonl: " + e.message); }
+  try { state = await loadJson("../evidence/learned-state.json"); }
+  catch (e) { problems.push("learned-state.json: " + e.message); }
+
+  const ds = $("dataState");
+  if (problems.length === 3) {
+    ds.textContent = "DISCONNECTED, no data files readable";
+    ds.className = "badge bad";
+  } else if (problems.length) {
+    ds.textContent = "PARTIAL: " + problems.length + " source(s) unreadable";
+    ds.className = "badge warn";
+    ds.title = problems.join("; ");
+  } else {
+    ds.textContent = `${entries.length} journal entries loaded`;
+    ds.className = "badge ok";
+  }
+
+  renderChain(dep);
+  renderRisk(entries);
+  renderRwa(entries);
+  renderLearning(state);
+  renderThesis(entries);
+  renderCandidates(entries);
+  renderJournal(entries);
+  renderNumbers(entries, state);
+})();
+</script>
+</body>
+</html>
