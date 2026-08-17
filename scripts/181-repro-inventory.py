@@ -12,7 +12,10 @@ import os
 import re
 import sys
 
-REPO = "/mnt/c/Users/zulab/OneDrive/Desktop/ASML-X"
+# Derived from this file's location, not hardcoded to one machine. See scripts/lib.sh for why:
+# a hardcoded absolute path silently breaks the "reproduces from a clean clone" claim everywhere
+# except the machine it was written on.
+REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CHAIN = f"{REPO}/evidence/CHAIN-OF-EVIDENCE.md"
 
 

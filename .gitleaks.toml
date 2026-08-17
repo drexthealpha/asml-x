@@ -1,0 +1,63 @@
+# gitleaks configuration.
+#
+# The default ruleset is kept in full. This file ONLY adds allowlist entries, each naming a specific
+# value and why it is not a secret. An allowlist that excluded a directory wholesale, or that turned
+# a rule off, would be the weakening this project spends most of its effort avoiding: a new secret
+# committed next week must still fail this gate.
+#
+# Every entry below is either a PUBLISHED test value that funds nothing, or a false positive on a
+# public Ethereum address. Nothing here is a credential.
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Published test values and build output. Each entry is justified individually."
+
+# ---------------------------------------------------------------------------
+# Paths. Build output only, all of it gitignored and therefore uncommittable.
+#
+# A working-tree scan (--no-git) reads these because it walks the filesystem rather than the index.
+# The Rust `pkcs8` crate ships private-key TEST VECTORS inside its compiled rmeta, and the Playwright
+# install brings 19MB of JavaScript with its own fixtures. Neither can reach a commit: the history
+# scan, which is the one that decides what is published, does not read them at all.
+# ---------------------------------------------------------------------------
+paths = [
+  '''^target/''',
+  '''^ui-v2/dist/''',
+  '''(^|/)node_modules/''',
+  # An internal probe, gitignored, whose curl carries the same public demo key described below.
+  '''^scripts/28-ratelimit-probe\.sh$''',
+]
+
+regexes = [
+  # -------------------------------------------------------------------------
+  # anvil's account 0 private key. This is printed in anvil's own startup banner, is in the Foundry
+  # documentation, and appears in thousands of public repositories. It funds nothing on any real
+  # network and exists so local chains are reproducible. Used by scripts/196-ci-anvil-up.sh to give
+  # CI a funded account without any real key.
+  # -------------------------------------------------------------------------
+  '''0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80''',
+  '''0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266''',
+
+  # -------------------------------------------------------------------------
+  # The coordination API's demo keys. The API is unauthenticated by design: a key selects a
+  # rate-limit bucket, not an identity, and nothing is billed to it. Both keys are hardcoded in
+  # crates/coordination-api/src/main.rs, documented in docs/COORDINATION-PROTOCOL.md, and published
+  # in the examples under examples/ so another builder can call the API.
+  # -------------------------------------------------------------------------
+  '''demo-agent-key-[12]''',
+
+  # -------------------------------------------------------------------------
+  # The throwaway keystore password used only by CI's local chain. It protects a key generated
+  # fresh per run that holds nothing anywhere.
+  # -------------------------------------------------------------------------
+  '''ci-throwaway-not-a-secret''',
+
+  # -------------------------------------------------------------------------
+  # FALSE POSITIVE. `fee_token` in metrics.json is a public Ethereum contract ADDRESS, which the
+  # generic-api-key heuristic matches on shape. Every contract address in this project is public by
+  # definition; they are printed in the README and linked to a block explorer.
+  # -------------------------------------------------------------------------
+  '''0x5069c6C619EE23a8e2EBa15b4B95F7EE16869501''',
+]

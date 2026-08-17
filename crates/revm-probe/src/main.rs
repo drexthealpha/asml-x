@@ -92,20 +92,21 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // executes one transaction and one that executes a SEQUENCE, and a pre-flight for a multi-leg
     // batch is a sequence.
     let mut nonce: u64 = 1;
-    let mut send = |sig: &str, words: &[[u8; 32]]| -> Result<ExecutionResult, Box<dyn std::error::Error>> {
-        let r = evm.transact_commit(
-            TxEnv::builder()
-                .caller(AGENT)
-                .kind(TxKind::Call(guard))
-                .data(call(sig, words))
-                .gas_limit(5_000_000)
-                .nonce(nonce)
-                .build()
-                .unwrap(),
-        )?;
-        nonce += 1;
-        Ok(r)
-    };
+    let mut send =
+        |sig: &str, words: &[[u8; 32]]| -> Result<ExecutionResult, Box<dyn std::error::Error>> {
+            let r = evm.transact_commit(
+                TxEnv::builder()
+                    .caller(AGENT)
+                    .kind(TxKind::Call(guard))
+                    .data(call(sig, words))
+                    .gas_limit(5_000_000)
+                    .nonce(nonce)
+                    .build()
+                    .unwrap(),
+            )?;
+            nonce += 1;
+            Ok(r)
+        };
 
     let mut agent_word = [0u8; 32];
     agent_word[12..].copy_from_slice(AGENT.as_slice());
@@ -113,17 +114,28 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     true_word[31] = 1;
 
     let r = send("setAgent(address,bool)", &[agent_word, true_word])?;
-    println!("    setAgent: {}", if r.is_success() { "ok" } else { "FAILED" });
+    println!(
+        "    setAgent: {}",
+        if r.is_success() { "ok" } else { "FAILED" }
+    );
     let r = send("setMarketCap(bytes32,uint256)", &[market, word_u256(cap)])?;
-    println!("    setMarketCap(500e18): {}", if r.is_success() { "ok" } else { "FAILED" });
+    println!(
+        "    setMarketCap(500e18): {}",
+        if r.is_success() { "ok" } else { "FAILED" }
+    );
 
     // Under the cap must succeed, so the refusal below is attributable to the CAP and not to a
     // misconfigured probe. Without this, a revert for any other reason would look like a pass.
     let under = U256::from(8u64) * U256::from(10u64).pow(U256::from(18u64));
     let r = send("addExposure(bytes32,uint256)", &[market, word_u256(under)])?;
-    println!("    addExposure(8e18) under the cap: {}", if r.is_success() { "ok" } else { "FAILED" });
+    println!(
+        "    addExposure(8e18) under the cap: {}",
+        if r.is_success() { "ok" } else { "FAILED" }
+    );
     if !r.is_success() {
-        println!("    probe misconfigured: a lawful add was refused, so the breach below proves nothing");
+        println!(
+            "    probe misconfigured: a lawful add was refused, so the breach below proves nothing"
+        );
         std::process::exit(1);
     }
 
@@ -137,7 +149,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         ExecutionResult::Revert { output, .. } => {
             println!("    addExposure(600e18) REVERTED");
             println!("    revert data: 0x{}", hex::encode(&output));
-            println!("    revert selector: 0x{}", hex::encode(&output[..4.min(output.len())]));
+            println!(
+                "    revert selector: 0x{}",
+                hex::encode(&output[..4.min(output.len())])
+            );
             // Decode the error's three fields to show the numbers are the real ones.
             if output.len() >= 4 + 96 {
                 let attempted = U256::from_be_slice(&output[36..68]);

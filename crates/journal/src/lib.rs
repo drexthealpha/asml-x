@@ -232,11 +232,7 @@ impl Journal {
     /// The `outcome` field on a live row stays as it is, and ADR-020 records that it describes
     /// SOMETHING ELSE'S settlement observed during that cycle, which is exactly the confusion this
     /// method removes: a settlement here names the decision that made the prediction.
-    pub fn append_settlement(
-        &self,
-        path: impl AsRef<Path>,
-        s: &Settlement,
-    ) -> std::io::Result<()> {
+    pub fn append_settlement(&self, path: impl AsRef<Path>, s: &Settlement) -> std::io::Result<()> {
         let path = path.as_ref();
         if let Some(parent) = path.parent() {
             create_dir_all(parent)?;

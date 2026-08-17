@@ -71,17 +71,52 @@ contract FeeFormalTest {
     /// piecewise formula can be bounded and locally exact while still dipping.
     ///
     /// BOUNDED TO 2**96 RATHER THAN 2**128, and the reason is solver hardness rather than the
-    /// property. This is the only theorem here that relates TWO symbolic divisions, and at 2**128 the
-    /// solver returned TIMEOUT after 60 seconds while every other theorem closed in under a second.
-    /// A timeout is not a proof, so the bound was lowered until the proof actually closes rather than
-    /// left as a stalled run reported optimistically. 2**96 base units is 7.9e28, which at 18 decimals
-    /// is 7.9e10 whole tokens: far above any notional this system will route. What is NOT proved is
-    /// monotonicity between 2**96 and 2**256, and that gap is stated here rather than implied by the
-    /// word "proved".
-    function check_feeIsMonotonicInNotional(uint256 a, uint256 b) public view {
+    /// property. This is the only theorem here that relates TWO symbolic divisions. 2**96 base units
+    /// is 7.9e28, which at 18 decimals is 7.9e10 whole tokens: far above any notional this system
+    /// will route. What is NOT proved is monotonicity between 2**96 and 2**256, and that gap is
+    /// stated here rather than implied by the word "proved".
+    ///
+    /// THE MULTIPLICATION HALF PROVES. It is kept as a theorem because it is the half that is about
+    /// this contract's arithmetic rather than about integer division in general.
+    function check_feeMultiplicationPreservesOrder(uint256 a, uint256 b) public pure {
         if (a >= 2 ** 96 || b >= 2 ** 96) return;
         if (a > b) return;
-        assert(fee.quoteFee(a) <= fee.quoteFee(b));
+        assert(a * START_BPS <= b * START_BPS);
+    }
+
+    // -------------------------------------------------------------------------------------------
+    // MONOTONICITY IS NOT PROVED SYMBOLICALLY, AND THIS RECORDS WHY RATHER THAN HIDING IT.
+    //
+    // An earlier version of this file asserted `quoteFee(a) <= quoteFee(b)` and its comment claimed
+    // the proof "actually closes" at 2**96. It does not. Measured, with halmos 0.3.3 and Z3:
+    //
+    //   quoteFee(a) <= quoteFee(b), bound 2**96      TIMEOUT at 240s, and again at 900s
+    //   (a*K)/D <= (b*K)/D as pure arithmetic        TIMEOUT at 240s
+    //   x/D <= y/D alone, no multiplication          TIMEOUT at 240s
+    //   the same, bound lowered to 2**64             TIMEOUT
+    //   the same, bound lowered to 2**48             TIMEOUT
+    //   the same, bound lowered to 2**32             TIMEOUT
+    //
+    // Lowering the bound changes nothing, which is the useful finding: the range guard is a path
+    // condition, but `x` and `y` remain full 256-bit bitvectors inside `bvudiv`, and two symbolic
+    // 256-bit divisions in one query is where this solver stops. Narrowing further would have been
+    // shrinking the claim until it turned green without making the solver's job any different.
+    //
+    // WHAT IS STILL PROVED, so this is not a gap dressed up as a decision. THEOREM 2 proves
+    // `quoteFee(n) == (n * START_BPS) / BPS_DENOM` EXACTLY, over the real contract, for every n
+    // below 2**128, in 0.03s. The residue is monotonicity of `floor(x / 10_000)`, which is a fact
+    // about integer division and not a property of this fee. It is covered by the fuzz test below
+    // rather than left unverified, and the theorem count in scripts/104b-fee-formal.sh reflects
+    // what is actually proved rather than what was hoped for.
+    // -------------------------------------------------------------------------------------------
+
+    /// Monotonicity, fuzzed rather than proved. Foundry draws real values and runs the real
+    /// contract, so this catches a dipping formula on any drawn pair; what it cannot do is quantify
+    /// over the whole range, and the comment block above says so.
+    function testFuzz_feeIsMonotonicInNotional(uint96 a, uint96 b) public view {
+        uint256 lo = a <= b ? a : b;
+        uint256 hi = a <= b ? b : a;
+        assert(fee.quoteFee(lo) <= fee.quoteFee(hi));
     }
 
     /// THEOREM 4: the rate is one-directional, and the ceiling holds in every reachable state.

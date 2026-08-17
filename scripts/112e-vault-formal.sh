@@ -74,3 +74,8 @@ fi
 } >> "$OUT"
 
 tail -50 "$OUT"
+
+# EXIT ON THE VERDICT, for the same reason as scripts/104b-fee-formal.sh: this script printed its
+# verdict and then exited 0 regardless, because the last command was the `tail` above. A CI job
+# built on that would go green while the gate said theorems were unproved.
+[ "$PROVED" -eq "$DECLARED" ] && [ "$DECLARED" -gt 0 ]

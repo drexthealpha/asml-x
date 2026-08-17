@@ -16,7 +16,8 @@ import os
 import re
 import sys
 
-REPO = "/mnt/c/Users/zulab/OneDrive/Desktop/ASML-X"
+# Derived, not hardcoded. See scripts/lib.sh.
+REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CHAIN = f"{REPO}/evidence/CHAIN-OF-EVIDENCE.md"
 DOCS = [
     "JUDGE-GUIDE.md",

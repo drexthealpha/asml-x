@@ -34,8 +34,11 @@
 
 use std::collections::HashMap;
 use std::sync::atomic::{AtomicU64, Ordering};
-//  is needed for . Kept explicit rather than relying on
-// a prelude that does not include it.
+// `Arc` is needed for the shared `Server` handed to each worker thread, and `Mutex` for the one
+// piece of shared state. Imported explicitly rather than via a prelude that does not include them.
+//
+// This comment was previously mangled to "//  is needed for ." because it was written through a
+// heredoc passed to `wsl -- bash -c`, which eats backticked words (E4).
 use std::sync::{Arc, Mutex};
 use std::time::{SystemTime, UNIX_EPOCH};
 
@@ -189,12 +192,18 @@ fn json_response(status: u16, body: &Value) -> Response<std::io::Cursor<Vec<u8>>
                 .expect("static header is valid"),
         )
         .with_header(
-            Header::from_bytes(&b"access-control-allow-headers"[..], &b"content-type, x-api-key"[..])
-                .expect("static header is valid"),
+            Header::from_bytes(
+                &b"access-control-allow-headers"[..],
+                &b"content-type, x-api-key"[..],
+            )
+            .expect("static header is valid"),
         )
         .with_header(
-            Header::from_bytes(&b"access-control-allow-methods"[..], &b"GET, POST, OPTIONS"[..])
-                .expect("static header is valid"),
+            Header::from_bytes(
+                &b"access-control-allow-methods"[..],
+                &b"GET, POST, OPTIONS"[..],
+            )
+            .expect("static header is valid"),
         )
 }
 
@@ -211,7 +220,7 @@ fn journal_len(repo: &str) -> usize {
 /// The last journal row, parsed. `None` when the journal is empty or unreadable.
 fn last_journal_row(repo: &str) -> Option<Value> {
     let text = std::fs::read_to_string(format!("{repo}/evidence/journal.jsonl")).ok()?;
-    let line = text.lines().filter(|l| !l.trim().is_empty()).next_back()?;
+    let line = text.lines().rfind(|l| !l.trim().is_empty())?;
     serde_json::from_str(line).ok()
 }
 
@@ -299,7 +308,6 @@ fn run_demo_cycle(repo: &str) -> (u16, Value) {
     }
 }
 
-
 /// Read the book and the guard once, and put them in the cache.
 ///
 /// This is the ONLY place the coordination API touches the chain. Called once before the listener
@@ -322,7 +330,11 @@ fn append_line(path: &str, line: &str) -> Option<String> {
             return Some(e.to_string());
         }
     }
-    match std::fs::OpenOptions::new().create(true).append(true).open(path) {
+    match std::fs::OpenOptions::new()
+        .create(true)
+        .append(true)
+        .open(path)
+    {
         Ok(mut f) => writeln!(f, "{line}").err().map(|e| e.to_string()),
         Err(e) => Some(e.to_string()),
     }
@@ -401,7 +413,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let server = Arc::new(Server::http(("127.0.0.1", port)).map_err(|e| e.to_string())?);
 
     println!("  listening   http://127.0.0.1:{port}");
-    println!("  server      tiny_http, {workers} worker threads, chain reads on a refresher thread");
+    println!(
+        "  server      tiny_http, {workers} worker threads, chain reads on a refresher thread"
+    );
     println!("  endpoints   GET /health  GET /thesis  GET /capacity");
     println!("              POST /quote  POST /accept");
     println!("  auth        x-api-key header, demo keys: demo-agent-key-1, demo-agent-key-2");
@@ -555,9 +569,7 @@ fn handle(
     let (snap, snapshot_fetched_at, killed, exposure) = {
         let s = state.lock().expect("state mutex");
         match (&s.snapshot, s.guard_state) {
-            (Some((snap, at)), Some((killed, exposure))) => {
-                (snap.clone(), *at, killed, exposure)
-            }
+            (Some((snap, at)), Some((killed, exposure))) => (snap.clone(), *at, killed, exposure),
             _ => {
                 drop(s);
                 let mut s = state.lock().expect("state mutex");
@@ -637,7 +649,7 @@ fn handle(
         // TASK 9.6: one button, one real cycle against the live chain.
         ("POST", "/demo") => {
             state.lock().expect("state mutex").served += 1;
-            return run_demo_cycle(&repo_root_of());
+            run_demo_cycle(&repo_root_of())
         }
 
         ("GET", "/thesis") => {

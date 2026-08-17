@@ -24,8 +24,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let hand_bytes = hand.call_raw(guard, &data)?;
 
     println!("  pinned block:      {block}");
-    println!("  selector:          {}", chain_client::hex_encode(&data[..4]));
-    println!("  hand-rolled bytes: {}", chain_client::hex_encode(&hand_bytes));
+    println!(
+        "  selector:          {}",
+        chain_client::hex_encode(&data[..4])
+    );
+    println!(
+        "  hand-rolled bytes: {}",
+        chain_client::hex_encode(&hand_bytes)
+    );
 
     // alloy, same call, same block.
     let provider = ProviderBuilder::new().connect(&rpc).await?;
@@ -33,12 +39,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let tx = TransactionRequest::default()
         .to(to)
         .input(Bytes::from(data.clone()).into());
-    let alloy_bytes = provider
-        .call(tx)
-        .block(BlockId::from(block))
-        .await?;
+    let alloy_bytes = provider.call(tx).block(BlockId::from(block)).await?;
 
-    println!("  alloy bytes:       {}", chain_client::hex_encode(&alloy_bytes));
+    println!(
+        "  alloy bytes:       {}",
+        chain_client::hex_encode(&alloy_bytes)
+    );
 
     // Also prove alloy is really talking to chain 1952 and not to a default.
     let cid = provider.get_chain_id().await?;
@@ -47,8 +53,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let same = hand_bytes.as_slice() == alloy_bytes.as_ref();
     println!();
     if same && cid == 1952 {
-        println!("  IDENTICAL. Both clients returned the same {} bytes at block {block} on chain {cid}.",
-                 hand_bytes.len());
+        println!(
+            "  IDENTICAL. Both clients returned the same {} bytes at block {block} on chain {cid}.",
+            hand_bytes.len()
+        );
         Ok(())
     } else if !same {
         println!("  MISMATCH. The two clients disagree, which means one of them is decoding or");

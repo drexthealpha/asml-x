@@ -5,7 +5,7 @@ Chain holds **126** claim ids.
 | document | tags cited | dangling | scripts referenced |
 |---|---|---|---|
 | `JUDGE-GUIDE.md` | 17 distinct tags | 0 | 6 |
-| `README.md` | 15 distinct tags | 0 | 7 |
+| `README.md` | 15 distinct tags | 0 | 9 |
 | `docs/limitations.md` | 7 distinct tags | 0 | 0 |
 | `docs/COORDINATION-PROTOCOL.md` | 0 distinct tags | 0 | 1 |
 | `docs/invariants.md` | 0 distinct tags | 0 | 8 |

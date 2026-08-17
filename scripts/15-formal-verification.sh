@@ -8,6 +8,12 @@
 # ordinary Solidity. So Halmos is attempted FIRST as the cheap certain path, and
 # Certora is only attempted if Halmos cannot express what we need.
 # The choice is recorded in docs/decisions/ADR-007-formal-verification-tool.md.
+
+# SOLVER TIMEOUT IS FINITE. This script used `--solver-timeout-assertion 0`, which is unlimited, and
+# a single stalling theorem then produces no output until something else kills it. 240000 ms is the
+# value scripts/104b-fee-formal.sh and scripts/112e-vault-formal.sh already use, so every theorem
+# script in the repo now fails in bounded time instead of hanging.
+
 set -uo pipefail
 cd "$(dirname "$0")"
 . ./lib.sh
@@ -35,7 +41,7 @@ forge build 2>&1 | tail -3
 
 echo
 echo "=== proving RiskGuardSymbolic ==="
-halmos --contract RiskGuardSymbolic --solver-timeout-assertion 0 2>&1 | tee "$EVID/halmos-riskguard.txt" | tail -40
+timeout 900 halmos --contract RiskGuardSymbolic --solver-timeout-assertion 240000 2>&1 | tee "$EVID/halmos-riskguard.txt" | tail -40
 
 echo
 echo "=== summary ==="

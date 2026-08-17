@@ -266,7 +266,8 @@ impl Learner {
                 if let Some(hist) = v.get("history").and_then(Value::as_array) {
                     for h in hist {
                         let u = |k: &str| -> u32 {
-                            u32::try_from(h.get(k).and_then(Value::as_u64).unwrap_or(0)).unwrap_or(0)
+                            u32::try_from(h.get(k).and_then(Value::as_u64).unwrap_or(0))
+                                .unwrap_or(0)
                         };
                         me.history.push(ParamChange {
                             at_ms: h.get("at_ms").and_then(Value::as_u64).unwrap_or(0),

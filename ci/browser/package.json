@@ -1,0 +1,13 @@
+{
+  "name": "asml-x-browser-gates",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Headless browser gates for CI. Isolated from ui-v2 so the product lockfile is untouched and pnpm install --frozen-lockfile there keeps its meaning.",
+  "type": "module",
+  "scripts": {
+    "gates": "node run-gates.mjs"
+  },
+  "dependencies": {
+    "playwright": "1.62.1"
+  }
+}

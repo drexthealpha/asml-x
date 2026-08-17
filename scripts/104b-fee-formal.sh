@@ -85,3 +85,8 @@ done
 } >> "$OUT"
 
 tail -45 "$OUT"
+
+# EXIT ON THE VERDICT. This script printed "GATE: FAIL" and then exited 0, because the last command
+# was the `tail` above. CI surfaced it: the job would have gone green while the gate said it had
+# proved 4 theorems of 5. A gate whose exit code does not follow its own verdict is not a gate.
+[ "$PROVED" -eq "$DECLARED" ] && [ "$DECLARED" -gt 0 ]

@@ -650,7 +650,6 @@ proptest! {
     }
 }
 
-
 // ===========================================================================
 // Task 1.7: tests that kill mutants cargo-mutants found SURVIVING.
 //
@@ -745,7 +744,10 @@ fn the_testnet_defaults_are_internally_coherent() {
     ] {
         assert_eq!(v % MICRO, 0, "limit {v} is not a whole number of units");
     }
-    assert!(l.max_rwa_share_bps <= 10_000, "a share cap above 100% is unsatisfiable");
+    assert!(
+        l.max_rwa_share_bps <= 10_000,
+        "a share cap above 100% is unsatisfiable"
+    );
 }
 
 // ---------------------------------------------------------------------------
@@ -767,7 +769,10 @@ fn the_order_notional_boundary_and_the_approval_threshold_are_both_inclusive() {
     // Exactly at the order cap: allowed. 25 units of notional against a 25 cap.
     let at_cap = mk_intent(InstrumentKind::Spot, Side::Buy, 25 * MICRO, MICRO);
     let v = e.evaluate(&at_cap, &pf, &ctx);
-    assert!(v.is_ok(), "notional exactly at the cap must be approved, got {v:?}");
+    assert!(
+        v.is_ok(),
+        "notional exactly at the cap must be approved, got {v:?}"
+    );
 
     // One micro-unit over: refused.
     let over = mk_intent(InstrumentKind::Spot, Side::Buy, 25 * MICRO + 1, MICRO);
@@ -778,18 +783,28 @@ fn the_order_notional_boundary_and_the_approval_threshold_are_both_inclusive() {
 
     // Human approval fires STRICTLY ABOVE the threshold, so exactly at it does not.
     let at_threshold = mk_intent(
-        InstrumentKind::Spot, Side::Buy, l.human_approval_threshold_micro, MICRO,
+        InstrumentKind::Spot,
+        Side::Buy,
+        l.human_approval_threshold_micro,
+        MICRO,
     );
-    let approved = e.evaluate(&at_threshold, &pf, &ctx).expect("within all limits");
+    let approved = e
+        .evaluate(&at_threshold, &pf, &ctx)
+        .expect("within all limits");
     assert!(
         !approved.requires_human_approval(),
         "notional exactly at the threshold does not require review"
     );
 
     let past_threshold = mk_intent(
-        InstrumentKind::Spot, Side::Buy, l.human_approval_threshold_micro + 1, MICRO,
+        InstrumentKind::Spot,
+        Side::Buy,
+        l.human_approval_threshold_micro + 1,
+        MICRO,
     );
-    let approved = e.evaluate(&past_threshold, &pf, &ctx).expect("still under the order cap");
+    let approved = e
+        .evaluate(&past_threshold, &pf, &ctx)
+        .expect("still under the order cap");
     assert!(
         approved.requires_human_approval(),
         "one micro-unit past the threshold requires review"
@@ -811,7 +826,10 @@ fn the_mark_age_boundary_is_inclusive_of_the_maximum() {
     // still usable.
     let ctx = RiskContext::healthy_at(l.max_mark_age_ms);
     let v = e.evaluate(&i, &pf, &ctx);
-    assert!(v.is_ok(), "a mark exactly at the age limit is still fresh, got {v:?}");
+    assert!(
+        v.is_ok(),
+        "a mark exactly at the age limit is still fresh, got {v:?}"
+    );
 
     let ctx = RiskContext::healthy_at(l.max_mark_age_ms + 1);
     assert!(matches!(
@@ -833,7 +851,10 @@ fn the_market_notional_projection_adds_to_existing_exposure_and_its_boundary_is_
     let ctx = RiskContext::healthy_at(0);
 
     // Sanity anchor, so a change to the fixture cannot silently invalidate the arithmetic below.
-    assert_eq!(pf.exposure_in_market_micro(&MarketId::new("M1")), 10 * MICRO);
+    assert_eq!(
+        pf.exposure_in_market_micro(&MarketId::new("M1")),
+        10 * MICRO
+    );
 
     // Order cap is 25, so approach the 50 market cap in two steps rather than one big order.
     // 10 existing + 25 = 35, under the cap.
@@ -845,7 +866,10 @@ fn the_market_notional_projection_adds_to_existing_exposure_and_its_boundary_is_
     at_cap_book.positions[0].net_size_micro = 40 * MICRO;
     let ten = mk_intent(InstrumentKind::Spot, Side::Buy, 10 * MICRO, MICRO);
     let v = e.evaluate(&ten, &at_cap_book, &ctx);
-    assert!(v.is_ok(), "projecting to exactly the market cap must be approved, got {v:?}");
+    assert!(
+        v.is_ok(),
+        "projecting to exactly the market cap must be approved, got {v:?}"
+    );
 
     // 41 existing + 10 = 51: refused. Under `existing - order` this is |41 - 10| = 31 and passes.
     let mut over_book = book_with_exposure();
@@ -910,7 +934,10 @@ fn the_gross_projection_adds_to_current_gross_and_its_boundary_is_inclusive() {
     assert_eq!(pf.gross_exposure_micro(), 175 * MICRO);
     assert_eq!(l.max_gross_notional_micro, 200 * MICRO);
     let v = e.evaluate(&order, &pf, &ctx);
-    assert!(v.is_ok(), "gross projecting to exactly the cap must be approved, got {v:?}");
+    assert!(
+        v.is_ok(),
+        "gross projecting to exactly the cap must be approved, got {v:?}"
+    );
 
     // 176 + 25 = 201: refused. Under `current - order` the projection would be 151 and pass,
     // which is the mutant this kills.
@@ -969,7 +996,10 @@ fn the_net_skew_projection_is_signed_and_its_boundary_is_inclusive() {
     let pf = book(30, 20);
     assert_eq!(pf.net_exposure_micro(), 50 * MICRO);
     let v = e.evaluate(&buy, &pf, &ctx);
-    assert!(v.is_ok(), "net projecting to exactly the skew cap must be approved, got {v:?}");
+    assert!(
+        v.is_ok(),
+        "net projecting to exactly the skew cap must be approved, got {v:?}"
+    );
 
     // 51 + 25 = 76: refused.
     let over = book(31, 20);
@@ -984,7 +1014,10 @@ fn the_net_skew_projection_is_signed_and_its_boundary_is_inclusive() {
 
     // The sign convention, which is what makes the `+` -> `-` mutant detectable rather than
     // merely wrong: the SAME book accepts a Sell, because selling reduces a long skew.
-    let sell = OrderIntent { side: Side::Sell, ..buy.clone() };
+    let sell = OrderIntent {
+        side: Side::Sell,
+        ..buy.clone()
+    };
     assert!(
         e.evaluate(&sell, &over, &ctx).is_ok(),
         "a Sell against a long book reduces skew and must be allowed"
@@ -1007,13 +1040,19 @@ fn the_free_margin_floor_is_inclusive_and_spending_reduces_margin() {
     // Leaves exactly the minimum: 25 - 20 = 5, and the minimum is 5.
     let pf = empty_book(25 * MICRO);
     let v = e.evaluate(&order, &pf, &ctx);
-    assert!(v.is_ok(), "leaving exactly the minimum is acceptable, got {v:?}");
+    assert!(
+        v.is_ok(),
+        "leaving exactly the minimum is acceptable, got {v:?}"
+    );
     assert_eq!(l.min_free_margin_micro, 5 * MICRO);
 
     // Leaves one micro-unit less than the minimum: refused.
     let pf = empty_book(25 * MICRO - 1);
     match e.evaluate(&order, &pf, &ctx) {
-        Err(Refusal::InsufficientFreeMargin { would_leave, minimum }) => {
+        Err(Refusal::InsufficientFreeMargin {
+            would_leave,
+            minimum,
+        }) => {
             assert_eq!(would_leave, 5 * MICRO - 1);
             assert_eq!(minimum, 5 * MICRO);
         }
@@ -1080,7 +1119,10 @@ fn the_rwa_share_cap_is_a_real_fraction_of_projected_gross() {
     };
     assert_eq!(clean.gross_exposure_micro(), 100 * MICRO);
     let v = e.evaluate(&order, &clean, &ctx);
-    assert!(v.is_ok(), "20% RWA share against a 40% cap must be approved, got {v:?}");
+    assert!(
+        v.is_ok(),
+        "20% RWA share against a 40% cap must be approved, got {v:?}"
+    );
 
     // CASE 2, the share cap binds. Non-RWA gross 40 and existing RWA 20, so gross 60 and
     // projected gross 85. Allowance is 40% of 85 = 34, and max(34, absolute 10) = 34.
@@ -1112,7 +1154,10 @@ fn the_rwa_share_cap_is_a_real_fraction_of_projected_gross() {
         consecutive_losses: 0,
     };
     assert_eq!(loaded.gross_exposure_micro(), 60 * MICRO);
-    assert_eq!(loaded.exposure_of_kind_micro(InstrumentKind::RwaLinked), 20 * MICRO);
+    assert_eq!(
+        loaded.exposure_of_kind_micro(InstrumentKind::RwaLinked),
+        20 * MICRO
+    );
 
     match e.evaluate(&order, &loaded, &ctx) {
         Err(Refusal::RwaShareTooLarge { got_bps, limit_bps }) => {
@@ -1120,7 +1165,10 @@ fn the_rwa_share_cap_is_a_real_fraction_of_projected_gross() {
             // 45 of 85 projected gross is 5294 bps. Pinning the exact value is what kills the
             // mutants on the reporting arithmetic at lib.rs:505: any of `*` -> `+`, `/` -> `*`
             // or `/` -> `%` moves this number.
-            assert_eq!(got_bps, 5_294, "the reported share must be the real fraction");
+            assert_eq!(
+                got_bps, 5_294,
+                "the reported share must be the real fraction"
+            );
         }
         other => panic!("expected RwaShareTooLarge, got {other:?}"),
     }
@@ -1171,7 +1219,10 @@ fn the_reported_rwa_share_is_the_actual_share_in_basis_points() {
     match e.evaluate(&rwa, &pf, &ctx) {
         Err(Refusal::RwaShareTooLarge { got_bps, limit_bps }) => {
             // 25 of 50 is exactly half.
-            assert_eq!(got_bps, 5_000, "the reported share must be the real fraction");
+            assert_eq!(
+                got_bps, 5_000,
+                "the reported share must be the real fraction"
+            );
             assert_eq!(limit_bps, 4_000);
         }
         other => panic!("expected RwaShareTooLarge with an exact share, got {other:?}"),
@@ -1195,7 +1246,10 @@ fn is_halted_answers_both_ways_and_agrees_with_evaluate() {
     let pf = empty_book(1_000 * MICRO);
 
     let healthy = RiskContext::healthy_at(1_000);
-    assert!(!e.is_halted(&pf, &healthy), "a healthy context is not halted");
+    assert!(
+        !e.is_halted(&pf, &healthy),
+        "a healthy context is not halted"
+    );
 
     let mut killed = RiskContext::healthy_at(1_000);
     killed.manual_kill = true;
@@ -1214,8 +1268,13 @@ fn is_halted_answers_both_ways_and_agrees_with_evaluate() {
     // Every other kill reason too, so `is_halted` cannot be right for one cause and wrong for
     // the rest.
     for (label, mutate) in [
-        ("data_stale", (|c: &mut RiskContext| c.data_stale = true) as fn(&mut RiskContext)),
-        ("reconciliation", |c: &mut RiskContext| c.reconciliation_mismatch = true),
+        (
+            "data_stale",
+            (|c: &mut RiskContext| c.data_stale = true) as fn(&mut RiskContext),
+        ),
+        ("reconciliation", |c: &mut RiskContext| {
+            c.reconciliation_mismatch = true
+        }),
         ("rpc_failed", |c: &mut RiskContext| c.rpc_failed = true),
     ] {
         let mut ctx = RiskContext::healthy_at(1_000);
@@ -1276,7 +1335,6 @@ fn the_divergence_boundary_is_inclusive_of_the_maximum() {
         Err(Refusal::RwaOracleMarketDivergence { .. })
     ));
 }
-
 
 /// Kills: lib.rs:502 `replace > with >=` on the RWA share allowance, the last real survivor of
 /// the 37 cargo-mutants found.
@@ -1356,7 +1414,6 @@ fn the_rwa_allowance_boundary_is_inclusive() {
     );
 }
 
-
 // ------------------------------------------------------------------ task 8.3: per-user limits
 
 /// A user's own limit refuses an order the SYSTEM would have allowed, and says so with a refusal
@@ -1369,7 +1426,10 @@ fn per_user_limits_refuse_an_order_the_system_would_allow() {
 
     // 12 units: comfortably inside the system's 25 unit per-order limit.
     let intent = mk_intent(InstrumentKind::Perp, Side::Buy, 12 * MICRO, MICRO);
-    assert!(e.evaluate(&intent, &pf, &ctx).is_ok(), "the system allows 12");
+    assert!(
+        e.evaluate(&intent, &pf, &ctx).is_ok(),
+        "the system allows 12"
+    );
 
     let user = UserLimits {
         max_order_notional_micro: 10 * MICRO,
@@ -1505,7 +1565,6 @@ proptest! {
     }
 }
 
-
 /// Task 9.3: write the shipped defaults where the UI reads them.
 ///
 /// This is a test that produces an artifact, which is unusual enough to justify. The alternative is
@@ -1589,6 +1648,7 @@ fn export_conservative_defaults_for_the_ui() {
     let repo = concat!(env!("CARGO_MANIFEST_DIR"), "/../..");
     let path = format!("{repo}/ui-v2/public/data/limits.json");
     let mut f = std::fs::File::create(&path).expect("cannot write limits.json");
-    f.write_all(json.as_bytes()).expect("cannot write limits.json");
+    f.write_all(json.as_bytes())
+        .expect("cannot write limits.json");
     println!("wrote {path}");
 }

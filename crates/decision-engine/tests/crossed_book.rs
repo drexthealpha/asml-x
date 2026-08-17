@@ -55,21 +55,46 @@ fn a_crossed_book_never_produces_a_negative_crossing_cost() {
         .collect();
     assert!(!takes.is_empty());
 
-    for c in takes {
-        // Edge is directional_edge minus crossing_cost. With the cost floored at zero, a
-        // crossed book cannot make expected edge exceed the pure directional term.
-        let directional_only = c.expected_edge_micro + 0;
-        assert!(
-            c.expected_edge_micro <= directional_only,
-            "crossed book credited the candidate: {}",
-            c.action.label()
-        );
-        // And the whole candidate must not be scored better than the same shape on an
-        // uncrossed book with identical directional information.
-        assert!(
-            c.expected_edge_micro.is_positive() || c.expected_edge_micro <= 0,
-            "sanity"
-        );
+    // BOTH ASSERTIONS HERE USED TO BE TAUTOLOGIES, and they guarded a bug that actually shipped.
+    //
+    //   let directional_only = c.expected_edge_micro + 0;
+    //   assert!(c.expected_edge_micro <= directional_only);          // x <= x + 0, always true
+    //   assert!(c.expected_edge_micro.is_positive() || c.expected_edge_micro <= 0);  // x>0 || x<=0
+    //
+    // The second was labelled "sanity" and is true for every integer that exists. Clippy's
+    // `identity_op` found the first one; nothing would have found the second. A test named for a
+    // bug that cannot fail is worse than no test, because it occupies the slot where a real one
+    // would go.
+    //
+    // THE REAL PROPERTY, and why this form catches the mutation. `crossing_cost` is
+    // `(notional * spread_bps.max(0)) / 20_000`. On a crossed book `spread_bps` is negative, so the
+    // `.max(0)` floors the cost to exactly zero. Deepening the cross therefore cannot change any
+    // edge. Remove the `.max(0)` and the cost goes NEGATIVE, `directional_edge - negative` grows,
+    // and a MORE crossed book pays MORE. So: make the book more crossed and require the edges to be
+    // identical. No engine internals are needed, and the mutation flips it red.
+    let deeper = vec![order(0, true, 2, 3_000_000), order(1, false, 2, 2_100_000)];
+    let s_deep = signals(&deeper);
+    assert!(
+        s_deep.spread_bps.unwrap().value < s.spread_bps.unwrap().value,
+        "the second book must be more crossed than the first"
+    );
+    let deep_cands = engine.generate(&s_deep, &deeper);
+
+    for c in &takes {
+        let same: Vec<&Candidate> = deep_cands
+            .iter()
+            .filter(|d| d.action == c.action)
+            .collect();
+        // Only compare candidates that exist on both books; a deeper cross changes which
+        // sizes are generated, and a missing counterpart is not a failure.
+        for d in same {
+            assert_eq!(
+                d.expected_edge_micro, c.expected_edge_micro,
+                "deepening the cross changed expected edge for {}, so the crossing cost is not \
+                 floored at zero and a crossed book is paying the agent to trade",
+                c.action.label()
+            );
+        }
     }
 }
 

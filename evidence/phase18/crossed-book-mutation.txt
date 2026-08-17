@@ -1,0 +1,23 @@
+Crossed-book test, mutation proof
+Run 2026-08-17 07:25:03 UTC
+
+=== baseline ===
+test a_crossed_book_never_produces_a_negative_crossing_cost ... ok
+test an_uncrossed_book_charges_a_real_crossing_cost ... ok
+test the_risk_gate_still_governs_a_crossed_book ... ok
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+floor removed: spread_bps.max(0) -> spread_bps
+
+=== mutated: the crossing cost may now go negative ===
+test an_uncrossed_book_charges_a_real_crossing_cost ... ok
+test the_risk_gate_still_governs_a_crossed_book ... ok
+test a_crossed_book_never_produces_a_negative_crossing_cost ... FAILED
+assertion `left == right` failed: deepening the cross changed expected edge for take order 1 Buy 0.500000 base at 2.100000, so the crossing cost is not floored at zero and a crossed book is paying the agent to trade
+test result: FAILED. 2 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+mutated exit: 101
+
+=== restored ===
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+restored exit: 0
+
+VERDICT: PASS  the test goes RED on the mutation and GREEN when restored.

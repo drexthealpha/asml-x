@@ -48,6 +48,16 @@ scripts/probe-rpc.sh
 scripts/probe-theorem1.sh
 scripts/probe-vault-solvency.sh
 scripts/probe-where-tokens.sh
+scripts/probe-coord-ready.sh
+scripts/probe-repo-resolution.sh
+scripts/probe-monotonic-theorem.sh
+
+# KEPT PUBLIC, deliberately, because each documents a finding a reader may want to re-run:
+#   probe-division-bound.sh       shows the fee monotonicity theorem times out at every bound,
+#                                 which is why FeeFormal.t.sol declares it unproved
+#   probe-insufficient-revert.sh  shows InsufficientBalance surfaces from a zero-balance address
+#   probe-monotonic-why.sh        distinguishes the theorem's TIMEOUT from a counterexample
+#   probe-otel-stdout.sh          invoked by scripts/165, so ignoring it breaks C-1402
 
 # The pre-push secret audit. Internal housekeeping, same reasoning as evidence/hygiene/.
 scripts/191-pre-push-audit.sh
@@ -72,6 +82,13 @@ evidence/internal/
 .claude/
 *.log
 !evidence/**/*.log
+
+# Build caches and editor/tool temp files that reached the first public commit by accident.
+# `scripts/sedrklu3s` was an empty artefact left by an interrupted `sed -i`, and the tsbuildinfo is
+# a TypeScript incremental cache. Neither is product; both are removed from tracking below.
+*.tsbuildinfo
+scripts/sed??????
+scripts/sed?????
 
 # ---------------------------------------------------------------------------
 # Build output

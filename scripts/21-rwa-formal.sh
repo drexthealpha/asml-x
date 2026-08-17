@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 # Phase 5 formal verification, plus the proof-mutation gate for the RWA guard.
+
+# SOLVER TIMEOUT IS FINITE. This script used `--solver-timeout-assertion 0`, which is unlimited, and
+# a single stalling theorem then produces no output until something else kills it. 240000 ms is the
+# value scripts/104b-fee-formal.sh and scripts/112e-vault-formal.sh already use, so every theorem
+# script in the repo now fails in bounded time instead of hanging.
+
 set -uo pipefail
 cd "$(dirname "$0")"
 . ./lib.sh
@@ -19,7 +25,7 @@ strip_ansi() { sed -r 's/\x1b\[[0-9;]*[a-zA-Z]//g'; }
 
 run() {
   touch "$G"
-  halmos --contract RwaRiskGuardSymbolic --solver-timeout-assertion 0 \
+  timeout 900 halmos --contract RwaRiskGuardSymbolic --solver-timeout-assertion 240000 \
     > "$EVID/raw-rwa-$1.txt" 2>&1
   strip_ansi < "$EVID/raw-rwa-$1.txt" > "$EVID/clean-rwa-$1.txt"
 }

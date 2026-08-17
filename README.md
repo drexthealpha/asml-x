@@ -160,6 +160,48 @@ lists are both in the evidence `[C-230]` `[C-231]`.
 Formal verification uses [Halmos](https://github.com/a16z/halmos) rather than the Certora
 Prover. See [ADR-007](docs/decisions/ADR-007-formal-verification-tool.md) for why.
 
+### Continuous integration
+
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml). Seven jobs, every one able to fail the
+build. The runner image, every action and every toolchain is pinned to an explicit version, because
+a pipeline that floats produces a green meaning "it passed against whatever existed that day".
+
+| job | gates |
+|---|---|
+| `rust` | `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, `cargo build`, `cargo test`, all `--locked` |
+| `contracts` | `forge build`, `forge test` including the stateful invariant campaigns |
+| `formal` | all five halmos theorem scripts |
+| `mutation` | vault invariant mutation, crossed-book mutation: each breaks the guarded thing and requires RED |
+| `onchain` | **deploy, seed a book, and run a full agent decide-gate-act cycle**, against a local chain |
+| `live-chain` | every mainnet claim re-verified read-only against chain 196 |
+| `frontend` | `pnpm install --frozen-lockfile`, then `pnpm build` which is `tsc -b && vite build` |
+| `browser` | dashboard timing, density, and failure-path recovery in headless Chromium |
+| `secrets` | gitleaks over the full history **and** over the working tree, which catch different things |
+| `evidence` | chain inventory, claim-tag resolution both directions, chain-of-evidence check |
+
+### The one thing CI does not have, and what replaces it
+
+**The deployer keystore never enters CI.** It holds real OKB on chain 196, and a funded key in
+repository secrets is one compromised action away from being drained.
+
+Nothing is skipped for want of it. `scripts/196-ci-anvil-up.sh` starts `anvil` with chain id 1952
+and imports its publicly known account 0, which funds nothing on any real network, and
+`scripts/lib.sh` reads every endpoint, address and key path from the environment. The **same** gate
+scripts then run unmodified: real contract deployments, real transactions, real settlement, real
+receipts. What that does not prove is anything about X Layer specifically, since a fresh chain has
+no live order flow and none of X Layer's OP Stack predeploys. The mainnet claims rest on what chain
+196 records, re-verified read-only by the `live-chain` job, which needs no key at all.
+
+Three gates were nearly declared "local only" and should not have been:
+
+- **The browser audits.** Environment fact E11 says `requestAnimationFrame` and `setTimeout` do not
+  fire when this project's own agent preview pane is closed. That is a property of that pane, not of
+  headless browsers. Chromium runs both, and the audits now run in CI unmodified.
+- **The live-RPC gates.** "It might fail on someone else's outage" is a weak reason not to test. The
+  job retries three times; a persistent failure still fails the build.
+- **Three halmos scripts** passing `--solver-timeout-assertion 0`, which is unlimited. That was a
+  two-line fix per script, not a reason for exclusion.
+
 ## Deployed contracts, chain 1952
 
 | contract | address |

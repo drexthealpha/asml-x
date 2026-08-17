@@ -1,3 +1,16 @@
+# ASML-X CI. Every gate here can fail the build. Nothing is advisory.
+#
+# WHAT IS PINNED AND WHY. Action majors move, runner images change under `ubuntu-latest`, and
+# toolchains drift. A pipeline that floats produces a green meaning "it passed against whatever
+# existed today", which is not a claim anyone can check later. So the runner image, every action and
+# every toolchain carries an explicit version.
+#
+# THERE IS ONE THING CI DOES NOT DO, and it is not a skipped gate. The deployer keystore holding real
+# OKB on chain 196 never enters CI, because a funded key in repository secrets is one compromised
+# action away from being drained. Everything that key would have done is done instead by `anvil` with
+# a throwaway account on a local chain: real deploys, real transactions, real settlement, real
+# receipts. The mainnet CLAIMS are separately re-verified read-only against chain 196 in the
+# `live-chain` job, which needs no key at all.
 name: CI
 
 on:
@@ -7,140 +20,292 @@ on:
     branches: [main]
   workflow_dispatch:
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
 env:
-  CARGO_TERM_COLOR: always
+  RUST_VERSION: "1.97.1"
+  FOUNDRY_VERSION: "1.7.1"
+  GITLEAKS_VERSION: "8.30.1"
+  HALMOS_VERSION: "0.3.3"
+  NODE_VERSION: "20.19.4"
+  PNPM_VERSION: "10.34.5"
+  CARGO_TERM_COLOR: never
 
 jobs:
   rust:
-    name: Rust (fmt, clippy, test)
-    runs-on: ubuntu-latest
+    name: rust (fmt, clippy, build, test)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Install Rust toolchain
+      - uses: actions/checkout@v7.0.1
+      - name: Install pinned Rust
         run: |
-          rustup toolchain install stable --profile minimal --component rustfmt,clippy
-          rustup default stable
-          rustc --version && cargo --version
-
-      - name: Cache cargo
-        uses: actions/cache@v4
+          rustup toolchain install "${RUST_VERSION}" --profile minimal --component clippy,rustfmt
+          rustup default "${RUST_VERSION}"
+          rustc --version
+      - uses: actions/cache@v4.2.4
         with:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
             target
-          key: cargo-${{ runner.os }}-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: cargo-${{ runner.os }}-
-
-      - name: Format check
-        run: cargo fmt --all -- --check
-
-      # -D warnings is deliberate: a warning allowed to accumulate is a warning nobody
-      # reads. identity_op is allowed explicitly because the risk-engine tests use
-      # expressions like `1 * MICRO` for readability. Allowed on purpose, not silently.
-      - name: Clippy
-        run: cargo clippy --workspace --all-targets -- -D warnings -A clippy::identity_op
-
-      - name: Test
-        run: cargo test --workspace --verbose
-
-      - name: Build release
-        run: cargo build --release --workspace
+          key: cargo-${{ runner.os }}-${{ env.RUST_VERSION }}-${{ hashFiles('Cargo.lock') }}
+      - name: cargo fmt --check
+        run: cargo fmt --all --check
+      # --all-targets covers tests too. A tautological assertion in a test file was found exactly
+      # this way in this repo, by clippy's identity_op, and it had been guarding a shipped bug.
+      - name: cargo clippy -D warnings
+        run: cargo clippy --workspace --all-targets --locked -- -D warnings
+      - name: cargo build
+        run: cargo build --workspace --locked
+      - name: cargo test
+        run: cargo test --workspace --locked
 
   contracts:
-    name: Solidity (forge test + invariants)
-    runs-on: ubuntu-latest
+    name: contracts (forge build, forge test)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7.0.1
+      # forge-std is vendored under contracts/lib and tracked, so a clean clone needs no submodules.
+      - uses: foundry-rs/foundry-toolchain@v1.9.1
         with:
-          submodules: recursive
-
-      - name: Install Foundry
-        uses: foundry-rs/foundry-toolchain@v1
-        with:
-          version: stable
-
-      - name: Show versions
-        run: forge --version && cast --version
-
-      # forge-std is vendored under contracts/lib. If the checkout did not bring it,
-      # install it, because a missing dependency makes forge report zero tests rather
-      # than an error, which reads as success to a careless eye.
-      - name: Ensure forge-std present
-        working-directory: contracts
-        run: |
-          if [ ! -d lib/forge-std ]; then
-            forge install foundry-rs/forge-std --no-commit || true
-          fi
-          test -d lib/forge-std
-
-      - name: Build
+          version: ${{ env.FOUNDRY_VERSION }}
+      - name: forge build
         working-directory: contracts
         run: forge build
-
-      - name: Test
+      - name: forge test
         working-directory: contracts
-        run: forge test -vv
+        run: forge test --color never -vv
 
-      # Guard against a vacuous run. forge exits 0 when it finds no tests at all, so
-      # assert a floor on the count. This project has 50; anything under 40 means the
-      # suite did not really run.
-      - name: Assert the suite was not vacuous
-        working-directory: contracts
-        run: |
-          COUNT=$(forge test 2>&1 | grep -oE '[0-9]+ tests passed' | tail -1 | awk '{print $1}')
-          echo "tests passed: ${COUNT:-0}"
-          if [ "${COUNT:-0}" -lt 40 ]; then
-            echo "Too few tests ran (${COUNT:-0}). Treating as a failure."
-            exit 1
-          fi
-
-  python:
-    name: Python (external agent syntax)
-    runs-on: ubuntu-latest
+  formal:
+    name: formal (halmos theorems)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7.0.1
+      - uses: foundry-rs/foundry-toolchain@v1.9.1
         with:
-          python-version: '3.11'
+          version: ${{ env.FOUNDRY_VERSION }}
+      - uses: astral-sh/setup-uv@v10.0.1
+      - name: Install pinned halmos
+        run: |
+          uv tool install "halmos==${HALMOS_VERSION}"
+          halmos --version
+      # ALL FIVE theorem scripts run. Three of them used `--solver-timeout-assertion 0`, which is
+      # unlimited, and were going to be excluded for that reason. They now carry the same finite
+      # per-theorem timeout and wall-clock wrapper the other two already had, which was a two-line
+      # fix per script. Excluding a gate is not a substitute for fixing it.
+      - name: Risk guard theorems
+        run: bash scripts/15-formal-verification.sh
+      - name: Risk guard proof mutation
+        run: bash scripts/16-proof-mutation.sh
+      - name: RWA theorems
+        run: bash scripts/21-rwa-formal.sh
+      - name: Fee theorems
+        run: bash scripts/104b-fee-formal.sh
+      - name: Vault theorems
+        run: bash scripts/112e-vault-formal.sh
 
-      # The external agent is not unit tested: it is an integration client that needs a
-      # live chain and a running server, neither of which exists in CI. Compile-checking
-      # it is the honest limit of what CI can assert here.
-      - name: Compile check
-        run: python3 -m py_compile agents/external_agent.py
+  mutation:
+    name: mutation (invariants, crossed book)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - name: Install pinned Rust
+        run: |
+          rustup toolchain install "${RUST_VERSION}" --profile minimal
+          rustup default "${RUST_VERSION}"
+      - uses: foundry-rs/foundry-toolchain@v1.9.1
+        with:
+          version: ${{ env.FOUNDRY_VERSION }}
+      - name: Vault invariant mutation
+        run: bash scripts/166-vault-invariants.sh
+      - name: Crossed-book mutation
+        run: bash scripts/195-crossed-book-mutation.sh
+
+  # ---------------------------------------------------------------------------
+  # Deploy, trade and settle. These were the "needs a funded key" gates.
+  # ---------------------------------------------------------------------------
+  onchain:
+    name: onchain (anvil, real transactions)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - name: Install pinned Rust
+        run: |
+          rustup toolchain install "${RUST_VERSION}" --profile minimal
+          rustup default "${RUST_VERSION}"
+      - uses: foundry-rs/foundry-toolchain@v1.9.1
+        with:
+          version: ${{ env.FOUNDRY_VERSION }}
+      - name: Build the runtime
+        run: cargo build --release --locked -p runtime
+      # anvil with chain id 1952 and its publicly known account 0, which funds nothing anywhere.
+      # scripts/lib.sh reads every endpoint, address and key path from the environment, so the SAME
+      # gate scripts run here as against real testnet, unmodified.
+      - name: Start local chain
+        run: bash scripts/196-ci-anvil-up.sh
+      - name: Deploy, seed, and run the agent
+        run: bash scripts/197-ci-onchain-gates.sh
+
+  # ---------------------------------------------------------------------------
+  # Read-only verification against the real chains. No key, so nothing here can spend.
+  # ---------------------------------------------------------------------------
+  live-chain:
+    name: live-chain (read-only, real X Layer)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: foundry-rs/foundry-toolchain@v1.9.1
+        with:
+          version: ${{ env.FOUNDRY_VERSION }}
+      # A public RPC can be briefly unavailable, and a gate that reddens on someone else's outage
+      # gets ignored. Retried three times rather than dropped: a persistent failure still fails.
+      - name: Mainnet claims, re-verified from chain 196
+        run: |
+          for attempt in 1 2 3; do
+            if bash scripts/184-mainnet-reverify.sh; then exit 0; fi
+            echo "attempt $attempt failed, retrying in 20s"
+            sleep 20
+          done
+          echo "mainnet re-verification failed three times"
+          exit 1
+
+  frontend:
+    name: frontend (typecheck, build)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-node@v7.0.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Install pinned pnpm
+        run: npm install -g "pnpm@${PNPM_VERSION}"
+      - name: Install dependencies
+        working-directory: ui-v2
+        run: pnpm install --frozen-lockfile
+      - name: Typecheck and build
+        working-directory: ui-v2
+        run: pnpm build
+
+  # ---------------------------------------------------------------------------
+  # Browser gates, headless. E11 is about this project's preview pane, NOT about headless Chromium,
+  # and treating it as a universal limit was how these came to be skipped.
+  # ---------------------------------------------------------------------------
+  browser:
+    name: browser (dashboard, density, failure paths)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-node@v7.0.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Install pinned pnpm
+        run: npm install -g "pnpm@${PNPM_VERSION}"
+      - name: Build the UI
+        working-directory: ui-v2
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm build
+      - name: Install Playwright
+        working-directory: ci/browser
+        run: |
+          npm install --no-audit --no-fund
+          npx playwright install --with-deps chromium
+      - name: Install pinned Rust
+        run: |
+          rustup toolchain install "${RUST_VERSION}" --profile minimal
+          rustup default "${RUST_VERSION}"
+      # The page posts flow-timing marks to the coordination API. Without it every load logs a
+      # connection-refused error and the console gate fails for a missing service rather than a
+      # defect, so the service is started rather than the gate loosened.
+      - name: Start the coordination API
+        run: |
+          cargo build --release --locked -p coordination-api
+          ASML_REPO="$PWD" ASML_COORD_PORT=8737 ./target/release/asml-coord > /tmp/coord.log 2>&1 &
+          for i in $(seq 1 90); do
+            curl -sf http://127.0.0.1:8737/health > /dev/null && break
+            sleep 2
+          done
+          # /health answers immediately; /thesis needs the first book walk to finish and returns 503
+          # until it does. Waiting on the endpoint the page actually calls, not just on liveness.
+          for i in $(seq 1 60); do
+            code=$(curl -s -o /dev/null -w '%{http_code}' -H 'x-api-key: demo-agent-key-1' http://127.0.0.1:8737/thesis)
+            echo "thesis: $code"
+            [ "$code" = "200" ] && break
+            sleep 5
+          done
+      # Bound to 0.0.0.0 so it is reachable regardless of how the runner resolves localhost.
+      - name: Serve the built UI
+        working-directory: ui-v2/dist
+        run: |
+          python3 -m http.server 4173 --bind 0.0.0.0 &
+          for i in $(seq 1 30); do
+            curl -sf http://127.0.0.1:4173/ > /dev/null && break
+            sleep 1
+          done
+          curl -sf -o /dev/null -w "ui responded %{http_code}\n" http://127.0.0.1:4173/
+      - name: Run browser gates
+        working-directory: ci/browser
+        run: node run-gates.mjs
 
   secrets:
-    name: No secrets committed
-    runs-on: ubuntu-latest
+    name: secrets (gitleaks)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7.0.1
         with:
           fetch-depth: 0
-
-      # The deployer keystore lives outside the repo, in WSL home. This job exists so a
-      # future commit cannot quietly change that.
-      - name: Scan the tree for key material
+      # The binary, not gitleaks-action: v2 of that action needs a paid licence for organisation
+      # repos, and a licence key is a dependency this gate does not need.
+      - name: Install pinned gitleaks
         run: |
-          set -e
-          BAD=$(git ls-files | grep -iE 'keystore|\.env$|\.pass$|id_rsa|secret' | grep -v '\.example$' || true)
-          if [ -n "$BAD" ]; then
-            echo "Secret-looking files are tracked:"
-            echo "$BAD"
-            exit 1
-          fi
-          echo "No key material tracked."
+          curl -sSL -o /tmp/gitleaks.tar.gz \
+            "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          tar -xzf /tmp/gitleaks.tar.gz -C /tmp gitleaks
+          sudo mv /tmp/gitleaks /usr/local/bin/gitleaks
+          gitleaks version
+      # --config keeps the DEFAULT ruleset and adds an allowlist that names each permitted value:
+      # anvil's published account 0, the public coordination demo keys, and gitignored build output
+      # whose dependencies ship key-shaped test vectors. scripts/204-gitleaks-mutation.sh proves the
+      # allowlist did not blind the gate by planting a freshly generated key and requiring a catch.
+      - name: Scan full history
+        run: gitleaks detect --source . --config .gitleaks.toml --no-banner --redact --exit-code 1
+      # --no-git scans the filesystem, so it sees untracked files a history scan never reaches.
+      - name: Scan working tree
+        run: gitleaks detect --source . --no-git --config .gitleaks.toml --no-banner --redact --exit-code 1
+      # The gate must be able to fail. An allowlist is exactly how a secret scanner gets quietly
+      # disabled, so this is checked on every run rather than trusted.
+      - name: Prove the allowlist still catches a real secret
+        run: bash scripts/204-gitleaks-mutation.sh
 
-      # A hand-rolled 64-hex grep was tried first and was the wrong tool: it flagged
-      # vendored forge-std fixtures, public keccak market ids in deployments.json, and
-      # zero-padded batch ids. A scanner that cries wolf teaches reviewers to ignore it,
-      # so this uses the standard scanner instead.
-      #
-      # v3, not v2: GitHub removes Node 20 from hosted runners on 16 Sept 2026, after
-      # which gitleaks-action@v2 stops working regardless of any opt-out flag.
-      - name: Gitleaks
-        uses: gitleaks/gitleaks-action@v3
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  evidence:
+    name: evidence (chain integrity)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-python@v6.0.0
+        with:
+          python-version: "3.12"
+      # Refuses on a malformed row, a duplicate claim id, a claim with no command, a missing or
+      # empty evidence file, or a cited script that does not exist. All five were real defects
+      # found in this repo's own chain.
+      - name: Chain inventory
+        run: python3 scripts/181-repro-inventory.py
+      - name: Claim tags resolve
+        run: python3 scripts/187-claim-tags.py
+      - name: Chain of evidence
+        run: bash scripts/44-chain-verify.sh --dry

@@ -228,7 +228,11 @@ fn settle_accepted(
     // notional and skew check on the CURRENT book.
     let ctx = RiskContext::healthy_at(now_ms);
 
-    println!("  book at block {} with {} live orders", snap.block_number, snap.orders.len());
+    println!(
+        "  book at block {} with {} live orders",
+        snap.block_number,
+        snap.orders.len()
+    );
 
     let mut settled_any = false;
     for rec in &mut records {
@@ -245,7 +249,11 @@ fn settle_accepted(
             .as_str()
             .and_then(|s| s.parse().ok())
             .unwrap_or(0);
-        let side = if rec["side"].as_str().unwrap_or("Buy").eq_ignore_ascii_case("sell") {
+        let side = if rec["side"]
+            .as_str()
+            .unwrap_or("Buy")
+            .eq_ignore_ascii_case("sell")
+        {
             core_types::Side::Sell
         } else {
             core_types::Side::Buy
@@ -765,7 +773,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let repo_root = std::env::var("ASML_REPO")
         .unwrap_or_else(|_| "/mnt/c/Users/zulab/OneDrive/Desktop/ASML-X".to_string());
 
-    let client = chain_client::ChainClient::new(&rpc_url(), fallback_url());
+    let client = chain_client::ChainClient::new(rpc_url(), fallback_url());
 
     // Fail fast and loudly on the wrong chain. Chain 195 is the deprecated testnet
     // and would otherwise look like a working endpoint.

@@ -1,0 +1,14 @@
+gitleaks allowlist, mutation proof
+Run 2026-08-17 20:30:32 UTC
+
+=== baseline: clean tree ===
+  exit 0  (clean)
+
+=== planting a real-shaped secret in a tracked path ===
+  wrote /mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/scripts/.canary-do-not-commit.sh with a freshly generated key
+  exit 1  (CAUGHT)
+
+=== restored ===
+  exit 0  (clean)
+
+VERDICT: PASS  the allowlist permits the published test values and still catches a real secret.
