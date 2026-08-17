@@ -1,5 +1,5 @@
 gitleaks allowlist, mutation proof
-Run 2026-08-17 20:30:32 UTC
+Run 2026-08-17 22:55:23 UTC
 
 === baseline: clean tree ===
   exit 0  (clean)

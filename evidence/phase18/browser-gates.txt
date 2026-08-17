@@ -5,7 +5,7 @@
 
 === dashboard audit (task 9.7) ===
 {
-  "firstMeaningfulMs": 58,
+  "firstMeaningfulMs": 65,
   "withinOneSecond": true,
   "zeroDuringLoadViolations": [],
   "samples": [
@@ -17,14 +17,14 @@
       "fee-disclosure": "Fee: 50 basis points of each executed trade, whi"
     },
     {
-      "atMs": 101,
+      "atMs": 162,
       "vault-balance": null,
       "exit-balance": "10.0000 tQUOTE",
       "limit-maxOrderNotional": null,
       "fee-disclosure": null
     },
     {
-      "atMs": 203,
+      "atMs": 262,
       "vault-balance": "10.0000 tQUOTE",
       "exit-balance": "10.0000 tQUOTE",
       "limit-maxOrderNotional": "25 tQUOTE",
@@ -51,19 +51,19 @@
   PASS  page has numeric readouts
 
 === failure paths (task 9.8) ===
-node:internal/modules/run_main:123
-    triggerUncaughtException(
-    ^
-
-page.evaluate: TypeError: Cannot read properties of undefined (reading 'toString')
-    at hi (http://127.0.0.1:4173/assets/index-ChCly-7j.js:11:88688)
-    at Object.decode (http://127.0.0.1:4173/assets/index-ChCly-7j.js:11:88970)
-    at Ws (http://127.0.0.1:4173/assets/index-ChCly-7j.js:11:91190)
-    at eval (eval at <anonymous> (eval at evaluate (:311:30)), <anonymous>:140:55)
-    at async <anonymous>:337:30
-    at runAudit (/mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ci/browser/run-gates.mjs:33:15)
-    at /mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ci/browser/run-gates.mjs:182:21 {
-  log: []
+{
+  "passed": 5,
+  "total": 5,
+  "deadEnds": []
 }
+  PASS  no dead ends
+  PASS  every failure case recovers
 
-Node.js v20.19.4
+=== console ===
+  non-2xx or failed requests (whole session, induced ones included):
+    502 POST http://localhost:4177/
+  errors before failure induction: 0
+  errors during induction (expected, not gated): 2
+  PASS  zero console errors before failure induction
+
+BROWSER GATES PASSED

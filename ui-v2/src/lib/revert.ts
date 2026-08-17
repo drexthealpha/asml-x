@@ -21,8 +21,15 @@
  * be stuck.
  */
 
-/** 18 decimals, formatted by string slicing so nothing rounds. */
-function fmt(wei: bigint, dp = 4): string {
+/** 18 decimals, formatted by string slicing so nothing rounds.
+ *
+ * TOLERATES A MISSING VALUE. A decoder destructures the words it expects, so a revert payload with
+ * fewer words than its signature implies hands `undefined` straight to this function. It then threw
+ * `Cannot read properties of undefined (reading 'toString')`, which took down the whole page rather
+ * than falling through to the honest "unrecognised revert" path this module documents. A malformed
+ * payload is exactly when a user needs the fallback most. */
+function fmt(wei: bigint | undefined, dp = 4): string {
+  if (typeof wei !== "bigint") return "an unknown amount";
   const s = wei.toString().padStart(19, "0");
   const whole = s.slice(0, s.length - 18).replace(/^0+(?=\d)/, "");
   const frac = s.slice(s.length - 18, s.length - 18 + dp);
@@ -153,7 +160,20 @@ export function friendlyError(err: unknown): FriendlyError {
       for (let i = 0; i + 64 <= body.length; i += 64) {
         words.push(BigInt("0x" + body.slice(i, i + 64)));
       }
-      return { ...entry.decode(words), raw: data };
+      // A DECODER THAT THROWS MUST NOT TAKE THE PAGE WITH IT. The selector matching is only as good
+      // as the payload behind it: a truncated or non-standard encoding reaches a decoder expecting
+      // two words and gets one. Falling back to the raw-revert path is what this module already
+      // promises for anything it cannot read, and a payload it cannot read is the same situation.
+      try {
+        return { ...entry.decode(words), raw: data };
+      } catch {
+        return {
+          message: `The contract refused the transaction with ${entry.sig}, but its data could not be read.`,
+          action: "Nothing was moved. The raw reason is below.",
+          errorName: entry.sig.split("(")[0],
+          raw: data,
+        };
+      }
     }
     // Unrecognised, and it says so rather than pretending.
     return {

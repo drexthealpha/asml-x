@@ -1,17 +1,17 @@
 # Onchain gates in CI, against a local chain
 
-Run 2026-08-17 19:50:25 UTC. Verdict: **PASS**
+Run 2026-08-17 22:46:41 UTC. Verdict: **PASS**
 
 Chain id `1952` at `http://127.0.0.1:8545`, deployer
 `0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266`, which is anvil's publicly known account 0 and funds nothing anywhere.
 
 | stage | time | result |
 |---|---|---|
-| `deploy venue and guard` | 19s | PASS |
-| `deploy the vault` | 4s | PASS |
-| `seed an executable book` | 2s | PASS |
-| `agent decides and acts` | 14s | PASS |
-| `fund a depositor` | 5s | PASS |
+| `deploy venue and guard` | 27s | PASS |
+| `deploy the vault` | 5s | PASS |
+| `seed an executable book` | 5s | PASS |
+| `agent decides and acts` | 25s | PASS |
+| `fund a depositor` | 11s | PASS |
 
 ## Why this is not a skipped gate
 

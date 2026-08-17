@@ -78,12 +78,24 @@
 
   // ---------------------------------------------------------------- 3. RPC failure
   {
-    // Point the position store's RPC at a dead port by breaking fetch for RPC calls only.
+    // Break fetch for the RPC the app is ACTUALLY using, read from the manifest it loads.
+    //
+    // This used to match only `/testrpc|rpc\.xlayer/`, the public testnet hostnames. Run against any
+    // other chain, a local one in CI for instance, it broke nothing: the store kept polling
+    // successfully, no outage occurred, and the audit then recorded "the app displayed no staleness
+    // warning" as an app defect. It was measuring its own failure to induce anything.
+    let rpcHost = null;
+    try {
+      const m = await (await fetch("data/deployments.json")).json();
+      rpcHost = new URL(m.rpc_url).host;
+    } catch {
+      // fall through to the hostname patterns below
+    }
     const realFetch = window.fetch;
     window.fetch = (url, opts) => {
-      if (typeof url === "string" && /testrpc|rpc\.xlayer/.test(url)) {
-        return Promise.reject(new TypeError("Failed to fetch"));
-      }
+      const u = typeof url === "string" ? url : String(url && url.url ? url.url : "");
+      const isRpc = /testrpc|rpc\.xlayer/.test(u) || (rpcHost && u.includes(rpcHost));
+      if (isRpc) return Promise.reject(new TypeError("Failed to fetch"));
       return realFetch(url, opts);
     };
     await wait(9000); // one poll interval plus slack

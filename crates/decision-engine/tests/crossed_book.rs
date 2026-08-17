@@ -81,15 +81,13 @@ fn a_crossed_book_never_produces_a_negative_crossing_cost() {
     let deep_cands = engine.generate(&s_deep, &deeper);
 
     for c in &takes {
-        let same: Vec<&Candidate> = deep_cands
-            .iter()
-            .filter(|d| d.action == c.action)
-            .collect();
+        let same: Vec<&Candidate> = deep_cands.iter().filter(|d| d.action == c.action).collect();
         // Only compare candidates that exist on both books; a deeper cross changes which
         // sizes are generated, and a missing counterpart is not a failure.
         for d in same {
             assert_eq!(
-                d.expected_edge_micro, c.expected_edge_micro,
+                d.expected_edge_micro,
+                c.expected_edge_micro,
                 "deepening the cross changed expected edge for {}, so the crossing cost is not \
                  floored at zero and a crossed book is paying the agent to trade",
                 c.action.label()

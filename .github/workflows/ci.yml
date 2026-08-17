@@ -83,6 +83,20 @@ jobs:
         working-directory: contracts
         run: forge test --color never -vv
 
+      # CARRIED OVER FROM THE PREVIOUS WORKFLOW, which this file replaced. A suite that runs zero
+      # tests exits 0, so "forge test passed" and "forge test proved something" are different
+      # claims. The floor is raised from the original 40 to 100: the suite currently runs 113, and a
+      # threshold far below the real count stops catching a suite that quietly shrinks.
+      - name: Assert the suite was not vacuous
+        working-directory: contracts
+        run: |
+          COUNT=$(forge test --color never 2>&1 | grep -oE '[0-9]+ tests passed' | tail -1 | awk '{print $1}')
+          echo "tests passed: ${COUNT:-0}"
+          if [ "${COUNT:-0}" -lt 100 ]; then
+            echo "Too few tests ran (${COUNT:-0}). Treating as a failure."
+            exit 1
+          fi
+
   formal:
     name: formal (halmos theorems)
     runs-on: ubuntu-24.04
@@ -227,38 +241,47 @@ jobs:
         run: |
           rustup toolchain install "${RUST_VERSION}" --profile minimal
           rustup default "${RUST_VERSION}"
-      # The page posts flow-timing marks to the coordination API. Without it every load logs a
-      # connection-refused error and the console gate fails for a missing service rather than a
-      # defect, so the service is started rather than the gate loosened.
-      - name: Start the coordination API
+      - uses: foundry-rs/foundry-toolchain@v1.9.1
+        with:
+          version: ${{ env.FOUNDRY_VERSION }}
+      - name: Build the runtime and the coordination API
+        run: cargo build --release --locked -p runtime -p coordination-api
+      # ONE SCRIPT STANDS UP THE WHOLE ENVIRONMENT, because the pieces have to agree about which
+      # chain they are on. The first version of this job started only the coordination API and the
+      # static server, and the failure-path audit then failed on
+      # `POST http://localhost:4177 :: ERR_CONNECTION_REFUSED`: the audit sends a REAL transaction
+      # through the injected provider, which posts to the signer, which was not running. The app
+      # correctly reported a network problem and the audit correctly refused it, so two gates failed
+      # for one missing service.
+      #
+      # scripts/202 starts a local chain, deploys the full contract set onto it, points the built
+      # UI's manifest at those addresses, funds and starts the signer, starts the coordination API
+      # on the same chain, serves the UI, and only then runs the gates.
+      - name: Stand up the environment and run the browser gates
+        run: bash scripts/202-ci-browser-env.sh
+
+  # CARRIED OVER FROM THE PREVIOUS WORKFLOW. The external agent is an integration client needing a
+  # live chain and a running server, so a compile check is the honest limit of what CI can assert
+  # about it. Dropping the job would have removed the only thing standing between a syntax error and
+  # the example another builder copies.
+  python:
+    name: python (external agent, examples)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-python@v6.0.0
+        with:
+          python-version: "3.12"
+      - name: Compile check
         run: |
-          cargo build --release --locked -p coordination-api
-          ASML_REPO="$PWD" ASML_COORD_PORT=8737 ./target/release/asml-coord > /tmp/coord.log 2>&1 &
-          for i in $(seq 1 90); do
-            curl -sf http://127.0.0.1:8737/health > /dev/null && break
-            sleep 2
-          done
-          # /health answers immediately; /thesis needs the first book walk to finish and returns 503
-          # until it does. Waiting on the endpoint the page actually calls, not just on liveness.
-          for i in $(seq 1 60); do
-            code=$(curl -s -o /dev/null -w '%{http_code}' -H 'x-api-key: demo-agent-key-1' http://127.0.0.1:8737/thesis)
-            echo "thesis: $code"
-            [ "$code" = "200" ] && break
-            sleep 5
-          done
-      # Bound to 0.0.0.0 so it is reachable regardless of how the runner resolves localhost.
-      - name: Serve the built UI
-        working-directory: ui-v2/dist
-        run: |
-          python3 -m http.server 4173 --bind 0.0.0.0 &
-          for i in $(seq 1 30); do
-            curl -sf http://127.0.0.1:4173/ > /dev/null && break
-            sleep 1
-          done
-          curl -sf -o /dev/null -w "ui responded %{http_code}\n" http://127.0.0.1:4173/
-      - name: Run browser gates
-        working-directory: ci/browser
-        run: node run-gates.mjs
+          python3 -m py_compile agents/external_agent.py
+          python3 -m py_compile examples/python_client.py
+          # Every gate script this workflow runs is Python or shell; a syntax error in one is a
+          # broken gate, so they are compile-checked too.
+          python3 -m py_compile scripts/181-repro-inventory.py scripts/187-claim-tags.py \
+            scripts/185-fake-win-register.py scripts/199-validate-workflow.py \
+            scripts/201-ci-ui-manifest-local.py scripts/203-gitleaks-triage.py
 
   secrets:
     name: secrets (gitleaks)
@@ -268,6 +291,20 @@ jobs:
       - uses: actions/checkout@v7.0.1
         with:
           fetch-depth: 0
+
+      # CARRIED OVER FROM THE PREVIOUS WORKFLOW. gitleaks looks at CONTENT; this looks at NAMES, and
+      # they fail differently. A tracked file called `deployer.keystore` that happens to contain
+      # nothing gitleaks recognises would pass a content scan and still be the exact mistake this
+      # project must never make.
+      - name: No key material tracked by name
+        run: |
+          BAD=$(git ls-files | grep -iE 'keystore|\.env$|\.pass$|id_rsa|secret' | grep -v '\.example$' || true)
+          if [ -n "$BAD" ]; then
+            echo "Secret-looking files are tracked:"
+            echo "$BAD"
+            exit 1
+          fi
+          echo "No key material tracked."
       # The binary, not gitleaks-action: v2 of that action needs a paid licence for organisation
       # repos, and a licence key is a dependency this gate does not need.
       - name: Install pinned gitleaks

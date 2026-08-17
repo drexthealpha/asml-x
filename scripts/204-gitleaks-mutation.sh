@@ -11,7 +11,16 @@ cd "$(dirname "$0")"
 . ./lib.sh
 cd "$REPO"
 
-G="$HOME/.local/bin/gitleaks"
+# RESOLVED FROM PATH, with the local install as a fallback. This was hardcoded to
+# "$HOME/.local/bin/gitleaks", which exists on the development machine and nowhere else. In CI the
+# binary is installed to /usr/local/bin, so every invocation exited 127 (command not found) and the
+# script reported "baseline=127 mutated=127 restored=127": three identical non-zero codes, which is
+# the signature of a missing binary rather than a real result.
+G="$(command -v gitleaks 2>/dev/null || echo "$HOME/.local/bin/gitleaks")"
+if [ ! -x "$G" ]; then
+  echo "gitleaks not found on PATH or at $HOME/.local/bin/gitleaks"
+  exit 1
+fi
 OUT="$REPO/evidence/phase18/gitleaks-mutation.txt"
 CANARY="$REPO/scripts/.canary-do-not-commit.sh"
 mkdir -p "$(dirname "$OUT")"

@@ -179,6 +179,8 @@ check("page has numeric readouts", density.numericCells > 0, `got ${density.nume
 // --- 3. Failure paths: every induced failure recovers and names a next action.
 console.log("\n=== failure paths (task 9.8) ===");
 await page.reload({ waitUntil: "networkidle" });
+// The console-error count is frozen here, before the audit starts breaking things on purpose.
+const errorsBeforeInduction = consoleErrors.length;
 const paths = await runAudit(page, "failure_paths_audit.js");
 console.log(JSON.stringify({ passed: paths.passed, total: paths.total, deadEnds: paths.deadEnds }, null, 2));
 // Print the failing cases in full. "4 of 5" without naming the one that failed is not a diagnosis,
@@ -190,12 +192,25 @@ check("no dead ends", Array.isArray(paths.deadEnds) && paths.deadEnds.length ===
 check("every failure case recovers", paths.pass === true, `${paths.passed}/${paths.total}`);
 
 // --- 4. No console errors anywhere in the above.
+// SCOPED TO EVERYTHING BEFORE FAILURE INDUCTION, and the distinction is the whole point of the
+// gate. The failure-path audit deliberately breaks fetch, sends a transaction it expects to revert,
+// and forces a chain switch. Those produce console errors BY DESIGN; counting them means failing the
+// build because a test did its job. What this gate is for is errors on a page doing normal work, so
+// the count is taken at the mark set before the audit runs. Everything after is still PRINTED, so a
+// genuinely new error during induction is visible rather than discarded.
 console.log("\n=== console ===");
 if (badResponses.length) {
-  console.log("  non-2xx or failed requests:");
+  console.log("  non-2xx or failed requests (whole session, induced ones included):");
   for (const b of [...new Set(badResponses)].slice(0, 10)) console.log(`    ${b}`);
 }
-check("zero console errors", consoleErrors.length === 0, consoleErrors.slice(0, 3).join(" | "));
+const inducedErrors = consoleErrors.length - errorsBeforeInduction;
+console.log(`  errors before failure induction: ${errorsBeforeInduction}`);
+console.log(`  errors during induction (expected, not gated): ${inducedErrors}`);
+check(
+  "zero console errors before failure induction",
+  errorsBeforeInduction === 0,
+  consoleErrors.slice(0, 3).join(" | "),
+);
 
 await browser.close();
 
