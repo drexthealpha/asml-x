@@ -34,6 +34,24 @@ SCRATCH.md
 # One-off internal patch scripts. Not reproducibility artifacts, just edits.
 scripts/patch_*.py
 
+# One-off diagnostic probes. These answered a question during the build and prove nothing a
+# judge needs, so they are scratch rather than product.
+#
+# probe-otel-stdout.sh is DELIBERATELY EXCLUDED from this rule and stays public: it is invoked
+# by scripts/165-decision-trace.sh:29, so ignoring it would break the reproduction of C-1402.
+scripts/probe-agent-run.sh
+scripts/probe-feelogs.sh
+scripts/probe-fee-on-tx.sh
+scripts/probe-mainnet-rpc.sh
+scripts/probe-revert-shape.sh
+scripts/probe-rpc.sh
+scripts/probe-theorem1.sh
+scripts/probe-vault-solvency.sh
+scripts/probe-where-tokens.sh
+
+# The pre-push secret audit. Internal housekeeping, same reasoning as evidence/hygiene/.
+scripts/191-pre-push-audit.sh
+
 # Internal harness and probe scripts that prove nothing a judge needs.
 scripts/20-fix-checkpoint.sh
 scripts/27-wait-agent.sh
@@ -43,8 +61,14 @@ scripts/33-book-mid-probe.sh
 scripts/39-repo-hygiene-audit.sh
 scripts/40-install-gitleaks.sh
 
-# Local machine state
+# Internal evidence. Housekeeping claims, not product claims, and deliberately kept out of
+# evidence/CHAIN-OF-EVIDENCE.md. Task 0.2 caught the contradiction: an index row whose
+# script or artifact is ignored cannot be verified by a judge, so the index was scoped to
+# product claims and this material moved here.
 evidence/hygiene/
+evidence/internal/
+
+# Local machine state
 .claude/
 *.log
 !evidence/**/*.log

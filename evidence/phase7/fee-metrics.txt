@@ -1,0 +1,32 @@
+Task 7.7 gate: fee revenue reaches the UI from chain
+run: 2026-08-15 16:40:45 UTC
+
+== CHECK A: no arithmetic on fees anywhere in ui-v2/src ==
+  files searched: 18
+  checks applied: 5 (comments and string literals stripped first)
+  PASS  no arithmetic, accumulation or numeric coercion of any fee value
+
+  -- self-test: the checker must actually detect a fee computation --
+     injecting a totalFee = feeA + feeB line into a scratch copy of ui-v2/src
+     PASS  the checker caught the injected computation
+
+== CHECK C: metrics.json totals against an independent read ==
+  metrics.json total_fees_wei: 200000000000000000
+  live totalCollected():       200000000000000000
+  metrics.json event_count:    2
+  live chargeCount():          2
+  sum of decoded log rows:     200000000000000000
+  cross-check: decoded events sum to the state total exactly
+  CHECK C: PASS
+
+== CHECK B: no-data proof, the fee source removed ==
+  PASS  with no fees block, mapFees returns undefined and the panel returns PanelError
+        (ui-v2/src/lib/data.ts mapFees, ui-v2/src/components/revenue-panel.tsx guard)
+  PASS  no zero fallback on any fee field
+  metrics.json restored
+
+== gate ==
+CHECK A (no frontend fee arithmetic): PASS
+CHECK B (error not zero on no data):  PASS
+CHECK C (totals match the chain):     PASS
+GATE: PASS

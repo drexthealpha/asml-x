@@ -1,0 +1,122 @@
+gemini-grounding, task 1.11
+Run 2026-08-11 08:36:28 UTC
+
+## Preconditions
+  GEMINI_API_KEY: PRESENT (len 53, prefix AQ.)
+  E3 says the AQ. prefix is correct for 2026 and a 401 means the transport is wrong.
+
+## Step 1: resolve the blocked host over DoH (E9)
+  generativelanguage.googleapis.com resolved to: 172.217.112.4
+
+## Step 2: the question. Something this build needs, not a toy prompt.
+  Asking for the CURRENT X Layer testnet chain id and public RPC endpoint. This is a
+  fact the whole project rests on, and it is exactly the class of fact that already
+  bit once: chain 195 is deprecated but STILL ANSWERS, so a stale source is worse than
+  no source. If grounding is real it should reach a live page and agree with 1952.
+
+## Step 3: native v1beta generateContent with the google_search tool
+  trying model gemini-2.5-flash
+    HTTP 404
+  trying model gemini-2.0-flash
+    HTTP 404
+
+## Step 4: is it GROUNDED? The decisive check.
+  API ERROR 404: This model models/gemini-2.0-flash is no longer available. Please update your code to use a newer model for the latest features and improvements. We recommend you to use the Interactions API (https://
+
+## Verdict, task 1.11
+  RESULT: FAIL. No groundingMetadata with source URIs.
+  Recorded as a fail. The ladder continues at rung 2 (WebSearch), which has been
+  carrying every search in this build so far and is working.
+
+==============================================================================
+## 1.11 continued: enumerate models instead of guessing names
+Run 2026-08-11 08:38:28 UTC
+
+  KEY FINDING from the previous run, and it corrects the record: the response was a
+  404 with an authenticated error body naming the retired model, NOT a 401. The key
+  works and the native transport works. E3 was right and the v1 conclusion that
+  grounding is unavailable was an artifact of the OpenAI-compatible route.
+
+  models the key can see: 52
+  supporting generateContent: 36
+  candidates for grounded search, newest-looking first:
+    nano-banana-pro-preview
+    lyria-3-pro-preview
+    lyria-3-clip-preview
+    gemma-4-31b-it
+    gemma-4-26b-a4b-it
+    gemini-robotics-er-2-preview
+    gemini-robotics-er-1.6-preview
+    gemini-pro-latest
+    gemini-omni-flash-preview
+    gemini-flash-lite-latest
+    gemini-flash-latest
+    gemini-3.6-flash
+    gemini-3.5-flash-lite
+    gemini-3.5-flash
+    gemini-3.1-pro-preview-customtools
+    gemini-3.1-pro-preview
+    gemini-3.1-flash-tts-preview
+    gemini-3.1-flash-lite-preview
+    gemini-3.1-flash-lite-image
+    gemini-3.1-flash-lite
+    gemini-3.1-flash-image-preview
+    gemini-3.1-flash-image
+    gemini-3-pro-image-preview
+    gemini-3-pro-image
+    gemini-3-flash-preview
+
+  ## Trying real model names with the google_search tool
+    nano-banana-pro-preview -> HTTP 429, groundingMetadata blocks: 0
+0
+    lyria-3-pro-preview -> HTTP 429, groundingMetadata blocks: 0
+0
+    gemini-pro-latest -> HTTP 429, groundingMetadata blocks: 0
+0
+    gemini-omni-flash-preview -> HTTP 429, groundingMetadata blocks: 0
+0
+    gemini-flash-lite-latest -> HTTP 000000, groundingMetadata blocks: 0
+0
+    gemini-flash-latest -> HTTP 429, groundingMetadata blocks: 0
+0
+    gemini-3.6-flash -> HTTP 429, groundingMetadata blocks: 0
+0
+    gemini-3.5-flash-lite -> HTTP 429, groundingMetadata blocks: 0
+0
+
+  ## Grounding check on the winning response
+  no HTTP 200 response from any model. Grounding unavailable via this key.
+
+  ## Verdict, task 1.11 final
+    RESULT: FAIL, and the failure is now precisely located rather than vague.
+    The key authenticates (the API returns authenticated 404s and a model list, not
+    401s), the DoH-pinned transport reaches the host, but no available model returned
+    groundingMetadata. So the missing piece is grounding ENTITLEMENT or the tool
+    schema on the models this key can see, NOT the key and NOT the network.
+    R-SEARCH-2 continues at rung 2, WebSearch, which has carried every search here.
+
+==============================================================================
+## 1.11 final: reading the 429 instead of interpreting it
+Run 2026-08-11 08:40:21 UTC
+
+  CORRECTION to the previous block's verdict: it attributed the failure to grounding
+  entitlement. That was wrong. HTTP 429 is a rate or quota limit. It also has an
+  obvious cause I created: the model-discovery loop fired eight grounded requests in
+  immediate succession. One request, spaced, is the correct test.
+
+  attempt 1, model gemini-flash-latest -> HTTP 429
+      backing off 35s
+  attempt 2, model gemini-flash-latest -> HTTP 429
+      backing off 35s
+  attempt 3, model gemini-flash-latest -> HTTP 429
+
+  ## Verdict, task 1.11 FINAL, superseding both blocks above
+    RESULT: FAIL on QUOTA, not on capability. Precisely: the key authenticates (the
+    API returns a full model list and authenticated 404s, never 401), the DoH-pinned
+    transport reaches the host, the request shape is accepted, and the refusal is 429.
+    So this is a free-tier quota ceiling on the grounded-search path.
+    R-SEARCH-2 rung 1 is therefore UNAVAILABLE FOR QUOTA REASONS, and every search in
+    this build is carried by rung 2, WebSearch, which is working. The ladder is
+    satisfied because rung 2 succeeds; it never required rung 1 to succeed.
+    What this does NOT license: quoting a Gemini answer as grounded. No such answer
+    was obtained, and none is quoted anywhere in this repo.

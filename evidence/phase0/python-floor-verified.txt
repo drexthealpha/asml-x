@@ -1,0 +1,18 @@
+halmos Python requirement, verified from the primary source
+Run 2026-08-10 20:07:36 UTC
+
+Resolving pypi.org over DoH (E9: local resolver interferes with some hosts):
+  pypi.org -> 151.101.128.223
+
+PRIMARY SOURCE: https://pypi.org/pypi/halmos/json
+  latest version   0.3.3
+  requires_python  >=3.11
+
+  0.3.3 requires_python: {'>=3.11'}
+
+Locally installed halmos, and the Python it actually runs on:
+  Halmos 0.1.13
+  local python: Python 3.10.12
+
+OBSERVED FACT from v1: halmos ran 14 theorems successfully under Python 3.10.12.
+That is evidence the 3.11 floor I asserted in 45-toolchain-floor.sh was WRONG.

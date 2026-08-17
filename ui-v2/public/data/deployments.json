@@ -1,0 +1,58 @@
+{
+  "chain_id": 1952,
+  "rpc_url": "https://testrpc.xlayer.tech",
+  "explorer_base": "https://www.oklink.com/x-layer-testnet/tx/",
+  "source": "docs/verified/deployments.md",
+  "verified_by": "bash scripts/67-verify-deployments.sh",
+  "deployments": [
+    {
+      "name": "MockERC20 tBASE",
+      "address": "0x8FB4B7899EdE2D2015E9E03C9baFF9632C0bec84",
+      "role": "TEST token, base asset",
+      "self_deployed": true,
+      "explicit_standin_marker": false
+    },
+    {
+      "name": "MockERC20 tQUOTE",
+      "address": "0x5069c6C619EE23a8e2EBa15b4B95F7EE16869501",
+      "role": "TEST token, quote asset",
+      "self_deployed": true,
+      "explicit_standin_marker": false
+    },
+    {
+      "name": "OrderBookVenue",
+      "address": "0xd79276538A39ae5247e7a0d33D40AaD849e09B4D",
+      "role": "escrowed limit order book",
+      "self_deployed": true,
+      "explicit_standin_marker": false
+    },
+    {
+      "name": "RiskGuard",
+      "address": "0x977A77aF8891187C73c7cdBd145B6fD57A0D0a47",
+      "role": "binding exposure caps and kill switch",
+      "self_deployed": true,
+      "explicit_standin_marker": false
+    },
+    {
+      "name": "BatchExecutor",
+      "address": "0x954A0B68B81dD4028631a7D1B98d80bf2a563142",
+      "role": "atomic multi-leg execution",
+      "self_deployed": true,
+      "explicit_standin_marker": false
+    },
+    {
+      "name": "FeeCollector",
+      "address": "0x2e0727C36c9F720E8d31C5eB3a3748A683610e38",
+      "role": "usage fee on executed notional, 50 bps, immutable 100 bps ceiling",
+      "self_deployed": true,
+      "explicit_standin_marker": false
+    },
+    {
+      "name": "AgentVault",
+      "address": "0x3e938422f11D53b62F6Fe4afa2e4f52B1aFF4382",
+      "role": "user custody: agent may trade, never withdraw",
+      "self_deployed": true,
+      "explicit_standin_marker": false
+    }
+  ]
+}

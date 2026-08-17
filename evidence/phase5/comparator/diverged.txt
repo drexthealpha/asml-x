@@ -1,0 +1,28 @@
+ASML-X runtime
+  mode        sidebyside
+  chain       1952 (verified)
+  venue       0x7092050f3c4e72a2df8610ae2cc8c39dca3b7f52
+  guard       0xe64b6e937fd0d855161a5f6f0aa1a3e01cb54c24
+  cycles      5
+
+Live inputs, block 38075850
+  crypto book: 26 live orders, spread Some(-2325) bps, imbalance Some(-9176) bps
+  rwa vault:   oracle age 230s, paused false, until window 0s, divergence 1000 bps, yield index 1.000000
+
+Identical order: Buy 2.000000 base at 1.000000
+
+  CRYPTO market (tBASE/tQUOTE, Spot):
+    APPROVED
+
+  RWA market (RWA/tQUOTE, RwaLinked):
+    REFUSED: RwaOracleMarketDivergence { got_bps: 1000, limit_bps: 300 } (rwa-specific: true)
+
+DIVERGENT TREATMENT: true
+RWA-SPECIFIC REASON: true
+
+The same order is permitted on the crypto market and refused on the
+RWA market, and the refusal names an RWA-specific cause. A generic bot
+has no vocabulary for this refusal.
+
+Onchain RwaRiskGuard.rwaTradeableFlag(): false
+Offchain risk engine agrees: true

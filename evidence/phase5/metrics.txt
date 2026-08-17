@@ -1,0 +1,48 @@
+Metrics recompute, task 5.1
+Run 2026-08-16 19:12:51 UTC
+
+## Live chain reads, so the onchain counters are not journal-derived
+  head block:                 38448773
+  guard.exposureOf(market):   23456250000000000000 wei
+  guard.maxPerMarket(market): 500000000000000000000 wei
+  guard.totalGross():         23456250000000000000 wei
+  guard.maxGross():           1000000000000000000000 wei
+  guard.killed():             false
+  venue.orderCount():         25
+  deployer nonce:             345  (total transactions ever sent by the agent's key)
+
+## Journal-derived counters
+  fee fetch: ok  16 events, 116701875000000000 wei, 2 log windows
+  journal rows 43  agent 43  baseline 0
+  takes 42  holds 1  submitted 39
+  candidates 2279  refusals 2236
+    lower score: 1956
+    MarketNotionalTooLarge: 280
+  market utilisation: 4.69%  (23456250 of 500000000 micro units)
+  gross utilisation:  2.35%
+  learning: {'settled': 10, 'unscored_flat': 36, 'pending': 1, 'signals_tracked': 1}
+  recent transactions carried into the panel: 20
+  wrote /mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/public/data/metrics.json
+  growth counters, each with its source:
+    feesCollectedWei       116701875000000000
+    feeEvents              16
+    agentActions           57
+    candidatesEvaluated    5094
+    refusalsTotal          4962
+    refusalsByReason       8 reasons
+    volumeTouchedMicro     66593736
+    learningUpdates        10
+    coordinationCalls      8
+  learning effect, every figure with its sample:
+    samples                {'scored': 10, 'settled': 10, 'droppedFlat': 36}
+    hitRateBps             {'value': 4000, 'samples': 10}
+    changes                [{'parameter': 'momentum_weight_bps', 'from': 411, 'to': 401, 'samples': 10, 'trigger': 'imbalance_bps hit rate 4000 bps over 10 settled outcomes, below a coin flip'}, {'parameter': 'thin_book_penalty_bps', 'from': 1175, 'to': 1200, 'samples': 10, 'trigger': 'mean edge error -141490 micro over 10 outcomes, decisions overestimated their own edge'}, {'parameter': 'momentum_weight_bps', 'from': 401, 'to': 391, 'samples': 10, 'trigger': 'imbalance_bps hit rate 4000 bps over 10 settled outcomes, below a coin flip'}, {'parameter': 'thin_book_penalty_bps', 'from': 1200, 'to': 1225, 'samples': 10, 'trigger': 'mean edge error -141490 micro over 10 outcomes, decisions overestimated their own edge'}]
+    netMove                [{'parameter': 'momentum_weight_bps', 'default': 2000, 'current': 391, 'moved': True}, {'parameter': 'variance_weight_bps', 'default': 8000, 'current': 8000, 'moved': False}, {'parameter': 'thin_book_penalty_bps', 'default': 150, 'current': 1225, 'moved': True}]
+    realizedPnl            {'totalMicro': 337500, 'settlements': 8, 'profitable': 3, 'losing': 4, 'flat': 1, 'basis': 'mark to market against a later observed mid, not cash proceeds'}
+  fees: 16 FeeCharged events, 116701875000000000 wei collected, read from contract state + bounded eth_getLogs backward scan
+
+## Verdict, task 5.1
+  RESULT: PASS. Counters written to ui-v2/public/data/metrics.json, which is the file the
+  metrics panel renders. The panel cannot disagree with this script because there is only
+  one implementation.
+  Reproduce: bash scripts/88-recompute-metrics.sh

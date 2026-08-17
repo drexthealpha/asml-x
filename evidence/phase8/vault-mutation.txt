@@ -1,0 +1,86 @@
+Task 8.5, vault mutation gate
+run: 2026-08-15 17:59:37 UTC
+halmos theorems included: 1 (0 skips them, for a fast unit-only pass)
+
+baseline unit suite exit: 0 (0 means GREEN)
+theorems in the formal suite, all run against every mutant: 6
+
+== M1: withdraw no longer binds to msg.sender (any caller drains any depositor) ==
+   sed: s/        _withdraw(msg.sender, amount);/        _withdraw(tx.origin, amount);/
+   lines changed: 4
+   theorem I expected to catch it (advisory; all are run): check_vaultOnlyTheDepositorCanWithdraw
+   UNIT: KILLED by these named tests:
+     testFuzz_aDepositorAlwaysGetsBackExactlyWhatTheyPutIn
+     test_committedFundsCannotAlsoBeWithdrawn
+     test_pauseStopsTheAgentAndNeverTheWithdrawal
+     test_theVaultIsSolventThroughAFullCycle
+   THEOREMS that stopped proving:
+     check_vaultDepositorCanAlwaysWithdrawEvenWhenPaused
+     check_vaultStaysSolventAcrossDepositAndWithdraw
+     check_vaultTheReachablePreconditionIsActuallyReachable
+
+== M2: pause check deleted from openTrade ==
+   sed: /if (paused\[depositor\]) revert DepositorPaused(depositor);/d
+   lines changed: 1
+   theorem I expected to catch it (advisory; all are run): check_vaultPauseBlocksEveryAgentAction
+   UNIT: KILLED by these named tests:
+     test_pauseStopsTheAgentAndNeverTheWithdrawal
+   THEOREMS that stopped proving:
+     check_vaultPauseBlocksEveryAgentAction
+
+== M3: per-user notional limit check deleted from openTrade ==
+   sed: /if (notional > maxNotional\[depositor\]) {/,+2d
+   lines changed: 3
+   theorem I expected to catch it (advisory; all are run): check_vaultAgentCannotExceedTheUserLimit
+   UNIT: KILLED by these named tests:
+     test_aDepositorCanTightenTheirOwnLimit
+     test_aRotatedAgentGetsNoNewPowers
+     test_limitsAreIndependentPerDepositor
+     test_theAgentCannotExceedAUsersLimit
+   THEOREMS that stopped proving:
+     check_vaultAgentCannotExceedTheUserLimit
+
+== M4: withdraw does not decrement the depositor balance ==
+   sed: s/        balanceOf\[depositor\] -= amount;/        balanceOf[depositor] -= 0;/
+   lines changed: 2
+   theorem I expected to catch it (advisory; all are run): check_vaultStaysSolventAcrossDepositAndWithdraw
+   UNIT: KILLED by these named tests:
+     testFuzz_aDepositorAlwaysGetsBackExactlyWhatTheyPutIn
+     test_pauseStopsTheAgentAndNeverTheWithdrawal
+   THEOREMS that stopped proving:
+     check_vaultDepositorCanAlwaysWithdrawEvenWhenPaused
+
+== M5: withdrawable ignores committed funds ==
+   sed: s/        return bal > out ? bal - out : 0;/        return bal;/
+   lines changed: 2
+   theorem I expected to catch it (advisory; all are run): check_vaultStaysSolventAcrossDepositAndWithdraw
+   UNIT: KILLED by these named tests:
+     test_committedFundsCannotAlsoBeWithdrawn
+   THEOREMS that stopped proving:
+     check_vaultTheReachablePreconditionIsActuallyReachable
+
+== M6: deposit credits the requested amount rather than the measured delta ==
+   sed: s/        if (received < amount) revert ShortDeposit(amount, received);/        received = amount;/
+   lines changed: 2
+   theorem I expected to catch it (advisory; all are run): none
+   UNIT: KILLED by these named tests:
+     test_aShortDeliveringTokenCannotCreditABalanceTheVaultDoesNotHold
+   THEOREMS: all 6 still prove. No symbolic property constrains this
+   behaviour, which is exactly the vacuity signature task 8.4's fake win warns about.
+
+== M7: pause is made to block withdrawal (the trap the research forbade) ==
+   sed: s|    function _withdraw(address depositor, uint256 amount) private {|    function _withdraw(address depositor, uint256 amount) private {\n        if (paused[depositor]) revert DepositorPaused(depositor);|
+   lines changed: 1
+   theorem I expected to catch it (advisory; all are run): check_vaultDepositorCanAlwaysWithdrawEvenWhenPaused
+   UNIT: KILLED by these named tests:
+     test_pauseStopsTheAgentAndNeverTheWithdrawal
+   THEOREMS that stopped proving:
+     check_vaultDepositorCanAlwaysWithdrawEvenWhenPaused
+
+== summary ==
+mutants injected: 7
+killed:           7
+survived:         0
+restored suite:   exit 0
+
+GATE: PASS  every mutant caught, and the source is restored green

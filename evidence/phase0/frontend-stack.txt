@@ -1,0 +1,95 @@
+Frontend stack scaffold, task 1.15
+Run 2026-08-11 20:24:21 UTC
+
+## Toolchain present
+  node: v20.19.4
+  npm:  10.8.2
+  pnpm: 10.33.2
+  pnpm in use: /home/zulab/.npm-global/bin/pnpm
+  version:     10.34.5
+  (NOT the Windows shim at /mnt/c/.../AppData/Roaming/npm/pnpm, which produced a
+   node_modules with a content store and no packages)
+
+## Installing, exact versions, no ranges
+  Progress: resolved 0, reused 93, downloaded 0, added 90
+  Progress: resolved 0, reused 93, downloaded 0, added 91
+  Progress: resolved 0, reused 93, downloaded 0, added 92
+  Progress: resolved 0, reused 93, downloaded 0, added 93
+  Progress: resolved 0, reused 93, downloaded 0, added 93, done
+  
+  ╭ Warning ─────────────────────────────────────────────────────────────────────╮
+  │                                                                              │
+  │   Ignored build scripts: esbuild@0.28.2.                                     │
+  │   Run "pnpm approve-builds" to pick which dependencies should be allowed     │
+  │   to run scripts.                                                            │
+  │                                                                              │
+  ╰──────────────────────────────────────────────────────────────────────────────╯
+  Done in 3m 35.2s using pnpm v10.34.5
+
+## Production build
+  
+  > asml-x-ui@0.0.0 build /mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2
+  > tsc -b && vite build
+  
+  vite v7.3.6 building client environment for production...
+  transforming...
+  ✓ 27 modules transformed.
+  rendering chunks...
+  computing gzip size...
+  dist/index.html                   0.39 kB │ gzip:  0.27 kB
+  dist/assets/index-CZ7tJtWc.css    4.06 kB │ gzip:  1.37 kB
+  dist/assets/index-ZksgWWOc.js   193.22 kB │ gzip: 60.65 kB
+  ✓ built in 6.73s
+
+## Versions AS INSTALLED, read from the resolved dependency tree
+  package.json records the request; the installed tree records the resolution.
+
+  The first version of this section grepped pnpm-lock.yaml by package name and produced
+  WRONG NUMBERS under a PASS verdict: it reported react 19.2.18 (that is @types/react)
+  and vite 4.3.3 (that is tailwindcss). A verdict saying "versions as pinned" above a
+  table of mismatched versions is exactly the fake win this build is supposed to catch,
+  and I wrote it. Substring grep over a lockfile is not a parser. Asking pnpm is.
+  lockfile present: yes, 51946 bytes
+
+    package                      pinned       installed    match
+    @tailwindcss/vite            4.3.3        4.3.3        yes
+    @tanstack/react-table        8.21.3       8.21.3       yes
+    @types/react                 19.2.18      19.2.18      yes
+    @types/react-dom             19.2.4       19.2.4       yes
+    @vitejs/plugin-react         5.2.0        5.2.0        yes
+    class-variance-authority     0.7.1        0.7.1        yes
+    clsx                         2.1.1        2.1.1        yes
+    framer-motion                13.1.0       13.1.0       yes
+    lightweight-charts           5.2.0        5.2.0        yes
+    lucide-react                 1.31.0       1.31.0       yes
+    react                        19.2.8       19.2.8       yes
+    react-dom                    19.2.8       19.2.8       yes
+    tailwind-merge               3.6.0        3.6.0        yes
+    tailwindcss                  4.3.3        4.3.3        yes
+    typescript                   5.9.3        5.9.3        yes
+    vite                         7.3.6        7.3.6        yes
+
+    all 16 pinned packages installed at exactly their pinned version.
+
+## Pinned-by-decision, with the reason
+  @tanstack/react-table 8.21.3, NOT v9. v9 renames useReactTable and moves the row
+  models, and the shadcn data-table examples are not v9-compatible. Recorded as a
+  decision in TASKS.md 1.15, not as a discovery here.
+  lightweight-charts 5.2.0. Pinned by decision.
+
+## Build output
+    total 0
+    drwxrwxrwx 1 zulab zulab 4096 Aug 11 21:29 .
+    drwxrwxrwx 1 zulab zulab 4096 Aug 11 21:26 ..
+    drwxrwxrwx 1 zulab zulab 4096 Aug 11 21:29 assets
+    -rwxrwxrwx 1 zulab zulab  391 Aug 11 21:29 index.html
+    dist total: 196K
+
+## Verdict, task 1.15
+  RESULT: PASS. Production build succeeded, lockfile written, and every installed
+  version was CHECKED against its pin by scripts/pnpm_versions.py, which exits
+  non-zero on any mismatch. The verdict is gated on that check, so it can no longer
+  say "versions as pinned" while printing versions that are not.
+  Reproduce: bash scripts/61-frontend-scaffold.sh
+  GATE INTACT: the only source file is a placeholder that names the gate. No UI has
+  been written and none will be until evidence/ui-study.md exists.

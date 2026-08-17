@@ -1,0 +1,67 @@
+ethereum/act, now argotorg/act, task 1.6
+Run 2026-08-12 01:43:37 UTC
+
+## Rung 1 and 2 of R-SEARCH-2, already done, recorded above this script's code
+  WebSearch plus the primary README establish exactly one supported build: Nix.
+  They also establish the repo moved ethereum/act -> argotorg/act, the same migration
+  that cost me attempts on hevm in 1.4.
+
+## Rung 3: is there a prebuilt binary that skips Nix entirely?
+  GET github.com/argotorg/act/releases/latest -> HTTP 200
+  NO release download assets. act publishes no prebuilt binary.
+  This is the decisive fact: unlike hevm 0.57.0, which ships a static x86_64 binary,
+  act has no artifact to fetch. Nix is not one route among several, it is the route.
+
+## Rung 4 was not needed
+  A browser render cannot manufacture a release asset that does not exist. Rungs 1-3
+  already answer the question they were asked.
+
+## Cost of the only available route
+  nix present: NO
+  Installing Nix on this machine means: a multi-user daemon install into /nix, which
+  needs systemd (E6 already records that this distro's systemd integration is partial),
+  or a single-user install plus a full Haskell toolchain build of act and its solver
+  dependencies. hevm, also Haskell, is a 30 MB static binary; act built from source is
+  a GHC build measured in tens of minutes to hours, with no cached substituter hit
+  guaranteed for this platform.
+
+## What act would add, and whether it is already covered
+
+  act's distinctive capability is a HIGH-LEVEL BEHAVIOURAL SPECIFICATION: it describes
+  a contract as a state transition system with storage updates, pre and post conditions
+  and invariants, in a language separate from the implementation, then proves the
+  bytecode conforms to that spec. Its backends are Coq/Rocq, SMT, and hevm.
+
+  Note the last one. act's strongest EVM backend IS hevm, which is installed and
+  working in this repo at 0.57.0, proving five theorems in contracts/test/
+  HevmCapProofs.t.sol. act would sit ON TOP of a backend I already drive directly.
+
+  Coverage already in place for the same invariants:
+    halmos 0.3.3   7 symbolic theorems over RiskGuard, evidence/phase0/halmos.txt
+    hevm 0.57.0    5 independent symbolic theorems, evidence/phase0/hevm.txt
+    scribble       the cap invariant instrumented and PROVEN TO FIRE, evidence/
+                   phase0/scribble.txt, with a plain-vs-instrumented differential
+    Rust types     RiskApproved<T> makes forgery a COMPILE error, not a runtime check
+
+  What is genuinely LOST by not installing act, stated plainly rather than minimised:
+    1. A machine-checked spec in a language independent of Solidity. Both halmos and
+       hevm properties are written IN Solidity, so a Solidity-level misunderstanding
+       could in principle appear in both the contract and its properties. act's
+       separate specification language is a real defence against exactly that, and I
+       do not have a substitute for it.
+    2. Rocq/Coq extraction, so no interactive proof of a property beyond SMT reach.
+
+  Why that loss is acceptable HERE, and this is a judgement, not a dodge: the
+  invariants being proven are small and arithmetic (a monotone accumulator bounded by a
+  cap, a sum equal to its parts, a kill switch that refuses every input). These are
+  squarely inside SMT's decidable range, which is why both engines discharge them
+  without bounds tricks. They are not the class of property that needs an interactive
+  prover. The independent-language defence is partly recovered a different way: the
+  same cap invariant is stated THREE times in three different formalisms, by
+  halmos, by hevm, and by a scribble annotation, and one of those three is checked at
+  runtime against a live contract.
+
+## Verdict, task 1.6
+  RESULT: SUBSTITUTED, recorded in evidence/phase0/tool-substitutions.md.
+  Four rungs named, capability loss stated, and the loss argued against the actual
+  invariants rather than waved away. Three independent formalisms already cover them.

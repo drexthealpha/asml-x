@@ -1,0 +1,60 @@
+Transaction claim re-verification, task 2.4
+Run 2026-08-11 21:36:02 UTC
+
+## Method
+  Every 32-byte hex string in README, JUDGE-GUIDE, docs/ and evidence/gates/ is treated
+  as a candidate tx hash and fetched with eth_getTransactionReceipt. Candidates that are
+  not transactions (a market id, a keccak of a signature, a bytecode hash) resolve to
+  nothing and are reported as NOT-A-TX rather than silently dropped, because the
+  difference between 'not a transaction' and 'a transaction that does not exist' is the
+  whole point of the task.
+
+  zero-padded ABI words excluded (solver output, not hashes): 9
+  candidate 32-byte values found: 30
+
+  TX ok      0x03609244f14d3bd14d...  block 0x240feae  logs 1  (README.md:158)
+  NOT-A-TX   0x053c91253bc9682c04...  (evidence/exchangeos-recon/devdocs-nav.html:37)
+  NOT-A-TX   0x068f5c6a6178076845...  (evidence/exchangeos-recon/devdocs-nav.html:37)
+  TX ok      0x34bf908d4fc3e23cb1...  block 0x240febe  logs 1  (README.md:159)
+  NOT-A-TX   0x357b0b74bc833e95a1...  (evidence/exchangeos-recon/devdocs-nav.html:37)
+  NOT-A-TX   0x375f70cf2ae4c00bf3...  (evidence/exchangeos-recon/devdocs-nav.html:37)
+  TX ok      0x38142f5ecf7be0bdb5...  block 0x24108dd  logs 1  (evidence/rwa-live/live-triggers.txt:41)
+  TX ok      0x4e1f7757850cee550a...  block 0x2410836  logs 1  (evidence/rwa-live/live-triggers.txt:20)
+  TX ok      0x5d4554a550fd6e53e4...  block 0x2410921  logs 1  (evidence/rwa-live/live-triggers.txt:51)
+  NOT-A-TX   0x5d4b302506645c37ff...  (evidence/exchangeos-recon/devdocs-nav.html:37)
+  TX ok      0x647b97147399195e55...  block 0x241091a  logs 1  (evidence/rwa-live/live-triggers.txt:50)
+  TX ok      0x68fe4a16cef4529b56...  block 0x2410911  logs 1  (evidence/rwa-live/live-triggers.txt:49)
+  TX ok      0x6b4168b0a7ab67fad7...  block 0x240d1c8  logs 1  (evidence/spine-run-01/README.md:12)
+  TX ok      0x88085ad1e74e4a0925...  block 0x2410806  logs 1  (evidence/rwa-live/live-triggers.txt:11)
+  TX ok      0x941c6a976243585e7b...  block 0x2410876  logs 1  (evidence/rwa-live/live-triggers.txt:32)
+  NOT-A-TX   0x9b14309189a210d9c5...  (docs/verified/deployments.md:18)
+  TX ok      0x9db29cfa3388181806...  block 0x241083a  logs 1  (evidence/rwa-live/live-triggers.txt:21)
+  NOT-A-TX   0xb87ddfac6c6e92e033...  (docs/verified/deployments.md:46)
+  NOT-A-TX   0xbae207659db88bea0c...  (evidence/exchangeos-recon/devdocs-nav.html:37)
+  TX ok      0xbed1a412229db65576...  block 0x240fe9e  logs 1  (README.md:157)
+  NOT-A-TX   0xc060006111016b8a02...  (evidence/exchangeos-recon/devdocs-nav.html:37)
+  TX ok      0xc76555862d5c6e2a39...  block 0x24076f0  logs 1  (evidence/first-tx.md:14)
+  TX ok      0xd2ae42fd8c466cd4b4...  block 0x241081e  logs 1  (evidence/rwa-live/live-triggers.txt:16)
+  TX ok      0xdb4f1fd29fff2d1376...  block 0x2410858  logs 1  (evidence/rwa-live/live-triggers.txt:26)
+  NOT-A-TX   0xdba34672e30cb065b1...  (evidence/exchangeos-recon/devdocs-nav.html:37)
+  TX ok      0xde72e7ed5af8e20dce...  block 0x24108a9  logs 1  (evidence/rwa-live/live-triggers.txt:35)
+  NOT-A-TX   0xf16e6b723f242ec745...  (evidence/exchangeos-recon/devdocs-nav.html:37)
+  NOT-A-TX   0xf22bede237a07e121b...  (evidence/exchangeos-recon/devdocs-nav.html:37)
+  TX ok      0xfacbf2f3dc36e4e8f4...  block 0x24076e7  logs 0
+0  (evidence/first-tx.md:13)
+  TX ok      0xfc0ccce60903596aea...  block 0x24108d2  logs 1  (evidence/rwa-live/live-triggers.txt:40)
+
+## Verdict, task 2.4
+  real transactions resolved: 18
+  status 0x1 (success):       18
+  status 0x0 (reverted):      0
+  not transactions:           12  (market ids, selectors, bytecode hashes)
+
+  RESULT: PASS. Every cited hash that IS a transaction resolves on chain 1952 with
+  status 0x1. Receipts: evidence/phase2/tx-receipts.json
+  Reproduce: bash scripts/68-verify-tx-claims.sh
+
+  One thing this task does NOT prove, stated so the artifact is not read as more than it
+  is: a successful receipt shows the transaction executed, not that it did what the
+  surrounding sentence claims. Event-topic checking against the claimed meaning is the
+  next layer, and the log counts above are the input to it.

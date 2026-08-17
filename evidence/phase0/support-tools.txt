@@ -1,0 +1,54 @@
+Supporting tools, task 1.16
+Run 2026-08-12 01:59:01 UTC
+
+## 1. just, the command surface
+  version: just 1.58.0
+  justfile written with 8 recipes
+  real operation: list the recipes just parsed (a syntax error here fails the task)
+    Available recipes:
+        evidence-check # Evidence
+        forge-test     # Contracts
+        graph query
+        halmos         # Formal verification, both engines. Independent by design: same invariant, two solvers.
+        hevm
+        lint
+        mutants        # Mutation testing. Non-zero exit means mutants SURVIVED, which is a finding, not a crash.
+        test           # Rust workspace
+
+## 2. DuckDB, journal analytics for task 8.6
+  version: 1.5.5
+  real operation: aggregate the REAL journal, 87 rows, straight from JSONL
+    action                 decisions  avg_conf  min   max
+    take order 9 Sell 1.000000 base at 2.300000        28    6878.0  6063  7243
+    take order 4 Sell 0.500000 base at 1.800000        20    5536.0  5336  6003
+    hold                          13    5592.0  5336  6003
+    Buy 2.000000 base              8       0.0  0     0
+    take order 3 Sell 1.500000 base at 1.900000         5    5736.0  5336  6002
+    take order 7 Sell 1.000000 base at 2.100000         3    6421.0  5927  6668
+    take order 5 Sell 1.000000 base at 1.900000         3    6192.0  5716  6430
+    take order 4 Sell 0.250000 base at 1.800000         3    5558.0  5336  6003
+    take order 31 Sell 1.000000 base at 2.400000         2    7189.0  7189  7189
+    take order 3 Sell 0.750000 base at 1.900000         1    5336.0  5336  5336
+    take order 4 Sell 1.000000 base at 1.800000         1    6002.0  6002  6002
+    total rows: 87
+
+## 3. insta, snapshot tests of journal rendering
+  Deferred to task 8.6 rather than installed here, and the reason is a real one:
+  a snapshot test asserts that rendered output has not changed. The journal renderer
+  is being CHANGED in Phases 4 and 8. A snapshot taken now would be accepted-and-
+  updated at every step, which trains the habit of blessing diffs without reading
+  them, and that is worse than having no snapshot test.
+  Recorded as DEFERRED with a task number, not as done and not as omitted.
+
+## 4. OpenTelemetry plus tracing
+  Task 6.8, and it is a Cargo dependency added with the code that emits spans.
+  Installing it now would put a dependency in Cargo.toml that nothing calls, which is
+  precisely the import-for-breadth fake win this phase warns about.
+
+## Verdict, task 1.16
+  just:     USED, justfile parses and lists recipes that wrap real evidence commands
+  duckdb:   USED, aggregated all 87 real journal rows with no ETL step
+  insta:    DEFERRED to 8.6, reason stated above
+  otel:     DEFERRED to 6.8, reason stated above
+  direnv, mise, Uniswap v4-core, safe-smart-account, reth: NOT INSTALLED, reasons in
+  evidence/phase0/tool-substitutions.md, unchanged from the v1 record.

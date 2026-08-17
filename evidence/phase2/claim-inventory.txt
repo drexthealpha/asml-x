@@ -1,0 +1,81 @@
+Claim inventory, task 2.1
+Run 2026-08-12 01:59:07 UTC
+
+## Scope: every judge-facing document
+  documents scanned: 32
+  assertions extracted: 293
+
+  per document:
+    docs/limitations.md                             22
+    README.md                                       21
+    docs/decisions/ADR-011-river-role.md            21
+    JUDGE-GUIDE.md                                  20
+    docs/mainnet-path.md                            16
+    evidence/gates/phase-2-v21.md                   16
+    evidence/gates/phase-3.md                       14
+    docs/decisions/ADR-012-agent-framework.md       11
+    docs/decisions/ADR-013-ui-primitives.md         11
+    evidence/gates/phase-6.md                       11
+    evidence/gates/phase-7.md                       11
+    evidence/gates/phase-8.md                       10
+    evidence/gates/phase-9.md                       10
+    docs/decisions/ADR-006-onchain-surface.md        9
+    docs/verified/chain-1952-reality.md              9
+    evidence/gates/phase-4.md                        9
+    evidence/gates/phase-5.md                        8
+    docs/verified/exchangeos-availability.md         7
+    evidence/gates/phase-1.md                        7
+    docs/decisions/ADR-004-grounding-substitution.md   6
+    docs/decisions/ADR-009-rwa-standin.md            6
+    docs/decisions/ADR-007-formal-verification-tool.md   5
+    docs/decisions/ADR-010-coordination-auth.md      5
+    docs/decisions/ADR-001-venue-strategy.md         4
+    docs/decisions/ADR-008-chain-client-and-signing.md   4
+    docs/invariants.md                               4
+    docs/research-basis.md                           4
+    evidence/gates/phase-2.md                        4
+    docs/decisions/ADR-003-testnet-only.md           3
+    docs/decisions/ADR-002-exchange-os-claims.md     2
+    docs/verified/deployments.md                     2
+    docs/decisions/ADR-005-no-floats-no-clocks.md    1
+
+  by kind, which is what tells us where the verification effort has to go:
+    other      217
+    chain       34
+    formal      19
+    testing     12
+    version      8
+    onchain      3
+
+  first 12 rows, so the extraction can be judged rather than trusted:
+    C-201 [other] JUDGE-GUIDE.md:5
+      If you only have sixty seconds, do step 2 and step 4.
+    C-202 [chain] JUDGE-GUIDE.md:52
+      It refuses to start on anything except chain 1952 and names 195 as the deprecated testnet.
+    C-203 [version] JUDGE-GUIDE.md:65
+      Read that count with the correction it needs, because the earlier version of this sentence said it meant "the engine wanted to trade larger and was re
+    C-204 [other] JUDGE-GUIDE.md:65
+      Every one of them carries a notional around 3e30 against a 25e6 limit: the candidates were 1e12 times too large because the recorded run predates the 
+    C-205 [other] JUDGE-GUIDE.md:76
+      Full finding, including why a fix that does not regenerate its artifacts leaves the artifacts asserting the bug: [evidence/phase4/journal-provenance.m
+    C-206 [other] JUDGE-GUIDE.md:87
+      oracle diverged 1000 bps, REFUSED(OracleMarketDivergence)
+    C-207 [other] JUDGE-GUIDE.md:96
+      It removes each refusal in turn and confirms the tests go RED. 18 of 18 RED means no refusal is decorative.
+    C-208 [other] JUDGE-GUIDE.md:106
+      On its first run it generated 107 viable mutants of the risk engine and **37 survived**: no limit boundary was pinned anywhere, and the post-trade pro
+    C-209 [other] JUDGE-GUIDE.md:106
+      Both survivor lists, before and after, are in the evidence `[C-230]` `[C-231]`.
+    C-210 [other] JUDGE-GUIDE.md:146
+      Each is a multi-leg atomic batch through `BatchExecutor`: the risk guard leg runs first, so a cap breach or a halt reverts the whole batch before any 
+    C-211 [other] JUDGE-GUIDE.md:150
+      Full context, including how the agent adapted as its own fills moved the book (imbalance 3750 to 5172 to 6296 bps, a different order and size each cyc
+    C-212 [other] JUDGE-GUIDE.md:165
+      Every panel reports "not readable" or "runtime has not run", with red borders, and the numbers read 0 and n/a.
+
+  csv: evidence/phase2/claim-inventory.csv
+
+## Verdict, task 2.1
+  RESULT: PASS. 293 assertions extracted, each with an id and a
+  file:line origin. Machine-readable copy: evidence/phase2/claim-inventory.csv
+  Nothing here was typed from memory; every row cites where it was read from.

@@ -1,0 +1,28 @@
+Comparator completeness gate, task 5.5
+Run 2026-08-12 19:31:27 UTC
+
+  1. capture files
+     healthy   present  evidence/phase5/comparator/healthy.txt
+     paused    present  evidence/phase5/comparator/paused.txt
+     diverged  present  evidence/phase5/comparator/diverged.txt
+
+  2. verdicts, read from the JSON the UI renders
+     state      crypto     rwa        rwa-specific  cause
+     healthy    APPROVED   APPROVED   False         
+     paused     APPROVED   REFUSED    True          : RwaIssuerPaused (rwa-specific: true)
+     diverged   APPROVED   REFUSED    True          : RwaOracleMarketDivergence { got_bps: 1000, limit_b
+
+  3. the assertions
+     healthy has BOTH markets approving:            yes
+     paused refuses on the RWA side:               yes
+     paused names an RWA-specific cause:           yes
+     diverged refuses on the RWA side:             yes
+     diverged names an RWA-specific cause:         yes
+     CONTROL, crypto approved in every state:       yes ['APPROVED', 'APPROVED', 'APPROVED']
+     the two refusals have DIFFERENT causes:        yes [': RwaIssuerPaused (rwa-specific: true)', ': RwaOracleMarketDivergence']
+
+  All five assertions hold.
+
+## Verdict, task 5.5
+  RESULT: PASS. Three states present with the verdicts the task requires.
+  Reproduce: bash scripts/90-comparator-states.sh && bash scripts/91-assert-comparator-states.sh

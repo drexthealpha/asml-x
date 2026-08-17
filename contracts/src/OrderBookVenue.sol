@@ -136,8 +136,44 @@ contract OrderBookVenue {
         emit OrderPosted(id, msg.sender, marketId(base, quote), makerBuysBase, sizeBase, priceQuote);
     }
 
+    /// @notice Addresses permitted to take liquidity. The BatchExecutor is the only one in
+    ///         practice; a list rather than one immutable address so an executor can be rotated
+    ///         without redeploying the venue and orphaning every resting order.
+    mapping(address => bool) public authorisedTakers;
+
+    address public venueOwner;
+
+    event AuthorisedTakerSet(address indexed taker, bool allowed);
+
+    error NotAuthorisedTaker(address caller);
+    error NotVenueOwner();
+
+    /// The deployer owns taker authorisation. Added with `authorisedTakers`: the venue previously had
+    /// no constructor at all because it had no privileged state, and `venueOwner` would otherwise
+    /// have been address(0), leaving `setAuthorisedTaker` callable by nobody and `take` permanently
+    /// bricked. Caught by compiling before claiming.
+    constructor() {
+        venueOwner = msg.sender;
+    }
+
+    /// @notice Authorise or revoke a taker. Owner set at deployment.
+    function setAuthorisedTaker(address taker, bool allowed) external {
+        if (msg.sender != venueOwner) revert NotVenueOwner();
+        authorisedTakers[taker] = allowed;
+        emit AuthorisedTakerSet(taker, allowed);
+    }
+
     /// @notice Take against a resting order. Partial fills allowed.
+    ///
+    /// RESTRICTED TO AUTHORISED TAKERS. This was public, which meant the agent key could call the
+    /// venue directly and skip the BatchExecutor entirely: no fee, and no RiskGuard update either.
+    /// The second half of that is the more serious one, and it predates the fee. Closing it makes
+    /// both the risk claim and the fee claim structural rather than procedural.
+    ///
+    /// Makers are unaffected: `post` and `cancel` stay open, because a venue only its own operator
+    /// can quote into is not a venue.
     function take(uint256 id, uint256 baseAmount) external returns (uint256 quoteAmount) {
+        if (!authorisedTakers[msg.sender]) revert NotAuthorisedTaker(msg.sender);
         if (baseAmount == 0) revert ZeroAmount();
         Order storage o = orders[id];
         if (o.cancelled) revert AlreadyCancelled();

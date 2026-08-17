@@ -1,0 +1,21 @@
+[package]
+name = "alloy-probe"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish = false
+
+# NOT a workspace member of the product graph by accident: this crate exists to compare alloy
+# against the hand-rolled client. Nothing in the decision path depends on it, which keeps
+# ADR-012's falsification test (no HTTP client in decision-engine, risk-engine or executor) true.
+[[bin]]
+name = "alloy-probe"
+path = "src/main.rs"
+
+[dependencies]
+alloy = { version = "2", features = ["full"] }
+tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
+chain-client = { workspace = true }
+
+[lints]
+workspace = true

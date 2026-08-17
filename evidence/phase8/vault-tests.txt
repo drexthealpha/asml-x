@@ -1,0 +1,35 @@
+Task 8.2, AgentVault custody suite
+run: 2026-08-16 00:18:16 UTC
+tests declared in test/AgentVault.t.sol: 18
+
+No files changed, compilation skipped
+
+Ran 18 tests for test/AgentVault.t.sol:AgentVaultTest
+[PASS] testFuzz_aDepositorAlwaysGetsBackExactlyWhatTheyPutIn(uint96) (runs: 256, μ: 113182, ~: 113187)
+[PASS] test_aDepositorCanTightenTheirOwnLimit() (gas: 126064)
+[PASS] test_aLossAlsoLandsOnlyOnThatDepositor() (gas: 251098)
+[PASS] test_aRotatedAgentGetsNoNewPowers() (gas: 137371)
+[PASS] test_aShortDeliveringTokenCannotCreditABalanceTheVaultDoesNotHold() (gas: 1331261)
+[PASS] test_committedFundsCannotAlsoBeWithdrawn() (gas: 178331)
+[PASS] test_depositRefusesZero() (gas: 11240)
+[PASS] test_limitsAreIndependentPerDepositor() (gas: 245019)
+[PASS] test_nobodyCanPauseAnotherDepositor() (gas: 206648)
+[PASS] test_onlyTheDepositorCanWithdraw() (gas: 161263)
+[PASS] test_onlyTheOwnerCanRotateTheAgent() (gas: 19269)
+[PASS] test_pauseIsPerDepositorAndDoesNotAffectAnyoneElse() (gas: 266664)
+[PASS] test_pauseStopsTheAgentAndNeverTheWithdrawal() (gas: 129657)
+[PASS] test_profitAndLossLandOnTheDepositorWhoseFundsWereTraded() (gas: 259454)
+[PASS] test_theAgentCannotExceedAUsersLimit() (gas: 185844)
+[PASS] test_theAgentCannotTradeMoreThanIsInTheVault() (gas: 130258)
+[PASS] test_theVaultIsSolventThroughAFullCycle() (gas: 213595)
+[PASS] test_thereIsNoFunctionThatMovesFundsToAnArbitraryAddress() (gas: 202169)
+Suite result: ok. 18 passed; 0 failed; 0 skipped; finished in 43.97ms (46.86ms CPU time)
+
+Ran 1 test suite in 61.49ms (43.97ms CPU time): 18 tests passed, 0 failed, 0 skipped (18 total tests)
+
+== gate ==
+declared: 18
+passed:   18
+failed:   0
+exit:     0
+GATE: PASS  18 of 18, none skipped

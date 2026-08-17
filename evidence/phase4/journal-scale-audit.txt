@@ -1,0 +1,20 @@
+Journal scale audit
+Run 2026-08-12 02:29:37 UTC
+
+## Input
+  file:     evidence/journal.jsonl
+  written:  2026-08-12 03:29:20
+  rows:     43
+
+## Threshold
+  WEI_PER_MICRO is 1e12 (crates/market-intel/src/lib.rs:60). A notional in micro-units for
+  this demo is at most a few tens of millions, so any refusal reporting a got above 1e12 is
+  a wei value that was never divided down.
+
+  refusals by reason: {'lower score': 1956, 'MarketNotionalTooLarge': 280}
+  refusals with a plausible got:  280
+  refusals with a wei-scaled got: 0
+  naive-baseline control rows in the file: 0 of 43
+
+## Verdict
+  RESULT: PASS. No wei-scaled values. The journal's numbers can be quoted directly.

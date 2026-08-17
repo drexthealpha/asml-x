@@ -2,28 +2,31 @@
 
 Status: DEMONSTRATED. Every address below was deployed by
 0x7BdD2d0D1728Df5bEF8FAae8de85c3dD21a5dE46 and read back from chain.
-Captured 2026-08-09 07:39:02 UTC.
+Captured 2026-08-16 00:16:25 UTC.
 
 These are SELF-DEPLOYED contracts, not third-party venues. See
 docs/decisions/ADR-001-venue-strategy.md for why, and what it costs.
 
 | contract | address | role |
 |---|---|---|
-| MockERC20 tBASE | `0x9D22e538a72a5d2c9A28D08c27999216A78343C9` | TEST token, base asset |
-| MockERC20 tQUOTE | `0x7ff884C412a1A2c416e931C59889e5335C5EFa0D` | TEST token, quote asset |
-| OrderBookVenue | `0x7092050F3C4e72A2df8610ae2CC8c39DcA3B7f52` | escrowed limit order book |
-| RiskGuard | `0xE64b6e937Fd0d855161A5F6F0Aa1A3E01CB54c24` | binding exposure caps and kill switch |
-| BatchExecutor | `0x81beCFdE5ad4692Dc52F7eA6B9DEA0C5f1694d5e` | atomic multi-leg execution |
+| MockERC20 tBASE | `0x8FB4B7899EdE2D2015E9E03C9baFF9632C0bec84` | TEST token, base asset |
+| MockERC20 tQUOTE | `0x5069c6C619EE23a8e2EBa15b4B95F7EE16869501` | TEST token, quote asset |
+| OrderBookVenue | `0xd79276538A39ae5247e7a0d33D40AaD849e09B4D` | escrowed limit order book |
+| RiskGuard | `0x977A77aF8891187C73c7cdBd145B6fD57A0D0a47` | binding exposure caps and kill switch |
+| BatchExecutor | `0x954A0B68B81dD4028631a7D1B98d80bf2a563142` | atomic multi-leg execution |
+| FeeCollector | `0x2e0727C36c9F720E8d31C5eB3a3748A683610e38` | usage fee on executed notional, 50 bps, immutable 100 bps ceiling |
 
-Market id for tBASE/tQUOTE: `0x9b14309189a210d9c57d8f9988110c977884ed7629791ee202706dc43dbaab0e`
+| AgentVault | `0x3e938422f11D53b62F6Fe4afa2e4f52B1aFF4382` | user custody: agent may trade, never withdraw |
+Market id for tBASE/tQUOTE: `0x7cf714968d0c21fb12269a1a8e84bdc4fe973673c435100e04baae9b7c6b3fdd`
 
 Explorer:
 
-- venue: https://www.oklink.com/x-layer-testnet/address/0x7092050F3C4e72A2df8610ae2CC8c39DcA3B7f52
-- guard: https://www.oklink.com/x-layer-testnet/address/0xE64b6e937Fd0d855161A5F6F0Aa1A3E01CB54c24
-- executor: https://www.oklink.com/x-layer-testnet/address/0x81beCFdE5ad4692Dc52F7eA6B9DEA0C5f1694d5e
-- tBASE: https://www.oklink.com/x-layer-testnet/address/0x9D22e538a72a5d2c9A28D08c27999216A78343C9
-- tQUOTE: https://www.oklink.com/x-layer-testnet/address/0x7ff884C412a1A2c416e931C59889e5335C5EFa0D
+- venue: https://www.oklink.com/x-layer-testnet/address/0xd79276538A39ae5247e7a0d33D40AaD849e09B4D
+- guard: https://www.oklink.com/x-layer-testnet/address/0x977A77aF8891187C73c7cdBd145B6fD57A0D0a47
+- executor: https://www.oklink.com/x-layer-testnet/address/0x954A0B68B81dD4028631a7D1B98d80bf2a563142
+- feeCollector: https://www.oklink.com/x-layer-testnet/address/0x2e0727C36c9F720E8d31C5eB3a3748A683610e38
+- tBASE: https://www.oklink.com/x-layer-testnet/address/0x8FB4B7899EdE2D2015E9E03C9baFF9632C0bec84
+- tQUOTE: https://www.oklink.com/x-layer-testnet/address/0x5069c6C619EE23a8e2EBa15b4B95F7EE16869501
 
 ## Configuration on chain
 
@@ -31,22 +34,6 @@ Explorer:
 - guard.maxPerMarket[tBASE/tQUOTE] = 500e18
 - guard agents: BatchExecutor, deployer
 - guard.killed = false
-
-## RWA stand-in stack (Phase 5)
-
-SELF-DEPLOYED STAND-IN. Not a real asset, not a third-party protocol. Deployed
-because task 0.4 established no RWA-linked instrument is live on X Layer testnet.
-See docs/decisions/ADR-009-rwa-standin.md.
-
-| contract | address | role |
-|---|---|---|
-| RwaVault | `0x3BF12df3BB0b6f0dF8c57089ab78e402bf698F84` | oracle mark, issuer pause, redemption window, yield index |
-| RwaRiskGuard | `0x401Ef3E4b9b838A021109c3BBebb7FDC70Cb9278` | RiskGuard plus four RWA-specific refusals |
-
-RWA market id: `0xb87ddfac6c6e92e03338f4740cb958f7966abe0a7c132510824697e5994bacba`
-
-- vault: https://www.oklink.com/x-layer-testnet/address/0x3BF12df3BB0b6f0dF8c57089ab78e402bf698F84
-- rwa guard: https://www.oklink.com/x-layer-testnet/address/0x401Ef3E4b9b838A021109c3BBebb7FDC70Cb9278
-
-Policy on chain: maxOracleAge 3600s, windowBuffer 43200s, maxDivergence 300 bps,
-gross cap 1000e18, RWA market cap 400e18.
+- venue.authorisedTakers[BatchExecutor] = true (nobody else can take; direct fills revert)
+- fee.chargers[BatchExecutor] = true, fee.feeBps = 50, fee.MAX_FEE_BPS = 100
+- BatchExecutor.feeCollector is immutable and every batch must end with a leg targeting it

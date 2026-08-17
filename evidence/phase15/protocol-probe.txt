@@ -1,0 +1,24 @@
+Coordination protocol probe, task 15.2
+Run 2026-08-16 19:15:42 UTC, server up after 40s
+
+== GET /health (no key required) ==
+{"chain_id":1952,"ok":true,"protocol_version":"1.0.0","refused":0,"served":0}
+
+== GET /thesis ==
+{"block":38448865,"confidence_bps":0,"halted":false,"imbalance_bps":"-3928","live_orders":25,"market":"tBASE/tQUOTE","snapshot_age_ms":817,"spread_bps":"-6666","thesis":"BOOK IS CROSSED: best bid 2.400000 is at or above best ask 1.200000, so spread-based inference is unreliable; spread -6666 bps observed, volatility not yet estimable, fewer than three mid observations so far; depth is ask-heavy by 3928 bps"}
+
+== GET /capacity ==
+{"current_exposure_micro":"23456250","first_refusal_beyond":null,"halted":false,"max_permitted_size_micro":"12500000"}
+
+== POST /quote ==
+{"block":38448865,"expires_at_ms":1786907757513,"market":"tBASE/tQUOTE","price_micro":"1200000","quote_id":1,"requires_human_approval":false,"side":"Buy","size_micro":"250000","ttl_ms":15000}
+
+
+== POST /accept ==
+{"accepted":true,"handoff_error":null,"handoff_written":true,"held_ms":41,"market":"tBASE/tQUOTE","note":"queued for settlement by the brain runtime, which owns the keystore; this endpoint never signs","price_micro":"1200000","priced_at_block":38448865,"quote_id":1,"side":"Buy","size_micro":"250000"}
+
+== refusals a client must handle ==
+  no api key on /thesis:        401
+  unknown quote_id on /accept:  404
+  size_micro as a number:       400
+  unknown endpoint:             404

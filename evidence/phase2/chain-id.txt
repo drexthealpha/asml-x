@@ -1,0 +1,34 @@
+Chain identity re-verification, task 2.3
+Run 2026-08-12 01:59:12 UTC
+
+## Endpoint
+  primary:  https://testrpc.xlayer.tech
+  fallback: https://xlayer-testnet.drpc.org
+
+## Chain id
+  cast chain-id -> 1952
+  MATCHES the claimed chain id 1952.
+
+  The trap, restated because it is the single easiest way to be confidently wrong here:
+  chain 195 is the DEPRECATED X Layer testnet and it STILL ANSWERS. A script pointed at
+  the old endpoint returns a plausible chain id, plausible blocks and no code at any of
+  our addresses. That is why the address checks below are the real test, not this one.
+
+## Block cadence, measured rather than quoted
+  head block:        38041120 at unix 1786499957
+  300 blocks back:   38040820 at unix 1786499657
+  span:              300s over 300 blocks
+  mean block time:   1.000s
+  Claimed ~1.0s. Measured above. Reported as measured, not as claimed.
+
+## Deployer
+  address: 0x7BdD2d0D1728Df5bEF8FAae8de85c3dD21a5dE46
+  balance: 199645970969925247 wei
+  nonce:   99
+
+## Verdict, task 2.3
+  addresses checked: 7
+  empty code:        0
+  RESULT: PASS. Chain id is 1952 and every address in docs/verified/deployments.md
+  returns non-empty bytecode on the live chain.
+  Reproduce: bash scripts/67-verify-deployments.sh

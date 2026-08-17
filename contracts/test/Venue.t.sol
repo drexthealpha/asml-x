@@ -6,6 +6,7 @@ import {MockERC20} from "../src/MockERC20.sol";
 import {OrderBookVenue} from "../src/OrderBookVenue.sol";
 import {RiskGuard} from "../src/RiskGuard.sol";
 import {BatchExecutor} from "../src/BatchExecutor.sol";
+import {FeeCollector} from "../src/FeeCollector.sol";
 
 contract VenueTest is Test {
     MockERC20 base;
@@ -19,6 +20,11 @@ contract VenueTest is Test {
         base = new MockERC20("Test Base", "tBASE");
         quote = new MockERC20("Test Quote", "tQUOTE");
         venue = new OrderBookVenue();
+
+        // This suite tests the venue's own escrow and fill arithmetic in isolation, so `taker` stands
+        // in for the executor. Authorised explicitly rather than left open, because leaving `take`
+        // callable by anyone is exactly the bypass task 7.3 closed.
+        venue.setAuthorisedTaker(taker, true);
 
         base.mint(maker, 1_000 ether);
         quote.mint(maker, 1_000 ether);
@@ -140,6 +146,8 @@ contract BatchExecutorTest is Test {
     OrderBookVenue venue;
     RiskGuard guard;
     BatchExecutor exec;
+    FeeCollector feeCollector;
+    address treasury = address(0x7777);
 
     address maker = address(0x1111);
     bytes32 market;
@@ -149,7 +157,10 @@ contract BatchExecutorTest is Test {
         quote = new MockERC20("Test Quote", "tQUOTE");
         venue = new OrderBookVenue();
         guard = new RiskGuard(1_000 ether);
-        exec = new BatchExecutor(address(guard));
+        feeCollector = new FeeCollector(treasury, 50);
+        exec = new BatchExecutor(address(guard), address(feeCollector));
+        feeCollector.setCharger(address(exec), true);
+        venue.setAuthorisedTaker(address(exec), true);
 
         market = venue.marketId(address(base), address(quote));
         guard.setMarketCap(market, 50 ether);
@@ -160,6 +171,22 @@ contract BatchExecutorTest is Test {
 
         vm.prank(maker);
         base.approve(address(venue), type(uint256).max);
+
+        // The executor pays its own usage fee out of the quote it holds.
+        vm.prank(address(exec));
+        quote.approve(address(feeCollector), type(uint256).max);
+    }
+
+    /// The fee leg every batch must end with. A helper rather than four copies, because the batches
+    /// below are testing the guard and the venue, not the fee, and an inlined encodeCall in each one
+    /// would be four places to get the argument order wrong.
+    function _feeLeg(uint256 notional) internal view returns (BatchExecutor.Leg memory) {
+        return BatchExecutor.Leg({
+            target: address(feeCollector),
+            data: abi.encodeCall(
+                FeeCollector.charge, (address(exec), market, address(quote), notional)
+            )
+        });
     }
 
     function _postSell(uint256 size, uint256 price) internal returns (uint256 id) {
@@ -188,7 +215,7 @@ contract BatchExecutorTest is Test {
         uint256 id = _postSell(40 ether, 2 ether);
 
         // 40 base at 2 quote = 80 quote exposure, above the 50 ether market cap.
-        BatchExecutor.Leg[] memory legs = new BatchExecutor.Leg[](2);
+        BatchExecutor.Leg[] memory legs = new BatchExecutor.Leg[](3);
         legs[0] = BatchExecutor.Leg({
             target: address(guard),
             data: abi.encodeCall(RiskGuard.addExposure, (market, 80 ether))
@@ -197,6 +224,7 @@ contract BatchExecutorTest is Test {
             target: address(venue),
             data: abi.encodeCall(OrderBookVenue.take, (id, 40 ether))
         });
+        legs[2] = _feeLeg(80 ether);
 
         uint256 venueBaseBefore = base.balanceOf(address(venue));
         uint256 execQuoteBefore = quote.balanceOf(address(exec));
@@ -214,7 +242,7 @@ contract BatchExecutorTest is Test {
     function test_withinCapTheWholeBatchLands() public {
         uint256 id = _postSell(20 ether, 2 ether);
 
-        BatchExecutor.Leg[] memory legs = new BatchExecutor.Leg[](2);
+        BatchExecutor.Leg[] memory legs = new BatchExecutor.Leg[](3);
         legs[0] = BatchExecutor.Leg({
             target: address(guard),
             data: abi.encodeCall(RiskGuard.addExposure, (market, 40 ether))
@@ -223,6 +251,7 @@ contract BatchExecutorTest is Test {
             target: address(venue),
             data: abi.encodeCall(OrderBookVenue.take, (id, 20 ether))
         });
+        legs[2] = _feeLeg(40 ether);
 
         vm.prank(address(exec));
         quote.approve(address(venue), type(uint256).max);
@@ -239,7 +268,7 @@ contract BatchExecutorTest is Test {
         uint256 id = _postSell(10 ether, 2 ether);
         guard.kill("operator halt");
 
-        BatchExecutor.Leg[] memory legs = new BatchExecutor.Leg[](2);
+        BatchExecutor.Leg[] memory legs = new BatchExecutor.Leg[](3);
         legs[0] = BatchExecutor.Leg({
             target: address(guard),
             data: abi.encodeCall(RiskGuard.addExposure, (market, 20 ether))
@@ -248,6 +277,7 @@ contract BatchExecutorTest is Test {
             target: address(venue),
             data: abi.encodeCall(OrderBookVenue.take, (id, 10 ether))
         });
+        legs[2] = _feeLeg(20 ether);
 
         vm.expectRevert();
         exec.execute(legs, bytes32(uint256(9)));

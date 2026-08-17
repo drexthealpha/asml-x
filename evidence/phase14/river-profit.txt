@@ -1,0 +1,45 @@
+Task 14.5: river against the REALIZED PROFIT target
+Run 2026-08-16 16:56:41 UTC
+
+## Inputs
+  river:       0.25.0
+  journal:     /mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/evidence/journal.jsonl (133 rows)
+  settlements: /mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/evidence/settlements.jsonl (8 rows)
+
+  settlements:        8
+  orphaned (dropped): 1
+  usable samples:     7
+  class balance:      3 profitable, 4 not
+
+  river progressive-validation accuracy: 0.5714
+  correct predictions:                   4 of 7
+  majority-class baseline:               0.5714
+  margin:                                +0.0 points, +0.0 predictions
+
+  one-sided binomial p against the baseline rate: 0.6531
+  (probability of 4 or more correct out of 7 by guessing the majority class)
+
+## ADR-011's falsification test, answered
+
+  river DOES NOT beat the majority baseline on the profit target.
+  ADR-011's condition is NOT met. The ADR stands: river remains a benchmark.
+
+  This is the outcome ADR-011 anticipated, and it is a finding about the FEATURES rather
+  than about either implementation: if a linear model cannot find profit signal in these
+  columns, the Rust learner is not failing to find one either.
+
+## THE CAVEAT THAT GOVERNS ALL OF THE ABOVE
+
+  These labels are INDUCED, not observed. This venue's book is static, so no forecast ever
+  settles on its own; scripts/171-build-pnl-sample.sh posts real orders that move the mid,
+  alternating up and down, and the profit label follows directly from which way it moved.
+
+  So the target is a function of the sampling procedure and not of the market. A win here
+  would NOT license reopening the sidecar question on its own, and this file says so BEFORE
+  reporting the number rather than after. What the run does establish is that the profit
+  target now exists, is joinable to the decisions that produced it, and can be benchmarked
+  at all, which is what 14.4 was for.
+
+  The honest summary: ADR-011 asked for a measurement that only an exogenous market can
+  supply, and this venue cannot supply one. That is a limit of the harness, stated, not a
+  result dressed up as one.

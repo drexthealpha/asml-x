@@ -16,11 +16,53 @@ use decision_engine::{assert_real_search, Action, DecisionEngine, NaiveBaseline,
 use journal::{Entry, Journal, SignalRecord};
 use market_intel::{read_snapshot, MarketIntel, Signals};
 use risk_engine::{Limits, RiskContext, RiskEngine, RwaState};
+
+mod trace;
 use std::process::Command;
 
 const RPC: &str = "https://testrpc.xlayer.tech";
 const FALLBACK: &str = "https://xlayer-testnet.drpc.org";
 const EXPECTED_CHAIN_ID: u64 = 1952;
+
+/// The RPC to use, from `ASML_RPC`, defaulting to testnet.
+///
+/// These were compile-time constants pinned to 1952, which was correct while testnet was the only
+/// target. Phase 12 made it wrong: the mainnet loop pointed the runtime at mainnet ADDRESSES while
+/// it kept reading the testnet RPC, so `orderCount()` returned no bytes and the cycle halted with
+/// RpcFailure. The address book and the endpoint have to move together.
+fn rpc_url() -> String {
+    std::env::var("ASML_RPC").unwrap_or_else(|_| RPC.to_string())
+}
+
+fn fallback_url() -> Option<String> {
+    match std::env::var("ASML_RPC_FALLBACK") {
+        Ok(v) if !v.is_empty() => Some(v),
+        Ok(_) => None,
+        // Only fall back to the testnet secondary when the primary is also the testnet default.
+        // A mainnet run must never silently fail over to a testnet endpoint: it would read a
+        // different chain's state and report it as mainnet.
+        Err(_) => {
+            if rpc_url() == RPC {
+                Some(FALLBACK.to_string())
+            } else {
+                None
+            }
+        }
+    }
+}
+
+/// The chain id the runtime insists on, from `ASML_CHAIN_ID`, defaulting to testnet.
+///
+/// The CHECK IS KEPT deliberately. The runtime still refuses to run against a chain it was not told
+/// to expect; it now takes the expectation from the environment rather than a literal. Deleting the
+/// check to make mainnet work would have discarded the guard that catches exactly this class of
+/// mistake.
+fn expected_chain_id() -> u64 {
+    std::env::var("ASML_CHAIN_ID")
+        .ok()
+        .and_then(|v| v.parse().ok())
+        .unwrap_or(EXPECTED_CHAIN_ID)
+}
 
 struct Deployments {
     venue: chain_client::Address,
@@ -139,6 +181,192 @@ fn signal_records(s: &Signals) -> Vec<SignalRecord> {
         input_age_ms: s.input_age_ms,
     });
     out
+}
+
+/// Settle quotes that an external agent accepted through the coordination API.
+///
+/// The API writes a handoff record on /accept and never signs; this owns the keystore, so this is
+/// where a stranger's accepted quote becomes a transaction. Task 6.4.
+fn settle_accepted(
+    repo_root: &str,
+    d: &Deployments,
+    client: &chain_client::ChainClient,
+) -> Result<(), Box<dyn std::error::Error>> {
+    let path = std::env::var("ASML_ACCEPTED_PATH")
+        .unwrap_or_else(|_| format!("{repo_root}/evidence/phase6/accepted-quotes.jsonl"));
+    let text = std::fs::read_to_string(&path).unwrap_or_default();
+    let mut records: Vec<serde_json::Value> = text
+        .lines()
+        .filter(|l| !l.trim().is_empty())
+        .filter_map(|l| serde_json::from_str(l).ok())
+        .collect();
+
+    println!("ASML-X settle-accepted");
+    println!("  handoff file  {path}");
+    println!("  records       {}", records.len());
+    let pending = records
+        .iter()
+        .filter(|r| r["settled"].as_bool() != Some(true))
+        .count();
+    println!("  unsettled     {pending}");
+    println!();
+
+    if pending == 0 {
+        println!("  nothing to settle.");
+        return Ok(());
+    }
+
+    let mut jrnl = Journal::open(format!("{repo_root}/evidence/journal.jsonl"))?;
+    let risk = RiskEngine::new(Limits::conservative_testnet());
+    let mut intel = MarketIntel::new(32);
+    let snap = read_snapshot(client, d.venue)?;
+    let now_ms = snap.chain_time_ms;
+    let signals = intel.observe(&snap, now_ms);
+    let pf = read_portfolio(client, d, &signals, now_ms)?;
+    // Settlement uses a plain healthy context: the kill switch and RWA conditions are
+    // enforced by the contracts on the way through, and the offchain gate here is the
+    // notional and skew check on the CURRENT book.
+    let ctx = RiskContext::healthy_at(now_ms);
+
+    println!("  book at block {} with {} live orders", snap.block_number, snap.orders.len());
+
+    let mut settled_any = false;
+    for rec in &mut records {
+        if rec["settled"].as_bool() == Some(true) {
+            continue;
+        }
+        let quote_id = rec["quote_id"].as_u64().unwrap_or(0);
+        let caller = rec["caller"].as_str().unwrap_or("unknown").to_string();
+        let size_micro: i128 = rec["size_micro"]
+            .as_str()
+            .and_then(|s| s.parse().ok())
+            .unwrap_or(0);
+        let price_micro: i128 = rec["price_micro"]
+            .as_str()
+            .and_then(|s| s.parse().ok())
+            .unwrap_or(0);
+        let side = if rec["side"].as_str().unwrap_or("Buy").eq_ignore_ascii_case("sell") {
+            core_types::Side::Sell
+        } else {
+            core_types::Side::Buy
+        };
+
+        println!("  quote {quote_id} from {caller}: {side:?} {size_micro} micro at {price_micro}");
+
+        // THE GATE RUNS AGAIN, against the book as it is now rather than as it was when the quote
+        // was priced. A quote is a promise about a past book; settling without re-checking would make
+        // the risk engine advisory.
+        let intent = OrderIntent {
+            market: MarketId::new("tBASE/tQUOTE"),
+            kind: InstrumentKind::Spot,
+            side,
+            size_micro,
+            limit_price_micro: price_micro,
+            decision_id: quote_id,
+        };
+        let approved = match risk.evaluate(&intent, &pf, &ctx) {
+            Ok(a) => a,
+            Err(r) => {
+                println!("    REFUSED on re-check: {r:?}");
+                rec["settle_refusal"] = serde_json::Value::String(format!("{r:?}"));
+                continue;
+            }
+        };
+        let _ = approved;
+
+        // Find a live order that can fill it on the correct side and at a price no worse than quoted.
+        // A live order is one that is neither cancelled nor fully filled. `maker_buys_base`
+        // is the maker's side, so a caller BUYING base needs a maker who is selling it.
+        let candidate = snap.orders.iter().find(|o| {
+            !o.cancelled
+                && o.remaining_base() > 0
+                && match side {
+                    core_types::Side::Buy => !o.maker_buys_base && o.price_quote <= price_micro,
+                    core_types::Side::Sell => o.maker_buys_base && o.price_quote >= price_micro,
+                }
+        });
+        let Some(order) = candidate else {
+            println!("    no live order on the book satisfies this quote right now");
+            rec["settle_refusal"] = serde_json::Value::String("no matching live order".into());
+            continue;
+        };
+
+        // FILL WHAT THE ORDER HAS, not what the caller asked for.
+        //
+        // The first version sent the caller's full size at the quoted price and the batch reverted
+        // with LegFailed at the venue leg. A maker with less remaining base than the request cannot
+        // fill it, and the settling price is the maker's, not the one the caller was quoted: a quote
+        // is a bound the caller agreed to, and the fill happens against a specific order.
+        let fill_micro = size_micro.min(order.remaining_base());
+        if fill_micro <= 0 {
+            println!("    chosen order has nothing left to fill");
+            rec["settle_refusal"] = serde_json::Value::String("chosen order fully filled".into());
+            continue;
+        }
+        if fill_micro < size_micro {
+            println!(
+                "    partial fill: order {} has {fill_micro} micro left of the {size_micro} requested",
+                order.id
+            );
+        }
+        rec["filled_micro"] = serde_json::Value::String(fill_micro.to_string());
+        rec["fill_price_micro"] = serde_json::Value::String(order.price_quote.to_string());
+
+        let base_wei = market_intel::micro_to_wei(fill_micro);
+        let quote_wei = market_intel::micro_to_wei(fill_micro * order.price_quote / MICRO);
+        match submit_take(repo_root, order.id, base_wei, quote_wei, quote_id) {
+            Ok(tx) => {
+                println!("    SETTLED tx {tx}");
+                rec["settled"] = serde_json::Value::Bool(true);
+                rec["tx_hash"] = serde_json::Value::String(tx.clone());
+                rec["settled_at_block"] = serde_json::Value::from(snap.block_number);
+                settled_any = true;
+
+                let entry = Entry {
+                    decision_id: quote_id,
+                    observed_at_ms: now_ms,
+                    block_number: snap.block_number,
+                    market: "tBASE/tQUOTE".to_string(),
+                    thesis: format!(
+                        "settlement of quote {quote_id} accepted by external caller {caller} through the coordination API"
+                    ),
+                    thesis_confidence_bps: 0,
+                    signals: signal_records(&signals),
+                    candidates: vec![],
+                    risk_verdict: "approved on re-check at settlement time".to_string(),
+                    action: Some(format!(
+                        "settle external quote {quote_id} for {caller}: take order {} {side:?} {size_micro} micro",
+                        order.id
+                    )),
+                    tx_hash: Some(tx),
+                    outcome: None,
+                    evidence: vec![
+                        format!("coordination API handoff record for quote {quote_id}"),
+                        format!("eth_call venue.orders at block {}", snap.block_number),
+                        "risk engine re-evaluated the intent against the current book".to_string(),
+                    ],
+                };
+                jrnl.append(&entry)?;
+            }
+            Err(e) => {
+                println!("    submit failed: {e}");
+                rec["settle_error"] = serde_json::Value::String(e);
+            }
+        }
+    }
+
+    // Rewrite the handoff file with the updated records.
+    let mut out = String::new();
+    for r in &records {
+        out.push_str(&r.to_string());
+        out.push('\n');
+    }
+    std::fs::write(&path, out)?;
+
+    println!();
+    println!("  settled at least one: {settled_any}");
+    println!("  handoff file updated: {path}");
+    Ok(())
 }
 
 /// Submit an approved take through the BatchExecutor via `cast`.
@@ -378,15 +606,35 @@ fn learn_loop(
         } else {
             Vec::new()
         };
+        // TASK 14.4. Each settlement is written against the decision that MADE the prediction, in an
+        // append-only sidecar. See Journal::append_settlement for why not the `outcome` field.
         for o in &settled {
             println!(
-                "  settled decision {}: predicted {:?}, realized {} bps, correct {}, edge error {}",
+                "  settled decision {}: predicted {:?}, realized {} bps, correct {}, edge error {}, pnl {} micro quote",
                 o.decision_id,
                 o.predicted,
                 o.realized_move_bps,
                 o.direction_correct,
-                o.edge_error_micro
+                o.edge_error_micro,
+                o.realized_pnl_micro
             );
+            jrnl.append_settlement(
+                format!("{repo_root}/evidence/settlements.jsonl"),
+                &journal::Settlement {
+                    decision_id: o.decision_id,
+                    settled_at_ms: o.settled_at_ms,
+                    signal_name: o.signal_name.clone(),
+                    predicted: format!("{:?}", o.predicted).to_lowercase(),
+                    mid_at_decision: o.mid_at_decision,
+                    mid_at_settle: o.mid_at_settle,
+                    size_micro: o.size_micro,
+                    realized_move_bps: o.realized_move_bps,
+                    direction_correct: o.direction_correct,
+                    expected_edge_micro: o.expected_edge_micro,
+                    edge_error_micro: o.edge_error_micro,
+                    realized_pnl_micro: o.realized_pnl_micro,
+                },
+            )?;
         }
 
         let changes = learner.update_params(now_ms);
@@ -439,6 +687,12 @@ fn learn_loop(
                 opened_at_ms: now_ms,
                 params_at_decision: learner.params().clone(),
                 signal_name: "imbalance_bps".to_string(),
+                // TASK 14.4. The size actually taken, so this forecast can settle to a PnL rather
+                // than only to a direction. A hold has no position and contributes zero.
+                size_micro: chosen.map_or(0, |c| match &c.action {
+                    Action::Take { base_amount, .. } => *base_amount,
+                    _ => 0,
+                }),
             });
         }
 
@@ -455,17 +709,15 @@ fn learn_loop(
             risk_verdict: decision.risk_verdict.clone(),
             action: chosen.map(|c| c.action.label()),
             tx_hash: None,
-            outcome: settled
-                .iter()
-                .map(|o| {
-                    format!(
-                        "decision {} realized {} bps, correct {}",
-                        o.decision_id, o.realized_move_bps, o.direction_correct
-                    )
-                })
-                .collect::<Vec<_>>()
-                .join("; ")
-                .into(),
+            // TASK 14.4. This used to be filled with whatever settled during THIS cycle, which is a
+            // DIFFERENT decision made a minute earlier: decision 163's row carried decision 87's
+            // result. Anyone reading a row and taking `outcome` as that row's outcome was reading
+            // another decision's number.
+            //
+            // A row's own outcome does not exist yet when the row is written, so the honest value
+            // here is None. The outcome is recorded later, against the decision that made the
+            // prediction, in evidence/settlements.jsonl. ADR-020 has the reasoning.
+            outcome: None,
             evidence: vec![format!("learn cycle at block {}", snap.block_number)],
         })?;
 
@@ -513,14 +765,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let repo_root = std::env::var("ASML_REPO")
         .unwrap_or_else(|_| "/mnt/c/Users/zulab/OneDrive/Desktop/ASML-X".to_string());
 
-    let client = chain_client::ChainClient::new(RPC, Some(FALLBACK.to_string()));
+    let client = chain_client::ChainClient::new(&rpc_url(), fallback_url());
 
     // Fail fast and loudly on the wrong chain. Chain 195 is the deprecated testnet
     // and would otherwise look like a working endpoint.
     let chain_id = client.chain_id()?;
-    if chain_id != EXPECTED_CHAIN_ID {
+    let expected = expected_chain_id();
+    if chain_id != expected {
         return Err(format!(
-            "wrong chain: connected to {chain_id}, expected {EXPECTED_CHAIN_ID}. \
+            "wrong chain: connected to {chain_id}, expected {expected}. \
              195 is the DEPRECATED X Layer testnet."
         )
         .into());
@@ -549,6 +802,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("  cycles      {cycles}");
     println!();
 
+    if mode == "settle-accepted" {
+        return settle_accepted(&repo_root, &d, &client);
+    }
+
     if mode == "sidebyside" {
         return side_by_side(&client, &d, &risk);
     }
@@ -559,11 +816,31 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let mut actions_this_run: u32 = 0;
 
+    // TASK 14.3. One tracer per run; one root span per cycle. Explicit rather than a global
+    // subscriber, because a second implicit sink that silently swallows output when unconfigured is
+    // how a trace file ends up mysteriously empty.
+    let tracer = trace::Tracer::new(format!("{repo_root}/evidence/phase14/decision-trace.jsonl"));
+    // Printed after the first root span opens, not here: the trace id is assigned by the
+    // OpenTelemetry SDK when a root span starts, so reading it at construction prints an empty
+    // string. The earlier hand-rolled tracer minted the id in its constructor and this line was
+    // correct for it.
+
     for cycle in 0..cycles {
+        let mut root = tracer.span("decision_cycle", None);
+        root.attr("cycle", cycle);
+        if cycle == 0 {
+            println!("  trace id    {}", tracer.trace_id());
+        }
+
+        let mut sp_read = tracer.span("perceive.read_snapshot", Some(&root));
         let snap = match read_snapshot(&client, d.venue) {
             Ok(s) => s,
             Err(e) => {
                 // A read failure is a risk event, not a retry opportunity.
+                sp_read.attr("outcome", "failed").attr("error", &e);
+                tracer.end(sp_read);
+                root.attr("outcome", "rpc_failed");
+                tracer.end(root);
                 println!("cycle {cycle}: chain read failed: {e}. Treating as rpc_failed.");
                 let mut ctx = RiskContext::healthy_at(0);
                 ctx.rpc_failed = true;
@@ -575,10 +852,27 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
         };
 
+        sp_read
+            .attr("block", snap.block_number)
+            .attr("live_orders", snap.orders.len())
+            .attr("outcome", "ok");
+        tracer.end(sp_read);
+        root.attr("block", snap.block_number);
+
+        let mut sp_sig = tracer.span("perceive.signals", Some(&root));
         let now_ms = snap.chain_time_ms;
         let signals = intel.observe(&snap, now_ms);
+        sp_sig.attr("mid_present", signals.mid.is_some());
+        tracer.end(sp_sig);
+
+        let mut sp_thesis = tracer.span("decide.thesis", Some(&root));
         let (thesis, confidence) = MarketIntel::thesis(&signals);
+        sp_thesis.attr("confidence_bps", confidence);
+        tracer.end(sp_thesis);
+
+        let sp_pf = tracer.span("perceive.portfolio", Some(&root));
         let portfolio = read_portfolio(&client, &d, &signals, snap.chain_time_ms)?;
+        tracer.end(sp_pf);
 
         let mut ctx = RiskContext::healthy_at(now_ms);
         ctx.actions_last_minute = actions_this_run;
@@ -710,9 +1004,23 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             ],
         })?;
 
+        // TASK 14.3: close the root span. Its duration is the whole cycle, and every stage span
+        // above is a child, so the trace shows where the time actually went rather than only how
+        // much there was.
+        root.attr("decision_id", decision_id);
+        tracer.end(root);
+
         if cycle + 1 < cycles {
             std::thread::sleep(std::time::Duration::from_secs(2));
         }
+    }
+
+    // Written once at the end rather than streamed, so a partial run cannot leave a half-written
+    // line that breaks `jq`. A trace file that cannot be parsed is worse than one that is absent,
+    // because it looks like evidence.
+    match tracer.flush() {
+        Ok(n) => println!("  trace spans written: {n}"),
+        Err(e) => println!("  trace write failed: {e}"),
     }
 
     println!();

@@ -1,0 +1,239 @@
+@import "tailwindcss";
+
+/* ============================================================================
+   ASML-X terminal tokens.
+
+   Structure copied from HypeTerminal's packages/ui/src/globals.css, which is a
+   two-layer system: primitives inside @theme, semantics as CSS variables that
+   components reference by MEANING. Cited in evidence/ui-study.md section 2
+   (globals.css:25-107 for layer 1, :110-260 for layer 2).
+
+   Why two layers matters here: the panels below reference --bg-raised and
+   --text-error, never a grey number. Retuning the palette touches this file only.
+
+   Tailwind v4 is configured in CSS. There is no tailwind.config.js, and the
+   plugin is wired in vite.config.ts.
+   ============================================================================ */
+
+@theme {
+  /* ---- Fonts ----
+     ui-study.md section 2: HypeTerminal uses Inter for sans and a monospace
+     stack for numerals (globals.css:28-29). We have no webfont budget and no
+     network at runtime, so this is a system stack with the same intent. */
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", "Consolas", monospace;
+
+  /* ---- Type scale, SHIFTED ONE STEP DOWN from Tailwind's default ----
+     This is the single change that makes terminal density reachable.
+     HypeTerminal's globals.css:42-57 sets text-2xs to 12px/16px and text-sm to
+     16px/24px, i.e. every step is one smaller than stock Tailwind. Data rows use
+     text-2xs. Padding alone cannot compensate for a larger scale. */
+  --text-2xs: 12px;
+  --text-2xs--line-height: 16px;
+  --text-xs: 14px;
+  --text-xs--line-height: 20px;
+  --text-sm: 16px;
+  --text-sm--line-height: 24px;
+  --text-base: 16px;
+  --text-base--line-height: 22px;
+  --text-lg: 20px;
+  --text-lg--line-height: 26px;
+
+  /* ---- 4px spacing grid (globals.css:65-71) ---- */
+  --spacing: 4px;
+
+  /* ---- Radius through a single factor (globals.css:76-87) ----
+     Their factor is 0.5, deliberately tighter than the token names suggest. A
+     terminal reads wrong with rounded corners, so ours is tighter still. */
+  --radius-factor: 0.35;
+  --radius-2: calc(2px * var(--radius-factor));
+  --radius-4: calc(4px * var(--radius-factor));
+  --radius-8: calc(8px * var(--radius-factor));
+
+  /* ---- Letter spacing for the uppercase column headers (globals.css:95) ---- */
+  --tracking-label: 0.08em;
+
+  /* ---- Z scale (globals.css:99-105) ---- */
+  --z-sticky: 40;
+  --z-overlay: 50;
+  --z-dropdown: 1000;
+  --z-tooltip: 1100;
+}
+
+@layer base {
+  /* ==================== Semantic layer, dark first ====================
+     This product is a terminal and ships dark. Light mode is defined below it
+     rather than the other way round, because the dark values are the ones that
+     were designed and the light ones are the adaptation. */
+  :root {
+    color-scheme: dark;
+
+    --bg-base: #12131a;
+    --bg-raised: #1d1e26;
+    --bg-overlay: #292b33;
+    --bg-sunken: #0a0a0a;
+
+    --text-strong: #ffffff;
+    --text-weak: #ffffffc7;
+    --text-muted: #6b7280;
+    --text-disabled: #ffffff1f;
+    /* NOT a HypeTerminal token. It was invented here at #6b7280, a 45% grey, and used 38
+       times for body text at 10px, which is the single biggest reason this terminal was hard
+       to read. Aliased to --text-weak so any remaining use is legible. Do not add values to
+       this palette that their token file does not have. */
+    --text-muted: var(--text-weak);
+
+    --fill-weak: #ffffff0f;
+    --fill-hover: #ffffff0f;
+    --fill-press: #ffffff1f;
+
+    --stroke-weak: #ffffff1f;
+    --stroke-strong: #ffffff99;
+    --stroke-focus: #b2bcf1;
+
+    /* Semantic status. Long is green, short is red, refusals are amber, and
+       nothing else gets a colour. A terminal that colours everything says
+       nothing. */
+    --status-long: #77c7af;
+    --status-short: #ff9c9c;
+    --status-warn: #e0be70;
+    --status-info: #7ec0e5;
+    --status-neutral: #ffffff99;
+  }
+
+  html.light {
+    color-scheme: light;
+
+    --bg-base: #ffffff;
+    --bg-raised: #ffffff;
+    --bg-overlay: #f5f6fa;
+    --bg-sunken: #f5f6fa;
+
+    --text-strong: #000626e5;
+    --text-weak: #000933a6;
+    --text-muted: #767d8c;
+
+    --fill-weak: #0015800a;
+    --fill-hover: #0015800a;
+    --fill-press: #0011661a;
+
+    --stroke-weak: #0011661a;
+    --stroke-strong: #000d4d73;
+
+    --status-long: #067a57;
+    --status-short: #c73a3a;
+    --status-warn: #8f6c1a;
+    --status-info: #1a74a8;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    background: var(--bg-base);
+    color: var(--text-strong);
+    font-family: var(--font-sans);
+    /* Terminal chrome should never scroll horizontally. Panels own their own
+       overflow, which is the rule at ui-study.md section 1 (main-workspace.tsx
+       uses min-h-0 on every flex child so inner regions scroll instead of
+       expanding their parent). */
+    overflow: hidden;
+  }
+}
+
+@layer utilities {
+  /* Depth-style bars for utilisation, adapted from HypeTerminal's depth bars
+     (apps/terminal/src/styles.css:506-517). They derive the translucent variant
+     from an existing token with oklch(from ...) rather than hardcoding a second
+     colour, and they raise alpha in dark mode because the same translucency
+     reads weaker on a dark background. Same technique, our tokens. */
+  .util-bar-ok {
+    background: linear-gradient(
+      90deg,
+      oklch(from var(--status-long) l c h / 0.28) 0%,
+      oklch(from var(--status-long) l c h / 0.1) 100%
+    );
+  }
+  .util-bar-warn {
+    background: linear-gradient(
+      90deg,
+      oklch(from var(--status-warn) l c h / 0.32) 0%,
+      oklch(from var(--status-warn) l c h / 0.12) 100%
+    );
+  }
+  .util-bar-danger {
+    background: linear-gradient(
+      90deg,
+      oklch(from var(--status-short) l c h / 0.36) 0%,
+      oklch(from var(--status-short) l c h / 0.14) 100%
+    );
+  }
+
+  /* Every numeric cell in this product uses this. Without fixed-width digits a
+     price or a block number jitters on each update, which ui-study.md section 2
+     records as the most obvious tell of an amateur trading UI
+     (orderbook-row.tsx:34, orderbook-panel.tsx:109). */
+  .num {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
+  }
+
+  /* Column header treatment: uppercase, tracked, muted, 12px.
+     From orderbook-panel.tsx:104. */
+  /* Column label, matched to theirs rather than invented.
+   *
+   * HypeTerminal's orderbook-panel.tsx:104 is:
+   *   text-2xs text-fg-muted uppercase tracking-wider
+   * and their layer-3 mapping at globals.css:314 is `--color-fg-muted: var(--text-weak)`, i.e.
+   * #ffffffc7 at 78% white. So their column labels are 12px at 78% white.
+   *
+   * Mine were 10px at #6b7280, a 45% grey. Two steps dimmer and two pixels smaller than the product
+   * I claimed to be copying, on every column header in the terminal. */
+  .col-label {
+    font-size: var(--text-2xs);
+    line-height: var(--text-2xs--line-height);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text-weak);
+  }
+
+  /* Every interactive control gets a pointer cursor.
+   *
+   * A native <button> defaults to `cursor: default`, which is why the view tabs and every row control
+   * felt dead: measured `cursor: "default"` on the tab button while the anchor beside it correctly
+   * read `pointer`. The element was hittable the whole time and gave no sign of it. Browsers made this
+   * the default for form buttons decades ago; every design system overrides it, and HypeTerminal's
+   * Base UI buttons carry `cursor-pointer` too. */
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  summary,
+  a[href] {
+    cursor: pointer;
+  }
+
+  button:disabled,
+  [aria-disabled="true"] {
+    cursor: not-allowed;
+  }
+
+  .hairline {
+    border-color: var(--stroke-weak);
+  }
+
+  /* Thin scrollbars. A 15px scrollbar inside a 19px row is absurd. */
+  .scroll-thin {
+    scrollbar-width: thin;
+    scrollbar-color: var(--stroke-strong) transparent;
+  }
+  .scroll-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .scroll-thin::-webkit-scrollbar-thumb {
+    background: var(--stroke-strong);
+  }
+}

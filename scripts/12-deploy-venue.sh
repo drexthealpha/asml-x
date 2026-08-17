@@ -31,9 +31,13 @@ echo "OrderBookVenue $VENUE"
 # 1000e18 gross cap
 GUARD=$(dep src/RiskGuard.sol:RiskGuard --constructor-args 1000000000000000000000)
 echo "RiskGuard      $GUARD"
-EXEC=$(dep src/BatchExecutor.sol:BatchExecutor --constructor-args "$GUARD")
+# Treasury is the deployer for the testnet stack. Task 12.1 uses a separate address on mainnet.
+FEE=$(dep src/FeeCollector.sol:FeeCollector --constructor-args "$DEPLOYER_ADDRESS" 50)
+echo "FeeCollector   $FEE  (50 bps, ceiling 100)"
+EXEC=$(dep src/BatchExecutor.sol:BatchExecutor --constructor-args "$GUARD" "$FEE")
 echo "BatchExecutor  $EXEC"
 
+if [ -z "$FEE" ]; then echo "FEECOLLECTOR DEPLOY FAILED"; exit 1; fi
 if [ -z "$BASE" ] || [ -z "$QUOTE" ] || [ -z "$VENUE" ] || [ -z "$GUARD" ] || [ -z "$EXEC" ]; then
   echo "ONE OR MORE DEPLOYS FAILED"
   exit 1
@@ -59,6 +63,18 @@ echo -n "mint tQUOTE to BatchExecutor: "; send "$QUOTE" "mint(address,uint256)" 
 echo -n "approve venue for tBASE: "; send "$BASE" "approve(address,uint256)" "$VENUE" 1000000000000000000000000
 echo -n "approve venue for tQUOTE: "; send "$QUOTE" "approve(address,uint256)" "$VENUE" 1000000000000000000000000
 
+# The fee path. Without all four of these the deployed stack is inert: the executor is not an
+# authorised taker, it is not a permitted charger, and it holds no allowance to pay with.
+echo -n "venue.setAuthorisedTaker(exec): "; send "$VENUE" "setAuthorisedTaker(address,bool)" "$EXEC" true
+echo -n "fee.setCharger(exec): "; send "$FEE" "setCharger(address,bool)" "$EXEC" true
+# BOTH TOKENS, and this is not belt and braces. A take against a resting ASK spends quote; a take
+# against a resting BID spends BASE. The runtime chooses the side, so the executor must be able to
+# pay in either. Task 7.6 removed the per-batch approve legs for the gas and granted only quote here,
+# which worked for every buy and reverted on the first sell with LegFailed on take().
+echo -n "exec approves venue for tQUOTE: "; send "$EXEC" "approveToken(address,address,uint256)" "$QUOTE" "$VENUE" 1000000000000000000000000
+echo -n "exec approves venue for tBASE:  "; send "$EXEC" "approveToken(address,address,uint256)" "$BASE" "$VENUE" 1000000000000000000000000
+echo -n "exec approves fee for tQUOTE: "; send "$EXEC" "approveToken(address,address,uint256)" "$QUOTE" "$FEE" 1000000000000000000000000
+
 echo
 echo "=== verify wiring by reading state back from chain ==="
 echo "guard.maxGross      $(cast call "$GUARD" "maxGross()(uint256)" --rpc-url "$RPC")"
@@ -66,6 +82,12 @@ echo "guard.maxPerMarket  $(cast call "$GUARD" "maxPerMarket(bytes32)(uint256)" 
 echo "guard.isAgent(exec) $(cast call "$GUARD" "isAgent(address)(bool)" "$EXEC" --rpc-url "$RPC")"
 echo "guard.killed        $(cast call "$GUARD" "killed()(bool)" --rpc-url "$RPC")"
 echo "base.balanceOf(dep) $(cast call "$BASE" "balanceOf(address)(uint256)" "$DEPLOYER_ADDRESS" --rpc-url "$RPC")"
+echo "venue.authorisedTaker(exec) $(cast call "$VENUE" "authorisedTakers(address)(bool)" "$EXEC" --rpc-url "$RPC")"
+echo "fee.chargers(exec)          $(cast call "$FEE" "chargers(address)(bool)" "$EXEC" --rpc-url "$RPC")"
+echo "fee.feeBps                  $(cast call "$FEE" "feeBps()(uint256)" --rpc-url "$RPC")"
+echo "fee.MAX_FEE_BPS             $(cast call "$FEE" "MAX_FEE_BPS()(uint256)" --rpc-url "$RPC")"
+echo "exec.feeCollector           $(cast call "$EXEC" "feeCollector()(address)" --rpc-url "$RPC")"
+echo "quote.allowance(exec,fee)   $(cast call "$QUOTE" "allowance(address,address)(uint256)" "$EXEC" "$FEE" --rpc-url "$RPC")"
 
 cat > "$DOCS/deployments.md" <<MD
 # Deployments: X Layer testnet, chain 1952
@@ -84,6 +106,7 @@ docs/decisions/ADR-001-venue-strategy.md for why, and what it costs.
 | OrderBookVenue | \`$VENUE\` | escrowed limit order book |
 | RiskGuard | \`$GUARD\` | binding exposure caps and kill switch |
 | BatchExecutor | \`$EXEC\` | atomic multi-leg execution |
+| FeeCollector | \`$FEE\` | usage fee on executed notional, 50 bps, immutable 100 bps ceiling |
 
 Market id for tBASE/tQUOTE: \`$MARKET\`
 
@@ -92,6 +115,7 @@ Explorer:
 - venue: https://www.oklink.com/x-layer-testnet/address/$VENUE
 - guard: https://www.oklink.com/x-layer-testnet/address/$GUARD
 - executor: https://www.oklink.com/x-layer-testnet/address/$EXEC
+- feeCollector: https://www.oklink.com/x-layer-testnet/address/$FEE
 - tBASE: https://www.oklink.com/x-layer-testnet/address/$BASE
 - tQUOTE: https://www.oklink.com/x-layer-testnet/address/$QUOTE
 
@@ -101,6 +125,9 @@ Explorer:
 - guard.maxPerMarket[tBASE/tQUOTE] = 500e18
 - guard agents: BatchExecutor, deployer
 - guard.killed = false
+- venue.authorisedTakers[BatchExecutor] = true (nobody else can take; direct fills revert)
+- fee.chargers[BatchExecutor] = true, fee.feeBps = 50, fee.MAX_FEE_BPS = 100
+- BatchExecutor.feeCollector is immutable and every batch must end with a leg targeting it
 MD
 
 # Machine-readable for the Rust runtime.
@@ -114,6 +141,8 @@ cat > "$REPO/deployments.json" <<JSON
   "venue": "$VENUE",
   "riskGuard": "$GUARD",
   "batchExecutor": "$EXEC",
+  "feeCollector": "$FEE",
+  "feeBps": 50,
   "marketId": "$MARKET"
 }
 JSON

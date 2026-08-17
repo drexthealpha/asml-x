@@ -1,0 +1,21 @@
+[package]
+name = "revm-probe"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish = false
+
+[[bin]]
+name = "revm-probe"
+path = "src/main.rs"
+
+[dependencies]
+# 42.x: the API used here (Context::mainnet, TxEnv::builder, ExecuteCommitEvm) is the v42 shape,
+# confirmed against the crate's own examples. A caret on 42 rather than an exact pin because the
+# probe is not on the product path and patch updates inside 42 keep this API.
+revm = "42"
+serde_json = { workspace = true }
+chain-client = { workspace = true }
+
+[lints]
+workspace = true

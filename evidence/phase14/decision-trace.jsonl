@@ -1,0 +1,5 @@
+{"trace_id":"d17389906f4622459a999143af636073","span_id":"350ab88bea2ea77c","parent_span_id":"ce2e3f382e6b230d","name":"perceive.read_snapshot","duration_us":16505109,"attributes":{"block":"38433098","live_orders":"16","outcome":"ok"}}
+{"trace_id":"d17389906f4622459a999143af636073","span_id":"4fa4aeb4c3a71e8d","parent_span_id":"ce2e3f382e6b230d","name":"perceive.signals","duration_us":3,"attributes":{"mid_present":"true"}}
+{"trace_id":"d17389906f4622459a999143af636073","span_id":"a0ae4cd8283fcd50","parent_span_id":"ce2e3f382e6b230d","name":"decide.thesis","duration_us":8,"attributes":{"confidence_bps":"0"}}
+{"trace_id":"d17389906f4622459a999143af636073","span_id":"bf0ef977ba264ad3","parent_span_id":"ce2e3f382e6b230d","name":"perceive.portfolio","duration_us":642233,"attributes":{}}
+{"trace_id":"d17389906f4622459a999143af636073","span_id":"ce2e3f382e6b230d","parent_span_id":"","name":"decision_cycle","duration_us":24769088,"attributes":{"cycle":"0","block":"38433098","decision_id":"163"}}

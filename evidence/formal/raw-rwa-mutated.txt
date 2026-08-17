@@ -1,5 +1,5 @@
 Compiling 3 files with Solc 0.8.28
-Solc 0.8.28 finished in 10.97s
+Solc 0.8.28 finished in 38.28s
 Compiler run successful!
 warning[block-timestamp]: usage of `block.timestamp` in a comparison may be manipulated by validators
     ╭▸ src/RwaVault.sol:126:16
@@ -9,18 +9,15 @@ warning[block-timestamp]: usage of `block.timestamp` in a comparison may be mani
     │
     ╰ help: https://book.getfoundry.sh/reference/forge/forge-lint#block-timestamp
 
-[31mSkipped console2.json due to parsing failure: KeyError: 'metadata'[0m
-[31mSkipped IERC20Min.json due to parsing failure: KeyError: 'ast'[0m
-[31mSkipped OrderBookVenue.json due to parsing failure: KeyError: 'ast'[0m
 
 Running 7 tests for test/RwaSymbolic.t.sol:RwaRiskGuardSymbolic
-[32m[PASS][0m check_divergenceBoundaryIsExact(uint256) (paths: 8, time: 1.56s, bounds: [])
-[32m[PASS][0m check_inheritedCapsSurviveTheOverride(uint256,uint256) (paths: 5, time: 4.49s, bounds: [])
-[32m[PASS][0m check_killedRefusesEveryAmountOnTheRwaPath(uint256) (paths: 2, time: 0.64s, bounds: [])
-[32m[PASS][0m check_onlyOwnerCanLoosenTheRwaPolicy(address,uint256) (paths: 2, time: 0.28s, bounds: [])
+[32m[PASS][0m check_divergenceBoundaryIsExact(uint256) (paths: 9, time: 0.35s, bounds: [])
+[32m[PASS][0m check_inheritedCapsSurviveTheOverride(uint256,uint256) (paths: 5, time: 0.67s, bounds: [])
+[32m[PASS][0m check_killedRefusesEveryAmountOnTheRwaPath(uint256) (paths: 2, time: 0.18s, bounds: [])
+[32m[PASS][0m check_onlyOwnerCanLoosenTheRwaPolicy(address,uint256) (paths: 2, time: 0.06s, bounds: [])
 [31mCounterexample: 
-    p_amount_uint256 = 0x0000000000000000000000000000000000000000000000100000000000000000 (295147905179352825856)[0m
-[31m[FAIL][0m check_pausedRefusesEveryAmount(uint256) (paths: 2, time: 1.20s, bounds: [])
-[32m[PASS][0m check_reduceIsNeverBlockedByRwaConditions(uint256,uint256) (paths: 3, time: 1.45s, bounds: [])
-[32m[PASS][0m check_yieldIndexIsMonotonic(uint256,uint256) (paths: 2, time: 0.60s, bounds: [])
-Symbolic test result: 6 passed; 1 failed; time: 11.37s
+    p_amount_uint256_f43120f_00 = 0x100000000000000000[0m
+[31m[FAIL][0m check_pausedRefusesEveryAmount(uint256) (paths: 3, time: 1.59s, bounds: [])
+[32m[PASS][0m check_reduceIsNeverBlockedByRwaConditions(uint256,uint256) (paths: 3, time: 0.34s, bounds: [])
+[32m[PASS][0m check_yieldIndexIsMonotonic(uint256,uint256) (paths: 2, time: 0.15s, bounds: [])
+Symbolic test result: 6 passed; 1 failed; time: 3.59s

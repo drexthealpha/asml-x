@@ -1,0 +1,46 @@
+Task 7.4, symbolic fee theorems
+run: 2026-08-15 13:35:19 UTC
+halmos: halmos 0.3.3
+theorems declared in test/FeeFormal.t.sol: 5
+  - check_feeNeverExceedsTheCeiling
+  - check_feeIsExactlyTheStatedFraction
+  - check_feeIsMonotonicInNotional
+  - check_setFeeBpsCanOnlyLower
+  - check_totalCollectedAccumulatesExactly
+
+== check_feeNeverExceedsTheCeiling ==
+  [PASS] check_feeNeverExceedsTheCeiling(uint256) (paths: 6, time: 20.69s, bounds: [])
+  Symbolic test result: 1 passed; 0 failed; time: 21.01s
+  elapsed: 37s, exit: 0
+  VERDICT: PROVED
+
+== check_feeIsExactlyTheStatedFraction ==
+  [PASS] check_feeIsExactlyTheStatedFraction(uint256) (paths: 3, time: 0.08s, bounds: [])
+  Symbolic test result: 1 passed; 0 failed; time: 0.24s
+  elapsed: 12s, exit: 0
+  VERDICT: PROVED
+
+== check_feeIsMonotonicInNotional ==
+  [TIMEOUT] check_feeIsMonotonicInNotional(uint256,uint256) (paths: 7, time: 240.43s, bounds: [])
+  Symbolic test result: 0 passed; 1 failed; time: 240.52s
+  elapsed: 266s, exit: 1
+  VERDICT: STALLED, no proof obtained. Counted as a failure, not as a pass.
+
+== check_setFeeBpsCanOnlyLower ==
+  [PASS] check_setFeeBpsCanOnlyLower(uint256) (paths: 2, time: 0.07s, bounds: [])
+  Symbolic test result: 1 passed; 0 failed; time: 0.17s
+  elapsed: 11s, exit: 0
+  VERDICT: PROVED
+
+== check_totalCollectedAccumulatesExactly ==
+  [PASS] check_totalCollectedAccumulatesExactly(uint256) (paths: 6, time: 0.58s, bounds: [])
+  Symbolic test result: 1 passed; 0 failed; time: 0.68s
+  elapsed: 10s, exit: 0
+  VERDICT: PROVED
+
+== gate ==
+declared: 5
+proved:   4
+failed:   0
+stalled:  1
+GATE: FAIL  proved=4 of declared=5 (failed=0 stalled=1)

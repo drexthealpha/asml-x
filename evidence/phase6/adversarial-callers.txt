@@ -1,0 +1,37 @@
+Adversarial caller suite, task 6.5
+Run 2026-08-13 04:51:18 UTC
+  server up after 37s
+  rate limit raised to 500 for this run so the LIMITER does not mask the other refusals.
+  The limiter has its own demonstration in evidence/phase6/rate-limit-429.txt.
+
+  case                               expect   got      verdict
+  no api key                         401      401      PASS
+  unknown api key                    401      401      PASS
+  empty api key                      401      401      PASS
+  unknown endpoint                   404      404      PASS
+  path traversal                     404      404      PASS
+  wrong method on /quote             404      404      PASS
+  malformed json                     400      400      PASS
+  size as a number not str           400      400      PASS
+  negative size                      400      400      PASS
+  zero size                          400      400      PASS
+  size beyond i128                   400      400      PASS
+  absurd but parseable size          409      409      PASS
+  unknown quote id                   404      404      PASS
+  quote id as a string               404      404      PASS
+  64KB body                          400      400      PASS
+  16KB header                        401      401      PASS
+
+  == concurrency: 30 parallel probes while the server is being abused ==
+  30 parallel /thesis requests in .225125304s
+
+  == the property that actually matters: is it still answering? ==
+  /health after every probe: 200
+  body: {"chain_id":1952,"ok":true,"protocol_version":"1.0.0","refused":16,"served":30}
+
+  == server-side accounting ==
+
+## Verdict, task 6.5
+  cases passed: 17
+  cases failed: 0
+  RESULT: PASS. Every hostile input was refused with a JSON error and the server kept serving.

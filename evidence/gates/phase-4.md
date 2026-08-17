@@ -1,100 +1,86 @@
-# Phase 4 gate: the AI decision layer is live and agent-driven
+# Phase 4 gate: the terminal UI
 
-Captured 9 Aug 2026. Chain 1952. The spine is no longer script-driven.
+Seven panels reading the agent's own output files, built after the study gate opened and citing it
+throughout. Every panel file names in its header comment the HypeTerminal pattern it applies, with a
+`path:line` reference into `evidence/ui-study.md`.
 
-## What the agent now does, end to end
+## Measured, not asserted
 
-Per cycle: read the real order book over JSON-RPC, compute signals with confidence
-intervals and chain-time staleness, form a thesis from those numbers, generate a
-candidate set from the live book, score every candidate on four competing terms,
-put EVERY action candidate through the risk gate, choose the highest-scoring
-permitted candidate, submit it atomically through BatchExecutor, and journal all of
-it with the rejected alternatives.
-
-## Live agent-driven transactions
-
-Three real transactions submitted by the runtime, not by a script:
-
-| cycle | block | decision | tx |
-|---|---|---|---|
-| 0 | 37813906 | take order 3, Sell 1.500000 base at 1.900000 | `0xbed1a412229db6557645a893e3465e821d5622872c8ebef8cffce3eaede80a5d` |
-| 1 | 37813921 | take order 4, Sell 1.000000 base at 1.800000 | `0x03609244f14d3bd14db73e46f0205ef595a9214d7af30399b090748f5ccd965f` |
-| 2 | 37813938 | take order 3, Sell 0.750000 base at 1.900000 | `0x34bf908d4fc3e23cb1be655bd47a32c6b11e4945827fcad4552ecdbd7fd7ccab` |
-
-Guard exposure moved 4.0e18 to 10.075e18, and `gross() == sumOfParts()` throughout.
-
-The agent adapted as its own fills changed the book: measured depth imbalance went
-3750 to 5172 to 6296 bps, and it chose a different order and a different size each
-cycle. That is the decision responding to state, which is the claim.
-
-## The candidate set is a real search
-
-Eleven candidates per cycle, generated from the live book rather than a fixed menu.
-From the last journal entry:
-
-| candidate | score | why not chosen |
+| metric | value | task |
 |---|---|---|
-| take order 3 Sell 0.750000 at 1.900000 | 93480 | CHOSEN |
-| take order 4 Sell 0.500000 at 1.800000 | 59040 | lower score |
-| take order 3 Sell 0.375000 at 1.900000 | 49412 | lower score |
-| take order 4 Sell 0.250000 at 1.800000 | 31208 | lower score |
-| hold | 0 | lower score |
+| ink coverage at 1920x1080 | **59.83%** | 4.1 |
+| largest empty rectangle | **5.92%** of viewport (target 3.9%, NOT met) | 4.1 |
+| numeric cells, all `tabular-nums` | **366** | 4.1 |
+| live values in one header row | **11** | 4.2 |
+| gradient bars (depth-bar technique) | 54 | 4.4, 4.5 |
+| peak utilisation bar | **`MarketNotionalTooLarge 52.96 / 50.00 = 100%`** | 4.5 |
+| contracts with a provenance badge | 7 of 7, all SELF-DEPLOYED | 4.6 |
+| fabricated numbers with data absent | **0** (1 static config value) | 4.7 |
+| panels naming their missing source | **7 of 7** | 4.7 |
+| submitted decisions verified against chain | **39 of 39**, status 0x1 | 4.8 |
+| read-to-landing drift | min 22, median 25, max 30 blocks | 4.8 |
+| adversarial inputs producing a visible error | **7 of 7** | 4.9 |
 
-`assert_real_search` refuses to journal a cycle that evaluated one candidate, and a
-test asserts the count is never 1.
+Reproduce: `bash scripts/78-ui-data.sh`, build and serve `ui-v2`, then run
+`scripts/measure-density.js` in the console. Then `bash scripts/86-seam-test.sh` and
+`bash scripts/80-ui-redteam.sh`.
 
-## Two real bugs found and fixed, both of which looked like correct behaviour
+## What the panels show that a dashboard usually does not
 
-1. **Unit scale.** The chain speaks 18 decimals, the risk engine speaks 6. Raw
-   values were fed straight across, making every notional read about 1e24 times too
-   large, so the risk engine refused 10 of 11 candidates every cycle. On screen this
-   looked exactly like a conservative agent working properly. Fixed with a single
-   `WEI_PER_MICRO` boundary conversion plus regression tests.
-2. **Backwards taker economics.** The scorer credited a taker with a fraction of the
-   observed spread. A taker PAYS the spread; the maker who posted the order earns
-   it. With that error the agent held on every cycle, which again looked like
-   sensible caution. Rewritten: a taker's edge is directional, derived from damped
-   depth imbalance scaled by that signal's own confidence, with the half-spread
-   charged as a crossing cost. After the fix the agent sells into bids when the book
-   is ask-heavy, which is the correct read.
+- **The losing candidates, with their scores and why they lost.** 4.4's PASS condition is exactly
+  this, and it is the anti-if-else-ladder: a panel showing only the chosen action is
+  indistinguishable from a panel in front of a hardcoded rule. A typical decision has 53 candidates,
+  52 of them refused, each with a score, an edge, a cost total and a reason.
+- **Utilisation read back out of refusals the engine actually issued**, not a gauge the UI invented.
+  The binding limits live in `crates/risk-engine` and onchain in `RiskGuard`; the panel says so, and
+  it refuses to draw a bar it cannot source.
+- **The journal's `evidence` array**, which nothing in the v1 UI displayed. It is the per-decision
+  half of the chain-of-evidence idea: the exact chain reads a decision rests on.
+- **Baseline control rows marked `[baseline]` and excluded from every agent statistic.** Task 1.16's
+  DuckDB aggregation found 8 of them contaminating the river benchmark, inflating its margin from
+  2.5 points to 11.5. The UI does not repeat that.
 
-Neither bug would have been caught by reading passing output. Both changed the
-agent from "does nothing, looks careful" to "acts for a stated reason".
+## Four defects this phase found in itself
 
-## Baseline comparison, reported as observed
+Each was found by a check in this phase, not by review.
 
-Window pre-declared in `evidence/baseline-comparison/declared-window.md` before
-either mode ran, from block 37814247, four cycles each.
+1. **The density metric measured nothing.** The first version marked any element with a background
+   as occupied, so panel backgrounds covered the viewport and it reported 100% occupied with a
+   zero-size largest empty rectangle. It would have passed the gate while proving the opposite.
+   Fixed to measure text-run rects.
+2. **Panel headers rendered zeros when the source was unreadable.** "0 decisions", "0 refusals",
+   "0 of 0". Each was derived from an empty array and each was a false statement about the agent.
+   With the source in an error state they now render an em dash.
+3. **Impossible values rendered as data.** The red team fed a 20-digit block number and a confidence
+   of 999999999 bps, and the UI printed "10000000.0%". Basis points are hundredths of a percent, so
+   that is not a percentage. Domain validation now flags the row, prints `invalid` instead of the
+   value, and counts out-of-range rows separately from malformed lines.
+4. **An invented threshold in the seam test.** It asserted drift <= 20 blocks and the first real
+   transaction came in at 29. Loosening the bound after seeing the result would be choosing the
+   threshold to fit the answer, so the bound was removed: direction is asserted for all 39
+   submissions and the magnitude is reported as the latency measurement it is.
 
-Result: in that window the engine chose ONE distinct action, the same count as the
-naive baseline. The engine did not show more variety than the baseline here.
+## The two things this phase does NOT claim
 
-Why, stated rather than explained away: in observe mode neither run submits, so the
-book is static, and identical inputs produce identical decisions. Determinism is a
-property this project deliberately proved, so a static book yielding one repeated
-decision is the engine working correctly, not failing. Variety appears when state
-changes, which is visible in the run-mode sequence above where the agent's own fills
-moved the book.
+**Density does not meet its baseline.** 5.92% against 3.9%. The remaining void is the Learning
+panel, which holds one signal statistic because the learning layer has settled exactly 2 forecasts.
+It fills as forecasts settle in task 8.5. No decorative panel, sparkline or hero number was added to
+win the metric, because "oversized cards with three numbers" and "placeholder charts" are named
+failure conditions and passing the number by failing the intent is not a pass.
 
-The honest conclusion is that distinct-action-count is a poor metric on a static
-book. A better comparison needs a moving book, and the run-mode evidence is the
-stronger artifact. The unflattering number is kept here rather than replaced,
-because the first version of this script compared every journal entry ever written,
-which inflated the engine's variety to 5 distinct actions against the baseline's 1.
-Scoping it to the declared window removed that flattery.
+**Read-to-landing latency is 22 to 30 seconds.** That is not presented as fast. It is the cost of
+the signing path ADR-008 records: a `cast` subprocess per transaction, paying a process spawn and a
+scrypt keystore decrypt. Task 6.6 weighs alloy's in-process signer against it, and this distribution
+is the before-number.
 
-## What is NOT claimed
+## The step that closed two findings at once
 
-- No realized PnL. Fills are not marked to a later price, so nothing here supports
-  a profitability claim.
-- Four cycles per mode is not a performance sample.
-- The venue is self-deployed and thin, so adverse selection, the main real cost of
-  taking liquidity, is not represented.
-- The LLM interpretation role from the plan is not wired yet. The thesis text is
-  generated from the signal numbers by ordinary code. That is stated plainly because
-  an LLM narrating this loop would add words, not intelligence.
+Task 4.5 and 4.1 were both blocked on the same missing build step, not on code: the staged journal
+was the 9 Aug file, whose 40 limit refusals carry wei-scaled numbers from before the
+`wei_to_micro` conversion. A 40-cycle agent run wrote 43 fresh rows with 39 transactions and 280
+real refusals; the pre-fix rows were split to `evidence/journal-legacy-2026-08-09.jsonl` rather than
+deleted, with the boundary verified on each half.
 
-## Test position
-
-55 Rust tests green across 7 crates, including proptest properties for
-"approved actions always satisfy the risk engine" and "ranking is deterministic".
+With **no CSS and no component change**, ink coverage went 46.63% to 59.83% and the largest empty
+rectangle 8.10% to 5.92%. That is the evidence that the layout was sized for content it did not yet
+have, and the reason padding it would have been the wrong fix.

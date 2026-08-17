@@ -1,0 +1,169 @@
+    Finished `release` profile [optimized] target(s) in 28.30s
+=== starting the coordination API in its own process ===
+server pid 179886, log /mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/evidence/coordination/server.log
+server is up after 43s (includes the pre-bind book read)
+
+=== server startup banner ===
+ASML-X coordination API
+  chain       1952 (verified)
+  priming     reading the book before binding the socket...
+  primed      block 38135292, 35 live orders, killed=false, took 41471ms
+  listening   http://127.0.0.1:8737
+  server      tiny_http, 8 worker threads, chain reads on a refresher thread
+  endpoints   GET /health  GET /thesis  GET /capacity
+              POST /quote  POST /accept
+  auth        x-api-key header, demo keys: demo-agent-key-1, demo-agent-key-2
+  quote ttl   15000 ms, rate limit 20/min per caller
+  freshness   snapshot refreshed every 2000 ms, refused past 120000 ms
+
+
+=== running the EXTERNAL PYTHON AGENT (separate process, separate language) ===
+
+==========================================================================
+0. reachability
+==========================================================================
+  [200] GET /health (no auth needed)
+        chain_id: 1952
+        ok: True
+        protocol_version: 1.0.0
+        refused: 0
+        served: 0
+        -> OK: got 200, expected 200
+
+==========================================================================
+1. the happy path: read the brain's view, then trade against it
+==========================================================================
+  [200] GET /thesis
+        block: 38135292
+        confidence_bps: 0
+        halted: False
+        imbalance_bps: -9176
+        live_orders: 26
+        market: tBASE/tQUOTE
+        snapshot_age_ms: 1397
+        spread_bps: -2325
+        thesis: BOOK IS CROSSED: best bid 2.400000 is at or above best ask 1.900000, so spread-based inference is unreliable; spread -2325 bps observed, volatility not yet estimable, fewer than three mid observations so far; depth is ask-heavy by 9176 bps
+        -> OK: got 200, expected 200
+  [200] GET /capacity
+        current_exposure_micro: 50362500
+        first_refusal_beyond: None
+        halted: False
+        max_permitted_size_micro: 12500000
+        -> OK: got 200, expected 200
+
+  external agent decides: request 6.250000 base, half of the brain's stated capacity
+  [200] POST /quote size=6250000
+        block: 38135292
+        expires_at_ms: 1786594186590
+        market: tBASE/tQUOTE
+        price_micro: 1900000
+        quote_id: 1
+        requires_human_approval: False
+        side: Buy
+        size_micro: 6250000
+        ttl_ms: 15000
+        -> OK: got 200, expected 200
+  [200] POST /accept quote_id=1
+        accepted: True
+        held_ms: 5
+        market: tBASE/tQUOTE
+        note: settlement is performed by the brain runtime; this endpoint records acceptance
+        price_micro: 1900000
+        quote_id: 1
+        side: Buy
+        size_micro: 6250000
+        -> OK: got 200, expected 200
+
+==========================================================================
+2. adversarial: a quote cannot be accepted twice
+==========================================================================
+  [409] POST /accept same quote again
+        error: quote already consumed
+        -> OK: got 409, expected 409
+
+==========================================================================
+3. adversarial: another caller cannot steal a quote
+==========================================================================
+  [403] POST /accept with agent-2's key on agent-1's quote
+        error: quote belongs to a different caller
+        -> OK: got 403, expected 403
+
+==========================================================================
+4. adversarial: no API key
+==========================================================================
+  [401] GET /thesis without a key
+        error: missing or unknown x-api-key
+        -> OK: got 401, expected 401
+
+==========================================================================
+5. adversarial: unknown API key
+==========================================================================
+  [401] GET /thesis with a made-up key
+        error: missing or unknown x-api-key
+        -> OK: got 401, expected 401
+
+==========================================================================
+6. adversarial: malformed body
+==========================================================================
+  [400] POST /quote with broken JSON
+        error: size_micro must be a positive integer string
+        -> OK: got 400, expected 400
+
+==========================================================================
+7. adversarial: request beyond the brain's risk capacity
+==========================================================================
+  [409] POST /quote size=10000000000 (far beyond limits)
+        error: risk gate refused
+        refusal: OrderNotionalTooLarge { got: 19000000000, limit: 25000000 }
+        rwa_specific: False
+        -> OK: got 409, expected 409
+
+==========================================================================
+8. adversarial: an expired quote cannot be accepted
+==========================================================================
+  holding quote 3 for 16s so it expires...
+  [410] POST /accept on the expired quote
+        error: quote expired
+        expired_ms_ago: 1019
+        -> OK: got 410, expected 410
+
+==========================================================================
+9. adversarial: burst until the rate limit trips
+==========================================================================
+  rate limit tripped on request 20
+        -> OK: rate limit enforced
+
+==========================================================================
+10. unknown endpoint
+==========================================================================
+  [404] GET /admin/drain-funds
+        error: unknown endpoint
+        -> OK: got 404, expected 404
+
+==========================================================================
+summary
+==========================================================================
+  server counters: served=25 refused=9
+  external agent checks passed: 14
+  external agent checks failed: 0
+
+  This agent ran in its own process, in Python, with no access to the
+  brain's memory. Every refusal above came from the brain's own risk gate
+  and auth layer over HTTP, not from a check inside this script.
+
+=== server log after the run ===
+ASML-X coordination API
+  chain       1952 (verified)
+  priming     reading the book before binding the socket...
+  primed      block 38135292, 35 live orders, killed=false, took 41471ms
+  listening   http://127.0.0.1:8737
+  server      tiny_http, 8 worker threads, chain reads on a refresher thread
+  endpoints   GET /health  GET /thesis  GET /capacity
+              POST /quote  POST /accept
+  auth        x-api-key header, demo keys: demo-agent-key-1, demo-agent-key-2
+  quote ttl   15000 ms, rate limit 20/min per caller
+  freshness   snapshot refreshed every 2000 ms, refused past 120000 ms
+
+
+external agent exit code: 0 (0 means every expectation held)
+logs: /mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/evidence/coordination/server.log and /mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/evidence/coordination/external-agent.log

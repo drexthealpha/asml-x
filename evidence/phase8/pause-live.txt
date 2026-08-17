@@ -1,0 +1,59 @@
+Task 8.7: pause during an active cycle
+run: 2026-08-16 00:20:36 UTC
+vault: 0x3e938422f11D53b62F6Fe4afa2e4f52B1aFF4382
+
+== setup: clean start ==
+wallet tQUOTE: 997000000000000000000
+paused:        false
+
+== 1. deposit and OPEN a trade, leaving the cycle genuinely in flight ==
+deposit:   status 0x1  block 38380819  tx 0x210ead0849e0c0408739cc7bb3b817fd6e5a2c65ee5541c84c1a9f84781946b1
+openTrade: status 0x1  block 38380823  tx 0xef36a589759656c35866a035f19aa7533e7aead57fd4e01a42be10f5758a3437
+
+IN FLIGHT, and this is the state the pause has to land in:
+  vault.committed(depositor):  1000000000000000000   (funds are AT THE VENUE right now)
+  vault.withdrawable:          3000000000000000000
+
+== 2. PAUSE while the trade is still open ==
+setPaused(true): status 0x1  block 38380832  tx 0x0a878890ffd5d4ec14c991d0c97908d8d83057dca2bbefbaa680b34cf2288318
+paused now:      true
+committed still: 1000000000000000000
+
+== 3. ZERO NEW SUBMISSIONS: every new agent action must now fail ==
+--- simulated, for the decoded error ---
+Error: server returned an error response: error code 3: execution reverted, data: "0xaed11bd20000000000000000000000007bdd2d0d1728df5bef8faae8de85c3dd21a5de46"
+--- submitted, so the refusal is a permanent record ---
+tx:     0x41f8f30b6f0887b88d42c94d06aeda0de452ace2d36a1ec16b2e00f93101b541
+status: 0x0  (0x0 means REVERTED, which is the pass)
+block:  38380844
+
+committed after the blocked attempt: 1000000000000000000
+unchanged, so nothing was submitted.
+
+== 4. THE DEPOSITOR CAN STILL WITHDRAW IN FULL, WHILE PAUSED ==
+closeTrade (settles the in-flight leg): status 0x1  block 38380852
+paused at withdrawal time: true
+withdrawAll: status 0x1  block 38380860  tx 0x58851cb0c39c33a1ce94d921b9af9df6686ff74683f47e4d631f5ac50b955eb3
+vault.balanceOf after:     0
+
+== block ordering, which is what makes this a MID-FLIGHT pause ==
+  deposit      block 38380819
+  openTrade    block 38380823
+  setPaused    block 38380832   <- strictly after the open
+  blocked open block 38380844
+  closeTrade   block 38380852   <- strictly after the pause
+  withdrawAll  block 38380860
+
+== gate ==
+pause landed strictly between open and close: yes
+committed was non-zero when the pause landed:  yes
+new agent action while paused reverted:        yes
+depositor withdrew in full WHILE paused:       yes
+vault balance now zero:                        yes
+
+explorer:
+  open:    https://www.oklink.com/x-layer-testnet/tx/0xef36a589759656c35866a035f19aa7533e7aead57fd4e01a42be10f5758a3437
+  pause:   https://www.oklink.com/x-layer-testnet/tx/0x0a878890ffd5d4ec14c991d0c97908d8d83057dca2bbefbaa680b34cf2288318
+  blocked: https://www.oklink.com/x-layer-testnet/tx/0x41f8f30b6f0887b88d42c94d06aeda0de452ace2d36a1ec16b2e00f93101b541
+  exit:    https://www.oklink.com/x-layer-testnet/tx/0x58851cb0c39c33a1ce94d921b9af9df6686ff74683f47e4d631f5ac50b955eb3
+GATE: PASS  the pause landed mid-flight, blocked every new action, and did not block the exit

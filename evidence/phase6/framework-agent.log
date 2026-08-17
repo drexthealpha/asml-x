@@ -1,0 +1,54 @@
+External agent settlement, task 6.4
+Run 2026-08-13 04:35:14 UTC
+
+## 1. start the coordination API (no keystore, never signs)
+  server up after 37s (includes the pre-bind book read)
+    primed      block 38136879, 35 live orders, killed=false, took 35293ms
+    listening   http://127.0.0.1:8737
+    freshness   snapshot refreshed every 2000 ms, refused past 120000 ms
+
+## 2. the external caller reads the brain's view and sizes its own order
+  GET /capacity -> {"current_exposure_micro":"50362500","first_refusal_beyond":"MarketNotionalTooLarge { got: 50862498, limit: 50000000 }","halted":false,"max_permitted_size_micro":"0"}
+  caller chooses size_micro=500000 (a quarter of the permitted maximum)
+
+## 3. request a quote, which passes through the SAME risk gate as an internal decision
+  POST /quote side=buy -> {"error":"risk gate refused","refusal":"MarketNotionalTooLarge { got: 51312498, limit: 50000000 }","rwa_specific":false}
+  refused on the buy side, which is the gate working. Reason above.
+  POST /quote side=sell -> {"block":38136879,"expires_at_ms":1786595766799,"market":"tBASE/tQUOTE","price_micro":"2400000","quote_id":1,"requires_human_approval":false,"side":"Sell","size_micro":"500000","ttl_ms":15000}
+
+## 4. accept it. The API writes a handoff record and does NOT sign.
+  POST /accept -> {"accepted":true,"handoff_error":null,"handoff_written":true,"held_ms":37,"market":"tBASE/tQUOTE","note":"queued for settlement by the brain runtime, which owns the keystore; this endpoint never signs","price_micro":"2400000","priced_at_block":38136879,"quote_id":1,"side":"Sell","size_micro":"500000"}
+  handoff file:
+    {"accepted_at_ms":1786595751836,"caller":"external-agent-1","market":"tBASE/tQUOTE","price_micro":"2400000","priced_at_block":38136879,"quote_id":1,"settled":false,"side":"Sell","size_micro":"500000"}
+
+## 5. the runtime settles it. This process owns the keystore; the API never did.
+  ASML-X runtime
+    mode        settle-accepted
+    chain       1952 (verified)
+    venue       0x7092050f3c4e72a2df8610ae2cc8c39dca3b7f52
+    guard       0xe64b6e937fd0d855161a5f6f0aa1a3e01cb54c24
+    cycles      5
+  
+  ASML-X settle-accepted
+    handoff file  /mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/evidence/phase6/accepted-quotes.jsonl
+    records       1
+    unsettled     1
+  
+    book at block 38136915 with 35 live orders
+    quote 1 from external-agent-1: Sell 500000 micro at 2400000
+      partial fill: order 31 has 125000 micro left of the 500000 requested
+      SETTLED tx 0x6e1d99ff225a728ba031d2d5f5d191788cd9e6ac2ad037c4554f75c35cc7e53a
+  
+    settled at least one: true
+    handoff file updated: /mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/evidence/phase6/accepted-quotes.jsonl
+
+## 6. the result, traced back to the caller's request
+  quote id:     1
+  tx hash:      0x6e1d99ff225a728ba031d2d5f5d191788cd9e6ac2ad037c4554f75c35cc7e53a
+  explorer:     https://www.oklink.com/x-layer-testnet/tx/0x6e1d99ff225a728ba031d2d5f5d191788cd9e6ac2ad037c4554f75c35cc7e53a
+  receipt status: "status":"0x1"
+
+  journal entry recorded against the quote id:
+    {"action":"settle external quote 1 for external-agent-1: take order 31 Sell 500000 micro","block_number":38136915,"candidates":[],"decision_id":1,"evidence":["coordination API handoff record for quote 1","eth_call venue.orders at block 38136915","risk engine re-evaluated the intent against the curre
+
+  RESULT: PASS. A stranger's request produced this transaction, and the quote id ties them.

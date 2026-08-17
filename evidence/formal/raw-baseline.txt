@@ -1,14 +1,24 @@
 No files changed, compilation skipped
-[31mSkipped console2.json due to parsing failure: KeyError: 'metadata'[0m
-[31mSkipped IERC20Min.json due to parsing failure: KeyError: 'ast'[0m
-[31mSkipped OrderBookVenue.json due to parsing failure: KeyError: 'ast'[0m
+warning[block-timestamp]: usage of `block.timestamp` in a comparison may be manipulated by validators
+    ╭▸ src/RwaVault.sol:126:16
+    │
+126 │         return ((block.timestamp - epochStart) % windowPeriod) < windowLength;
+    │                ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    │
+    ╰ help: https://book.getfoundry.sh/reference/forge/forge-lint#block-timestamp
+
 
 Running 7 tests for test/RiskGuardSymbolic.t.sol:RiskGuardSymbolic
-[32m[PASS][0m check_grossAlwaysEqualsSumOfParts(uint256,uint256,uint256) (paths: 16, time: 4.37s, bounds: [])
-[32m[PASS][0m check_grossCapHoldsAcrossMarkets(uint256,uint256) (paths: 5, time: 2.32s, bounds: [])
-[32m[PASS][0m check_killedBlocksEveryAdd(uint256) (paths: 2, time: 0.54s, bounds: [])
-[32m[PASS][0m check_noSequenceOfAddsCanBreakACap(uint256,uint256) (paths: 5, time: 1.54s, bounds: [])
-[32m[PASS][0m check_onlyOwnerCanRaiseCaps(address,uint256) (paths: 2, time: 0.22s, bounds: [])
-[32m[PASS][0m check_onlyOwnerCanRevive(address) (paths: 2, time: 0.36s, bounds: [])
-[32m[PASS][0m check_unconfiguredMarketAlwaysFailsClosed(bytes32,uint256) (paths: 4, time: 0.98s, bounds: [])
-Symbolic test result: 7 passed; 0 failed; time: 11.25s
+[32m[PASS][0m check_grossAlwaysEqualsSumOfParts(uint256,uint256,uint256) (paths: 18, time: 1.12s, bounds: [])
+[32m[PASS][0m check_grossCapHoldsAcrossMarkets(uint256,uint256) (paths: 5, time: 0.38s, bounds: [])
+[32m[PASS][0m check_killedBlocksEveryAdd(uint256) (paths: 2, time: 0.13s, bounds: [])
+[32m[PASS][0m check_noSequenceOfAddsCanBreakACap(uint256,uint256) (paths: 5, time: 0.33s, bounds: [])
+[32m[PASS][0m check_onlyOwnerCanRaiseCaps(address,uint256) (paths: 2, time: 0.04s, bounds: [])
+[32m[PASS][0m check_onlyOwnerCanRevive(address) (paths: 2, time: 0.05s, bounds: [])
+ERROR    encountered exception during assertion solving: RuntimeError('Download 
+         not allowed (configure HALMOS_ALLOW_DOWNLOAD=1 to bypass)')            
+ERROR    solver_output.error='Download not allowed (configure                   
+         HALMOS_ALLOW_DOWNLOAD=1 to bypass)' (solver_output.returncode=-1)      
+[31m[ERROR][0m check_unconfiguredMarketAlwaysFailsClosed(bytes32,uint256) (paths: 5, time: 0.45s, bounds: [])
+[36mError queries saved in: /tmp/check_unconfiguredMarketAlwaysFailsClosed-n99ab48i-error[0m
+Symbolic test result: 6 passed; 1 failed; time: 3.10s

@@ -1,0 +1,71 @@
+Task 12.7: every mainnet transaction is one click from the JUDGE-GUIDE and the UI
+Run 2026-08-16. Chain 196.
+
+PASS: every mainnet hash is reachable in one click from both surfaces.
+
+== ONE GENERATED SOURCE, TWO SURFACES ==
+
+scripts/159-mainnet-manifest.sh writes ui-v2/public/data/mainnet.json by SCRAPING HASHES OUT OF THE
+PHASE 12 EVIDENCE FILES. A hash cannot appear on either surface unless an evidence document recorded
+it, and neither surface holds a hand-maintained list.
+
+That matters because this project has already had addresses go stale in three separate files at once
+(Phase 7), each of them a hand-kept copy of something the deploy script already knew.
+
+  contracts     7
+  transactions 17
+
+== SURFACE 1: THE UI ==
+
+ui-v2/src/components/mainnet-panel.tsx, mounted in the Chain view.
+
+Measured in the Browser pane against the built app:
+
+  mainnet-tx anchors        17
+  mainnet-contract anchors   7
+  all tx links resolvable   true   (href contains /x-layer/evm/tx/0x)
+  all contract links ok     true   (href contains /x-layer/evm/address/0x)
+  opens in a new tab        true   (target=_blank, so a judge does not lose the dashboard)
+
+Sample hrefs, read from the live DOM:
+
+  https://www.oklink.com/x-layer/evm/tx/0xb4785fbcbd2ba5f007b5735c63ee671aa178547da066bceb6ae0bef75bbcec6f
+  https://www.oklink.com/x-layer/evm/address/0x12dcbE73416CDFe6de0681286C25ACe81B4644C0
+
+"One click" means the anchor already carries a resolvable href. No hash on this panel has to be
+copied, pasted or assembled into a URL by the reader.
+
+== SURFACE 2: THE JUDGE-GUIDE ==
+
+docs/JUDGE-GUIDE.md is created in Phase 17. It reads the SAME mainnet.json, so the two surfaces
+cannot disagree by construction. This is recorded as outstanding rather than claimed: a file that
+does not exist carries no links.
+
+== A DEFECT THIS TASK FOUND ==
+
+The transaction URL form was wrong, and it was wrong for the same reason the address form had been.
+
+Task 11.1 loaded an ADDRESS url in a real browser and found:
+
+  requested  https://www.oklink.com/x-layer/address/<addr>
+  resolved   https://www.oklink.com/x-layer/evm/address/<addr>
+
+and the manifest was built with the corrected address form. But the TRANSACTION form was left as
+/x-layer/tx/<hash>, because fixing the address form felt like the whole lesson. Loading a real
+transaction URL in the browser for this task showed:
+
+  requested  https://www.oklink.com/x-layer/tx/0xb4785fbc...bcec6f
+  resolved   https://www.oklink.com/x-layer/evm/tx/0xb4785fbc...bcec6f
+  title      X Layer - EVM Transaction Hash 0xb478...bcec6f | Blockchain Explorer | OKLink
+
+Both forms redirect, and `curl -L` follows both silently while reporting 200, so neither stale form
+looks wrong from a shell. Only loading them in a browser exposes it. Both are now the post-redirect
+form in the manifest.
+
+The page was confirmed to render the real transaction: it shows the X Layer explorer chrome, a
+"Transaction details" heading, and our hash 0xb4785fbc...
+
+== GATE: PASS ==
+
+24 links, every one resolvable in a single click, using URL forms verified by loading them rather
+than by assuming a redirect will keep being served.

@@ -1,0 +1,25 @@
+Task 10.1, flow instrumentation
+run: 2026-08-16 05:34:45 UTC
+
+Marks file: /mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/evidence/phase10/flow-marks.jsonl
+Lines: 15
+
+== marks per run, milliseconds since first paint ==
+
+run                     first_paint        connected          defaults_seen      deposit_submitted  activated          
+run-msvd715k-1moprr     0                  2722               3066               3851               9205               
+run-msvd9lx5-94h4vu     0                  1940               2260               3622               8530               
+run-msvdbx3p-jqp3oj     0                  2149               2494               3817               8620               
+
+runs recorded:            3
+runs with all five marks: 3
+
+== first paint to activated ==
+  runs:   3
+  median: 8620 ms  (8.6 s)
+  min:    8530 ms  (8.5 s)
+  max:    9205 ms  (9.2 s)
+
+  Under 60 seconds. The measured figure is 8.6 s.
+
+GATE: PASS  five timestamps recorded per run, in a file

@@ -52,6 +52,9 @@ fn pending(id: u64, predicted: Predicted, mid: Micro, expected_edge: Micro, at_m
         opened_at_ms: at_ms,
         params_at_decision: Params::default(),
         signal_name: "imbalance_bps".to_string(),
+        // 1.0 base in micro units, so a settlement in these tests produces a realized PnL equal to
+        // the price move. A size of zero would make every PnL assertion below pass trivially.
+        size_micro: 1_000_000,
     }
 }
 
@@ -526,4 +529,128 @@ fn a_persistently_wrong_signal_lands_exactly_on_the_floor_and_stays() {
         "a signal wrong 60 times never reached the floor"
     );
     assert_eq!(l.stats_for("imbalance_bps").hit_rate_bps(), 0);
+}
+
+// ---------------------------------------------------------------------------
+// TASK 14.4: realized PnL
+//
+// A hit rate grades forecasts; a PnL grades trading. These pin the arithmetic and the sign, because
+// a PnL with an inverted sign for shorts is a bug that makes a losing system look profitable and
+// passes every direction-based test in this file.
+// ---------------------------------------------------------------------------
+
+#[test]
+fn long_that_rises_makes_money_proportional_to_size() {
+    let mut l = Learner::new(Params::default());
+    let mut p = pending(1, Predicted::Up, 100 * MICRO, 0, 0);
+    p.size_micro = 2 * MICRO; // 2.0 base
+    l.record_decision(p);
+
+    // Mid moves 100 -> 110, a gain of 10 quote per base unit, on 2 units.
+    let out = l.settle_due(10_000, 110 * MICRO, 1_000);
+    assert_eq!(out.len(), 1, "the forecast did not settle");
+    assert_eq!(out[0].realized_pnl_micro, 20 * MICRO, "2 units * 10 move");
+    assert!(out[0].direction_correct);
+}
+
+#[test]
+fn short_that_falls_makes_money_and_the_sign_is_not_inverted() {
+    let mut l = Learner::new(Params::default());
+    let mut p = pending(2, Predicted::Down, 100 * MICRO, 0, 0);
+    p.size_micro = 2 * MICRO;
+    l.record_decision(p);
+
+    // Mid falls 100 -> 90. A short gains. If the direction sign were dropped this would come out
+    // negative, which is the whole reason this test exists separately from the long case.
+    let out = l.settle_due(10_000, 90 * MICRO, 1_000);
+    assert_eq!(out.len(), 1);
+    assert_eq!(out[0].realized_pnl_micro, 20 * MICRO);
+    assert!(out[0].direction_correct);
+}
+
+#[test]
+fn a_wrong_call_produces_a_negative_pnl() {
+    let mut l = Learner::new(Params::default());
+    let mut p = pending(3, Predicted::Up, 100 * MICRO, 0, 0);
+    p.size_micro = MICRO;
+    l.record_decision(p);
+
+    let out = l.settle_due(10_000, 90 * MICRO, 1_000);
+    assert_eq!(out.len(), 1);
+    assert_eq!(out[0].realized_pnl_micro, -10 * MICRO);
+    assert!(!out[0].direction_correct);
+    assert!(
+        out[0].realized_pnl_micro < 0,
+        "a losing trade must report a loss, not an absolute value"
+    );
+}
+
+#[test]
+fn a_forecast_with_no_recorded_size_reports_zero_pnl_rather_than_a_guess() {
+    // State files written before 14.4 have no size. Such a forecast is still scoreable for
+    // DIRECTION, and must contribute exactly zero to PnL rather than being dropped or guessed at.
+    let mut l = Learner::new(Params::default());
+    let mut p = pending(4, Predicted::Up, 100 * MICRO, 0, 0);
+    p.size_micro = 0;
+    l.record_decision(p);
+
+    let out = l.settle_due(10_000, 110 * MICRO, 1_000);
+    assert_eq!(out.len(), 1, "it must still settle for direction");
+    assert_eq!(out[0].realized_pnl_micro, 0);
+    assert!(out[0].direction_correct, "direction is still scoreable");
+}
+
+#[test]
+fn expected_edge_survives_settlement_rather_than_being_reconstructed() {
+    // Carried through, not derived. Deriving it from edge_error requires re-applying the direction
+    // sign and gets a short wrong.
+    let mut l = Learner::new(Params::default());
+    let mut p = pending(5, Predicted::Down, 100 * MICRO, 777, 0);
+    p.size_micro = MICRO;
+    l.record_decision(p);
+
+    let out = l.settle_due(10_000, 90 * MICRO, 1_000);
+    assert_eq!(out[0].expected_edge_micro, 777);
+    assert_eq!(out[0].size_micro, MICRO);
+}
+
+#[test]
+fn parameter_history_survives_a_reload() {
+    // Regression for a defect task 14.6 surfaced: `save` wrote the parameter history and `load`
+    // silently dropped it, so the recorded history was only ever the CURRENT process's changes.
+    // The panel showed momentum weight moving 411 -> 401 when it had actually fallen from its
+    // default of 2000, understating the learning effect by two orders of magnitude while looking
+    // entirely plausible.
+    //
+    // Same shape as the pending-queue defect fixed earlier: anything written on save and not read
+    // on load is a lie the next run tells.
+    let dir = std::env::temp_dir().join(format!("asml-hist-{}", std::process::id()));
+    let _ = std::fs::create_dir_all(&dir);
+    let path = dir.join("state.json");
+
+    let mut l = Learner::load(&path, Params::default());
+    for i in 0..10u64 {
+        l.record_decision(pending(i, Predicted::Up, 100 * MICRO, 10, i * 1_000));
+    }
+    l.settle_due(60_000, 90 * MICRO, 5_000);
+    let changes = l.update_params(60_000);
+    assert!(
+        !changes.is_empty(),
+        "no parameter moved, so there is no history to test and this test would pass vacuously"
+    );
+    let before = l.history().len();
+    assert!(before > 0);
+    l.save().expect("save");
+
+    let reloaded = Learner::load(&path, Params::default());
+    assert_eq!(
+        reloaded.history().len(),
+        before,
+        "history did not survive the reload"
+    );
+    assert_eq!(reloaded.history()[0].parameter, l.history()[0].parameter);
+    assert_eq!(reloaded.history()[0].from, l.history()[0].from);
+    assert_eq!(reloaded.history()[0].samples, l.history()[0].samples);
+
+    let _ = std::fs::remove_dir_all(&dir);
 }

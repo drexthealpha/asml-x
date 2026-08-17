@@ -1,0 +1,29 @@
+Journal split, pre-fix rows separated from post-fix rows
+Run 2026-08-12 02:13:25 UTC
+
+## Before
+  evidence/journal.jsonl: 100 rows
+  boundary: row 87. Rows 1..87 were written on 9 Aug by a binary predating the
+  wei_to_micro conversion at crates/market-intel/src/lib.rs:95-110. Everything after was
+  written today by the current binary.
+
+## After
+  evidence/journal.jsonl (current binary):        13 rows
+  evidence/journal-legacy-2026-08-09.jsonl:       87 rows
+  Nothing was deleted. The legacy rows are a real record of real decisions and stay in the
+  repository, labelled by filename and by date.
+
+## Verification, which is what makes the positional split a checked fact
+  legacy (9 Aug, pre-fix)
+    rows: 87   transactions: 3
+    limit refusals with a wei-scaled got: 40
+    limit refusals with a plausible got:  0
+  current (this session, post-fix)
+    rows: 13   transactions: 10
+    limit refusals with a wei-scaled got: 0
+    limit refusals with a plausible got:  0
+
+  SPLIT CONFIRMED: every wei-scaled value is on the legacy side and none on the current
+  side, which is exactly what the boundary claim predicts.
+
+written: /mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/evidence/phase4/journal-split.txt

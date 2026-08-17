@@ -1,0 +1,141 @@
+Task 7.3, fee bypass gate
+run: 2026-08-15 13:01:55 UTC
+
+== full suite, all contracts ==
+Compiling 3 files with Solc 0.8.28
+Solc 0.8.28 finished in 11.71s
+Compiler run successful!
+
+Ran 11 tests for test/FeeBypass.t.sol:FeeBypassTest
+[PASS] test_aBatchPointedAtAnImpostorCollectorReverts() (gas: 732333)
+[PASS] test_aBatchWithNoFeeLegReverts() (gas: 216259)
+[PASS] test_aFailingFeeLegRevertsTheFillToo() (gas: 418954)
+[PASS] test_aFeeLegThatIsNotLastReverts() (gas: 215646)
+[PASS] test_agentKeyCannotFillDirectlyAtTheVenue() (gas: 216284)
+[PASS] test_anArbitraryAddressCannotFillDirectlyEither() (gas: 253586)
+[PASS] test_approveTokenIsOwnerGatedAndActuallyGrants() (gas: 47127)
+[PASS] test_enumerateEveryRouteTheAgentKeyHas() (gas: 240669)
+[PASS] test_onlyTheVenueOwnerCanAuthoriseATaker() (gas: 13358)
+[PASS] test_takerAuthorisationCanBeRevoked() (gas: 279564)
+[PASS] test_theAuthorisedExecutorCanStillFill() (gas: 442960)
+Suite result: ok. 11 passed; 0 failed; 0 skipped; finished in 14.71ms (4.31ms CPU time)
+
+Ran 8 tests for test/FeeCollector.t.sol:FeeCollectorTest
+[PASS] testFuzz_feeIsAlwaysTheStatedFractionAndNeverExceedsTheCeiling(uint128) (runs: 256, μ: 11573, ~: 11573)
+[PASS] test_aTokenThatUnderDeliversRevertsRatherThanUnderCollecting() (gas: 351372)
+[PASS] test_chargeMovesTokensAndEmitsTheNumbers() (gas: 116707)
+[PASS] test_constructorRefusesAFeeAboveTheCeiling() (gas: 44153)
+[PASS] test_dustNotionalChargesNothingAndEmitsNothing() (gas: 25348)
+[PASS] test_feeCanOnlyBeLoweredNeverRaised() (gas: 22557)
+[PASS] test_onlyAnApprovedChargerCanCharge() (gas: 15703)
+[PASS] test_onlyOwnerCanChangeAnything() (gas: 18212)
+Suite result: ok. 8 passed; 0 failed; 0 skipped; finished in 111.39ms (108.85ms CPU time)
+
+Ran 4 tests for test/Venue.t.sol:BatchExecutorTest
+[PASS] test_batchRequiresTheGuardAsItsFirstLeg() (gas: 16953)
+[PASS] test_capBreachInLegOneRevertsTheWholeBatchAndMovesNothing() (gas: 239176)
+[PASS] test_killedGuardStopsTheBatch() (gas: 268097)
+[PASS] test_withinCapTheWholeBatchLands() (gas: 459914)
+Suite result: ok. 4 passed; 0 failed; 0 skipped; finished in 8.71ms (6.95ms CPU time)
+
+Ran 11 tests for test/RiskGuard.t.sol:RiskGuardTest
+[PASS] testFuzz_headroomIsHonest(uint96,uint96) (runs: 256, μ: 113517, ~: 113517)
+[PASS] test_addExposure_respectsGrossCap() (gas: 90184)
+[PASS] test_addExposure_respectsMarketCap() (gas: 69677)
+[PASS] test_agentCannotRaiseCaps() (gas: 17044)
+[PASS] test_agentCannotRevive() (gas: 64626)
+[PASS] test_killedBlocksAddExposure() (gas: 65629)
+[PASS] test_killedStillAllowsReduce() (gas: 92033)
+[PASS] test_ownerCanRevive() (gas: 48278)
+[PASS] test_reduceCannotExceedExposure() (gas: 68123)
+[PASS] test_strangerCannotDoAnything() (gas: 23378)
+[PASS] test_unknownMarketIsRefused() (gas: 17832)
+Suite result: ok. 11 passed; 0 failed; 0 skipped; finished in 209.86ms (208.82ms CPU time)
+
+Ran 5 tests for test/ScribbleFire.t.sol:ScribbleFireTest
+[PASS] test_cumulativeBreachAlsoTrips() (gas: 33610)
+[PASS] test_cumulativeUnderCapDoesNotTrip() (gas: 29785)
+[PASS] test_theRevertComesFromInstrumentationNotArithmetic() (gas: 28496)
+[PASS] test_validInputPasses() (gas: 28596)
+[PASS] test_violatingInputTripsTheAssertion() (gas: 32499)
+Suite result: ok. 5 passed; 0 failed; 0 skipped; finished in 855.68µs (396.28µs CPU time)
+
+Ran 23 tests for test/Rwa.t.sol:RwaTest
+[PASS] testFuzz_riskViewNeverDisagreesWithTheIndividualGetters(uint32) (runs: 256, μ: 28725, ~: 28740)
+[PASS] testFuzz_theTwoTradeableViewsNeverDisagree(uint32,bool,uint96) (runs: 256, μ: 96209, ~: 95300)
+[PASS] test_aFlatOracleIsNotAStaleOracle() (gas: 101359)
+[PASS] test_agentCannotLoosenTheRwaPolicy() (gas: 16129)
+[PASS] test_agentStillCannotRevive() (gas: 63592)
+[PASS] test_deriskingIsNeverBlockedByAnyRwaCondition() (gas: 130100)
+[PASS] test_deriskingWorksEvenWhenKilled() (gas: 109996)
+[PASS] test_divergenceBetweenOracleAndMarketRefusesNewExposure() (gas: 99003)
+[PASS] test_divergenceIsSymmetric() (gas: 87053)
+[PASS] test_divergenceWithinToleranceIsFine() (gas: 143577)
+[PASS] test_exposureIsRefusedJustBeforeARedemptionWindow() (gas: 55434)
+[PASS] test_freshOracleAndFarWindowAllowsExposure() (gas: 94565)
+[PASS] test_inheritedCapsStillBind() (gas: 43808)
+[PASS] test_inheritedKillSwitchStillBlocks() (gas: 64770)
+[PASS] test_issuerPauseRefusesNewExposure() (gas: 63526)
+[PASS] test_onlyAgentCanObserveMarketPrice() (gas: 13907)
+[PASS] test_onlyIssuerCanMoveTheOracle() (gas: 11044)
+[PASS] test_onlyIssuerCanUseEveryIssuerOnlyEntryPoint() (gas: 28426)
+[PASS] test_oraclePriceCannotBeZero() (gas: 8495)
+[PASS] test_settingAPriceAlsoRefreshesItsTimestamp() (gas: 45960)
+[PASS] test_staleOracleRefusesNewExposure() (gas: 42834)
+[PASS] test_whileTheWindowIsOpenExposureIsAllowed() (gas: 42052)
+[PASS] test_yieldIndexCannotDecrease() (gas: 16895)
+Suite result: ok. 23 passed; 0 failed; 0 skipped; finished in 325.14ms (323.48ms CPU time)
+
+Ran 8 tests for test/Venue.t.sol:VenueTest
+[PASS] testFuzz_venueRemainsSolventAcrossPartialFills(uint96) (runs: 256, μ: 250916, ~: 250916)
+[PASS] test_cancelRefundsTheUnfilledRemainder() (gas: 259597)
+[PASS] test_cannotOverfill() (gas: 198283)
+[PASS] test_onlyMakerCanCancel() (gas: 195233)
+[PASS] test_partialFillsAccumulateExactly() (gas: 261428)
+[PASS] test_postingABuyEscrowsTheQuote() (gas: 194936)
+[PASS] test_postingASellEscrowsTheBase() (gas: 194786)
+[PASS] test_takeMovesBothAssetsAndClearsEscrow() (gas: 255518)
+Suite result: ok. 8 passed; 0 failed; 0 skipped; finished in 212.21ms (210.97ms CPU time)
+
+Ran 4 tests for test/RiskGuard.t.sol:RiskGuardInvariantTest
+[PASS] invariant_capsAreNeverExceeded() (runs: 128, calls: 8192, reverts: 0)
+
+╭--------------+------------+-------+---------+----------╮
+| Contract     | Selector   | Calls | Reverts | Discards |
++========================================================+
+| GuardHandler | addCounted | 4175  | 0       | 0        |
+|--------------+------------+-------+---------+----------|
+| GuardHandler | reduce     | 4017  | 0       | 0        |
+╰--------------+------------+-------+---------+----------╯
+
+[PASS] invariant_grossEqualsSumOfParts() (runs: 128, calls: 8192, reverts: 0)
+
+╭--------------+------------+-------+---------+----------╮
+| Contract     | Selector   | Calls | Reverts | Discards |
++========================================================+
+| GuardHandler | addCounted | 4175  | 0       | 0        |
+|--------------+------------+-------+---------+----------|
+| GuardHandler | reduce     | 4017  | 0       | 0        |
+╰--------------+------------+-------+---------+----------╯
+
+[PASS] invariant_grossNeverExceedsCapEvenAfterReduces() (runs: 128, calls: 8192, reverts: 0)
+
+╭--------------+------------+-------+---------+----------╮
+| Contract     | Selector   | Calls | Reverts | Discards |
++========================================================+
+| GuardHandler | addCounted | 4175  | 0       | 0        |
+|--------------+------------+-------+---------+----------|
+| GuardHandler | reduce     | 4017  | 0       | 0        |
+╰--------------+------------+-------+---------+----------╯
+
+[PASS] test_handlerCanReachARiskyState() (gas: 96376)
+Suite result: ok. 4 passed; 0 failed; 0 skipped; finished in 4.27s (11.34s CPU time)
+
+Ran 8 test suites in 4.29s (5.15s CPU time): 74 tests passed, 0 failed, 0 skipped (74 total tests)
+
+== assertion: the bypass suite actually ran and found its tests ==
+FeeBypassTest tests found: 11 (expected 11)
+total PASS lines in run:   66
+FAIL lines in run:         0
+forge exit code:           0
+GATE: PASS

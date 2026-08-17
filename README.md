@@ -1,23 +1,47 @@
 # ASML-X
 
-An autonomous market brain running live on X Layer testnet, chain 1952.
+**Deposit money. An agent trades it under limits only you can tighten. Withdraw whenever you
+want, including while the agent is paused.**
 
-It reads a real order book over JSON-RPC, forms a thesis from measured signals, scores a
-generated candidate set, puts every candidate through a risk gate the agent cannot bypass,
-submits multi-leg transactions atomically, and learns from realized outcomes. It has a
-second layer of refusals that only make sense for RWA-linked instruments, and a
-coordination API that another agent can call over HTTP.
+That is the product. It is live on **X Layer mainnet, chain 196, with real OKB** — deposit,
+an agent action under a user-set limit, a fee event, and a full withdrawal, all executed
+onchain `[C-1204]`. Developed against testnet 1952.
 
-Submission for the BuildX AI Season hackathon (X Layer). **Testnet only**, with a
-documented mainnet path in [docs/mainnet-path.md](docs/mainnet-path.md).
+Three properties make it safe to actually use, and each is proved rather than promised:
 
-Start here if you are judging: **[JUDGE-GUIDE.md](JUDGE-GUIDE.md)**, a five-minute path.
+- **Your limit can only tighten, never widen.** `Limits::tightened_by` takes the minimum of
+  each field, so a user limit cannot loosen a system limit even if the caller asks it to.
+- **Pause can never block withdrawal.** Proved as an invariant over a 128-run campaign, and
+  the campaign is shown able to fail `[C-1401]`.
+- **The agent cannot bypass the risk gate.** Forging an approval fails to *compile*:
+  `RiskApproved<T>` is sealed, and the same cap is independently enforced onchain `[C-1400]`.
+
+Underneath, it reads a real order book over JSON-RPC, forms a thesis from measured signals,
+scores a generated candidate set, puts every candidate through that gate, submits multi-leg
+transactions atomically, and learns from realized outcomes. There is a second layer of
+refusals specific to RWA-linked instruments, and a coordination API other agents can call
+([protocol v1.0.0](docs/COORDINATION-PROTOCOL.md)).
+
+**It is not profitable, and that is measured rather than merely unmeasured:** the signal's
+hit rate is 40% on n = 10, worse than a coin flip, and the learner responded by cutting its
+weight until the agent stopped trading `[C-1406]`. That number is on the landing page in the
+loss colour, not in a footnote.
+
+Submission for the BuildX AI Season hackathon (X Layer).
+
+Start here if you are judging: **[JUDGE-GUIDE.md](JUDGE-GUIDE.md)**, a seven-minute path.
 
 ## Evidence labels
 
 Every claim in this repository is tagged. `DEMONSTRATED` means shown true with a link to
 the artifact. `INFERRED` means assumed from structure and not proven. Untagged claims are
 treated as defects.
+
+Claims carry an inline id like `[C-204]`. Every id resolves to a row in
+[evidence/CHAIN-OF-EVIDENCE.md](evidence/CHAIN-OF-EVIDENCE.md) giving the artifact and the exact
+command that regenerates it. Re-run every row at once with `bash scripts/44-chain-verify.sh`.
+The point of the index is that no sentence here has to be taken on trust: a claim whose command
+fails is deleted from this file rather than softened.
 
 ## What is real, and what is not
 
@@ -108,8 +132,11 @@ a policy someone must remember.
 |---|---|
 | Rust tests | 19 suites, all green `DEMONSTRATED` |
 | Solidity tests | 50 Foundry tests including 4 stateful invariant campaigns `DEMONSTRATED` |
-| Formal verification | 7 + 7 Halmos theorems, each proven for all inputs in range `DEMONSTRATED` [evidence/formal/](evidence/formal/) |
-| Proof mutation | an injected 1-wei cap violation and a removed pause refusal were both caught `DEMONSTRATED` |
+| Formal verification | 7 + 7 Halmos theorems, each proven for all inputs in range `DEMONSTRATED` `[C-220]` [evidence/formal/](evidence/formal/) |
+| Second prover, independently | 5 hevm 0.57.0 theorems on the same cap invariant, a different engine reaching the same conclusion `DEMONSTRATED` `[C-221]` |
+| Runtime assertion, proven to fire | a scribble annotation on the cap: the plain contract accepts 150, the instrumented one reverts `DEMONSTRATED` `[C-222]` |
+| Proof mutation | an injected 1-wei cap violation and a removed pause refusal were both caught `DEMONSTRATED` `[C-220]` |
+| Automated mutation, risk engine | cargo-mutants found **37 surviving mutants** in the crate holding every limit check. 11 tests were written to kill them `DEMONSTRATED` `[C-230]` `[C-231]` |
 | Mutation: risk engine | 14/14 RED [evidence/mutation-risk-engine.md](evidence/mutation-risk-engine.md) |
 | Mutation: contracts | 15/15 RED [evidence/mutation-contracts.md](evidence/mutation-contracts.md) |
 | Mutation: RWA layer | 18/18 RED [evidence/mutation-rwa.md](evidence/mutation-rwa.md) |
@@ -119,6 +146,16 @@ Every test suite is mutation-tested: the thing each test guards is deliberately 
 test is confirmed RED, then restored and confirmed GREEN. A test that cannot fail is
 deleted. This caught three cases where a mutation silently failed to apply, which proves
 nothing at all, and several where a test was passing vacuously.
+
+Those four gates are hand-written, and running an automated mutation engine over the same crate
+showed what hand-written gates miss. `cargo-mutants` generated 107 viable mutants of the risk
+engine and **37 survived** the full suite: no test pinned a single limit boundary (so `>` could
+become `>=` everywhere unnoticed), no test used a book with existing exposure (so the post-trade
+projection that stops a book creeping past a limit one order at a time was never exercised), the
+shipped default limits were asserted nowhere, and `is_halted` had no test at all. The 14/14 RED
+table above was true and incomplete at the same time: a hand-written gate tests the breaks its
+author thought of. Eleven tests were added to kill those 37, and the before-and-after survivor
+lists are both in the evidence `[C-230]` `[C-231]`.
 
 Formal verification uses [Halmos](https://github.com/a16z/halmos) rather than the Certora
 Prover. See [ADR-007](docs/decisions/ADR-007-formal-verification-tool.md) for why.
@@ -138,7 +175,12 @@ Agent-driven transactions, submitted by the runtime rather than by a script:
 [`0xbed1a412`](https://www.oklink.com/x-layer-testnet/tx/0xbed1a412229db6557645a893e3465e821d5622872c8ebef8cffce3eaede80a5d),
 [`0x03609244`](https://www.oklink.com/x-layer-testnet/tx/0x03609244f14d3bd14db73e46f0205ef595a9214d7af30399b090748f5ccd965f),
 [`0x34bf908d`](https://www.oklink.com/x-layer-testnet/tx/0x34bf908d4fc3e23cb1be655bd47a32c6b11e4945827fcad4552ecdbd7fd7ccab)
-`DEMONSTRATED`.
+`DEMONSTRATED` `[C-211]`.
+
+Every address above returns non-empty bytecode on the live chain, and every transaction hash
+cited anywhere in this repository resolves with status `0x1`. Both are re-checked from chain, not
+from these tables: `bash scripts/67-verify-deployments.sh` and
+`bash scripts/68-verify-tx-claims.sh` `[C-204]` `[C-211]`.
 
 ## Measured numbers
 
@@ -146,13 +188,16 @@ All measured on chain 1952, not taken from marketing material.
 
 | metric | value |
 |---|---|
-| chain id | 1952 (chain 195 is deprecated and still answers, which is a trap) |
-| block time | ~1.0 s, measured twice independently |
+| chain id | 1952 (chain 195 is deprecated and still answers, which is a trap) `[C-202]` |
+| block time | 1.000 s, measured over 300 blocks `[C-203]` |
 | gas limit | 210,000,000 |
 | gas price | 20,000,001 wei |
 | gas per agent action | 45,366 for the Ping proof, higher for multi-leg batches |
 | candidates evaluated per decision | 11 to 27, generated from the live book |
 | total cost of the entire build | under 0.001 OKB |
+| connect to running, cold start | 8.6 s median of 3 runs, first paint to activated. **SCRIPTED, not human**: a lower bound, because a script does not hesitate and a person does `[C-1001]` |
+| of which, waiting for the chain | about 4.8 s. The part the product controls is about 3.8 s |
+| deposit and activate | 3 interactions from a cold wallet: one click, one signature, one confirmation `[C-903]` |
 
 ## Run it in ten minutes
 
@@ -219,17 +264,22 @@ risk. It is proven symbolically, unit-tested, and demonstrated live onchain.
 ## Repository layout
 
 ```
-crates/          Rust workspace: 10 crates
+crates/          Rust workspace: 12 crates, 2 of them offline probes not on the product path
 contracts/       Solidity + Foundry: 7 contracts, 49 tests, symbolic suites
 scripts/         every operation, numbered, runnable
 agents/          external_agent.py, the separate-process coordination client
 ui/              single-file dashboard, plus nodata-check/ proving it cannot fake data
+ui-v2/           the terminal-density rebuild, toolchain only until the UI study lands
 evidence/        tx hashes, mutation tables, proof reports, gate reports per phase
+evidence/CHAIN-OF-EVIDENCE.md   the claim index every [C-xxx] tag in this file resolves to
 docs/verified/   facts established from primary sources, with retrieval dates
-docs/decisions/  ADR-001 to ADR-010
-CLAUDE.md        the build's standing rules and environment facts
-RESUME.md        current state, written so a fresh session can resume
+docs/decisions/  ADR-001 to ADR-012
 ```
+
+Two files the build uses internally, `CLAUDE.md` and `RESUME.md`, are deliberately NOT in the
+repository. An earlier version of this section listed them, which was wrong: they are gitignored,
+so a judge reading that line would look for files that are not there. They hold the build's
+working rules and session state, neither of which is a product claim.
 
 ## License
 

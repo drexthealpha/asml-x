@@ -1,182 +1,194 @@
 # Judge guide
 
-Five minutes, in order. Each step names what to look at and what would falsify the claim.
+**Seven minutes, in order.** Each step says what to look at, and what would falsify it.
 
-If you only have sixty seconds, do step 2 and step 4.
+If you have ninety seconds, do **step 1 and step 2**. Those are the two claims everything else
+supports: this is live on X Layer mainnet with real money, and a person can actually use it.
 
----
-
-## 0. Setup, one minute
+Every claim below is tagged `[C-xxx]` and resolves to a row in
+[evidence/CHAIN-OF-EVIDENCE.md](evidence/CHAIN-OF-EVIDENCE.md) carrying the artifact and the command
+that regenerates it. 119 rows. To check the whole index at once:
 
 ```bash
-curl -L https://foundry.paradigm.xyz | bash && foundryup
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-cargo build --release
+bash scripts/44-chain-verify.sh
 ```
-
-No Docker, no API keys, no wallet extension. Everything below except transaction
-submission is read-only against public infrastructure.
 
 ---
 
-## 1. The agent decides against the live chain, 60 seconds
+## 1. It is live on X Layer mainnet, with the user's own money — 90 seconds
+
+Not a testnet demo. **Chain 196, real OKB.** Verify it without trusting a single file in this repo:
+
+```bash
+bash scripts/184-mainnet-reverify.sh
+```
+
+That script scrapes the hashes and addresses **out of the evidence documents** and checks them
+against chain 196, so a document that quietly changed a hash fails rather than being confirmed by a
+constant somebody updated to match. `[C-1602]`
+
+**What you should see:** `eth_chainId` 196; 7 transactions each checked against **what its own
+document claims**; 7 contracts carrying real bytecode; and live contract state showing
+`chargeCount` 1, a treasury address **distinct from the deployer**, and a solvent vault.
+
+**The detail worth pausing on:** one of those 7 transactions is expected to **revert**, and does. It
+is the proof that the risk gate refuses an over-cap trade **with real money at stake** `[C-1201]`. A
+version of this checker that expected success everywhere would have flagged the single most
+important negative result in the project as a defect.
+
+The whole mainnet launch cost **0.000203652 OKB across 75 transactions**, reconciled against the
+deployer's balance delta rather than summed from a table of plausible figures. **No USD figure is
+asserted anywhere**: the chain cannot be asked what OKB is worth `[C-1205]`.
+
+---
+
+## 2. A person can deposit, let the agent trade, and get their money back — 2 minutes
+
+This is the product. Everything else is what makes it safe to use.
+
+```bash
+bash scripts/serve-ui.sh
+```
+
+Open the dashboard. **You do not need a wallet to see it work**: press **Run full demo** on the
+landing page. It runs a complete cycle against the live chain and shows the thesis, the candidates
+scored, the risk verdict and the transaction. It is not a replay — a replay would leave the journal
+length unchanged, and the endpoint refuses to return success if it does `[C-905]`.
+
+With a wallet, the full path is **deposit → the agent acts under a limit you set → withdraw**, and it
+was executed on mainnet end to end: 5 in, 5 out, vault left solvent with the user's balance at zero
+`[C-1204]`.
+
+Connect to running takes a measured **8.6s median across three cold runs**, first paint to activated.
+That figure is labelled **scripted, not human** — a script does not hesitate and a person does, so
+treat it as a lower bound `[C-1001]`.
+
+**What makes it non-trivial:** the limit you set can only ever *tighten* what the agent may do.
+`Limits::tightened_by` takes the minimum of each field, so a user limit cannot widen a system limit
+even if the caller asks it to. And **pause can never block withdrawal** — that is proved as an
+invariant, not promised in a comment `[C-1401]`.
+
+---
+
+## 3. Risk refuses, and the refusal is legible — 90 seconds
 
 ```bash
 ASML_REPO=$PWD ./target/release/asml observe 4
 ```
 
-**What you should see:** four cycles, each reporting the block number, the number of live
-orders read from chain 1952, a candidate count between 11 and 27, the chosen action, a
-thesis with a confidence in basis points, and the risk verdict.
+Four cycles against live chain 1952: block number, live orders read from chain, a candidate count
+that *changes with the book* because candidates are generated from live state rather than picked
+from a fixed menu, the chosen action, and the risk verdict.
 
-**What makes it non-trivial:** the candidate count changes with the book, because
-candidates are generated from live state rather than picked from a fixed menu. The thesis
-sentence is assembled from the actual signal numbers.
-
-**How to falsify it:** point it at the wrong chain. It refuses to start on anything except
-chain 1952 and names 195 as the deprecated testnet.
-
----
-
-## 2. Risk actually stops the agent, and you can see it onchain
-
-This is the claim most worth checking, so check it two ways.
-
-**Offchain, in the candidate record.** Open [ui/index.html](ui/index.html) after step 5, or
-read `evidence/journal.jsonl`. The risk panel groups refusals by reason. In the recorded run
-`OrderNotionalTooLarge` appears 40 times, meaning the engine wanted to trade larger and was
-refused.
-
-**Onchain, in the RWA guard.** Read
-[evidence/rwa-live/live-triggers.txt](evidence/rwa-live/live-triggers.txt). It walks four
-refusal conditions live with transaction hashes:
-
-- issuer pause set, `addExposure` REFUSED(IssuerPaused)
-- **de-risk while paused, `reduceExposure` ACCEPTED**, tx `0xd2ae42fd`
-- oracle diverged 1000 bps, REFUSED(OracleMarketDivergence)
-- oracle aged past its threshold, REFUSED(OracleStale)
-- redemption window inside the buffer, REFUSED(RedemptionWindowTooClose)
-
-**The line to look at is the second one.** Adding is refused while exiting still works. A
-guard that blocks the exit when the oracle is stale converts a risk control into a trap.
-That asymmetry is proven three ways: symbolically for all amounts
-(`check_reduceIsNeverBlockedByRwaConditions`), by unit test, and live onchain.
-
-**How to falsify it:** run `bash scripts/25-rwa-mutation.sh`. It removes each refusal in
-turn and confirms the tests go RED. 18 of 18 RED means no refusal is decorative.
-
----
-
-## 3. The AI-RWA side-by-side, 90 seconds
+Every refused candidate carries **its own numbers and its reason**, not a generic rejection. And the
+same cap rule is enforced in **three independent implementations** — the live deployed contract,
+the same bytecode replayed in revm, and the Rust risk engine — which are shown to agree on the
+**revert selector and its decoded arguments**, not merely on a boolean `[C-1400]`:
 
 ```bash
-bash scripts/24-side-by-side.sh
+bash scripts/164-differential-proof.sh
 ```
 
-The same order, the same live signals, evaluated against a pure crypto market and an
-RWA-linked market, across four instrument states. Output is also saved at
-[evidence/rwa-live/side-by-side.txt](evidence/rwa-live/side-by-side.txt).
-
-| state | crypto market | RWA market |
-|---|---|---|
-| healthy | APPROVED | APPROVED |
-| issuer paused | APPROVED | REFUSED `RwaIssuerPaused` |
-| oracle diverged 1200 bps | APPROVED | REFUSED `RwaOracleMarketDivergence{1200,300}` |
-| restored | APPROVED | APPROVED |
-
-**The healthy row is the important one.** Without it, the RWA layer could be a global brake
-wearing an RWA label. With it, the refusals are demonstrably specific to the instrument and
-its current state. The onchain `rwaTradeableFlag()` agreed with the offchain engine in every
-case.
+Two implementations that both refuse *for different reasons* have coincided, not agreed. The
+under-cap call succeeding in the same run is the control, without which a contract that reverted on
+everything would pass.
 
 ---
 
-## 4. A real transaction, driven by the agent
+## 4. The honest result: the agent's signal is worse than a coin flip — 60 seconds
 
-Three transactions submitted by the runtime itself, not by a script:
+**This is on the landing page, in the loss colour, with its sample size.** It is not buried.
 
-- [`0xbed1a412…`](https://www.oklink.com/x-layer-testnet/tx/0xbed1a412229db6557645a893e3465e821d5622872c8ebef8cffce3eaede80a5d)
-- [`0x03609244…`](https://www.oklink.com/x-layer-testnet/tx/0x03609244f14d3bd14db73e46f0205ef595a9214d7af30399b090748f5ccd965f)
-- [`0x34bf908d…`](https://www.oklink.com/x-layer-testnet/tx/0x34bf908d4fc3e23cb1be655bd47a32c6b11e4945827fcad4552ecdbd7fd7ccab)
+- Signal hit rate **40.0%, n = 10**. Below a coin flip.
+- The learner responded by cutting `momentum_weight_bps` from its default of **2000 to 391** and
+  raising `thin_book_penalty_bps` from **150 to 1225** — until the agent stopped taking positions
+  and chose `hold`. `[C-1406]`
+- Realized PnL is recorded **in money, not just direction**: decision 176 predicted down, the mid
+  moved against it, and it settled to **−37,500 micro quote** `[C-1403]`.
 
-Each is a multi-leg atomic batch through `BatchExecutor`: the risk guard leg runs first, so
-a cap breach or a halt reverts the whole batch before any token moves. Guard exposure moved
-4.0e18 to 10.075e18 across the three, with `gross() == sumOfParts()` holding throughout.
+**What is claimed:** outcomes are measured, attributed to the decision that produced them, and acted
+on. **What is not claimed:** profitability. Ten settled outcomes is not a track record, and the
+realized figure is mark-to-market against a later observed mid, not cash from a closing trade.
 
-Full context, including how the agent adapted as its own fills moved the book (imbalance
-3750 to 5172 to 6296 bps, a different order and size each cycle), is in
-[evidence/gates/phase-4.md](evidence/gates/phase-4.md).
+Every figure carries its sample size **because the data structure forces it** — the count lives
+inside the same object as the value, so a component cannot render the number without it.
 
 ---
 
-## 5. The dashboard, and proof it cannot fake data
+## 5. It refuses hostile callers, on the deployed bytecode — 60 seconds
 
 ```bash
-bash scripts/35-serve-ui.sh
+bash scripts/178-adversarial-fee-vault.sh
 ```
 
-- Dashboard: <http://127.0.0.1:8080/ui/>
-- **No-data proof: <http://127.0.0.1:8080/ui/nodata-check/>**
+Nine hostile calls from an address this project holds no key for, each matched against the **exact
+error selector** rather than a name, because an X Layer node returns custom errors as raw calldata
+and "it reverted" and "it reverted for the reason I claimed" are different findings `[C-1500]`.
 
-The second link is the same page in a directory where its data files do not resolve. Every
-panel reports "not readable" or "runtime has not run", with red borders, and the numbers
-read 0 and n/a. A dashboard that shows plausible values with no data behind it is the
-standard way this kind of demo lies, so the failure mode is shipped as a checkable artifact.
+Three negative controls run **as the same attacker** and succeed. Without them, a contract that
+reverted on everything would score a perfect refusal rate.
 
-On the dashboard itself, the candidate table shows the chosen action and every rejected
-alternative with all four score terms, which is the evidence that a search happened rather
-than an if/else ladder running.
+This runs against **what is actually deployed**, not locally compiled bytecode. A contract can pass
+its own test suite and not be the contract that reached the chain.
 
 ---
 
-## 6. Where the code enforces its own rules, 60 seconds
-
-Three things are enforced by the compiler or the prover rather than by discipline.
-
-**The agent cannot bypass the risk gate.** Signing requires a `RiskApproved<OrderIntent>`,
-whose only constructor is inside the risk engine. Attempting to forge one does not fail a
-test, it fails to compile:
-[evidence/bypass-compile-error.txt](evidence/bypass-compile-error.txt).
-
-**Learning cannot widen a risk limit.** `Learner` has no type in its API that mentions
-`Limits`. It emits scoring parameters only. See `crates/learning/src/lib.rs`.
-
-**The limits are proven, not sampled.** 14 Halmos theorems across the base guard and the
-RWA guard, each proven for all inputs in range. Verify the proofs can fail:
+## 6. Reproduce the whole thing — 60 seconds
 
 ```bash
-bash scripts/16-proof-mutation.sh   # injects a 1-wei cap violation, prover catches it
-bash scripts/21-rwa-formal.sh       # removes the pause refusal, prover catches it
+bash scripts/183-reproduce.sh
 ```
+
+Nine gates including the full Rust workspace and 113 contract tests `[C-1600]`.
+
+That reproduction audit found **three defects in the evidence chain itself** and repaired them: a
+duplicate claim id that made `[C-710]` ambiguous, and two rows citing scripts that never existed
+`[C-1601]`. It runs an inventory pass *before* any re-execution, because a row citing a missing file
+produces a runner failure indistinguishable from a flaky test.
+
+All **33 fake wins named in TASKS.md** have a claim covering their subtask `[C-1603]`. The register
+prints each claim's text and deliberately **refuses to score whether the refusal is convincing** — a
+script asserting that thirty traps were avoided, written by the same process that might have fallen
+into them, would be that task's own fake win.
 
 ---
 
 ## 7. What this project does not claim
 
-Please read [docs/limitations.md](docs/limitations.md). Summary:
+Stated here so you do not have to go looking.
 
-- **Exchange OS integration is not demonstrated.** It has no developer surface on X Layer
-  testnet, established by four primary probes. It is a labelled forward commitment.
-- **The venue and the RWA instrument are self-deployed** and labelled as such everywhere.
-  Chain 1952 had nothing liquid to integrate against.
-- **No realized PnL.** Nothing here supports a claim about profitability.
-- **The coordination server stalls under a rapid burst**, so its rate limiter has never been
-  observed tripping. The remedy is stated.
-- **Learning sample sizes are single digits.** The mechanism is proven, the improvement is
-  not.
+- **Not profitable.** See step 4. The measured signal is worse than a coin flip on 10 samples.
+- **The venue and the RWA vault are self-deployed stand-ins**, labelled as such everywhere. This is
+  not integrated with a real order book.
+- **AggLayer settlement is INFERRED, not verified.** Reading chain 196's deployed bytecode found a
+  standard OP Stack bridge stack and no AggLayer path visible from L2 at all. The chain *is* past
+  Ecotone and Fjord, demonstrated by `eth_call`. This is stated because an earlier version of the
+  internal notes asserted it, and the assertion did not survive being checked.
+- **The mid moves because this project moves it.** The seeded book is static, so nothing settles on
+  its own. The profit labels used to benchmark the learner are **induced** by a script that posts
+  real orders. A win there would not have licensed a stronger claim, and the evidence file says so
+  *above* its numbers `[C-1405]`.
+- **The coordination fee is quoted, not charged.** The API has no identity system behind its key.
+- **The trace exports to stdout, not to a collector.** Real OpenTelemetry SDK, real span tree, no
+  infrastructure to stand up `[C-1402]`.
 
 ---
 
 ## The fastest way to attack this submission
 
-If you want to find the weak points, these are where they are, and each is already
-documented rather than hidden:
+If you want to break it, these are the places I would look, in order:
 
-1. Ask what happens when Exchange OS opens. Answer:
-   [docs/mainnet-path.md](docs/mainnet-path.md), and the venue interface is two calls wide.
-2. Point out the venue is self-dealing. Correct, and stated in
-   [ADR-001](docs/decisions/ADR-001-venue-strategy.md) with the evidence that forced it.
-3. Ask for the learning improvement number. There isn't one, and
-   [evidence/gates/phase-7.md](evidence/gates/phase-7.md) says so.
-4. Burst the coordination endpoint. It will stall, and
-   [evidence/gates/phase-6.md](evidence/gates/phase-6.md) predicts that.
+1. **The sample sizes.** n = 10 on the learning result. Everything in step 4 is honest about this,
+   but it is genuinely small, and no amount of framing changes that.
+2. **The stand-in venue.** The agent trades against a book this project deployed and seeds. The
+   decisions are real and the transactions are real; the *market* is not adversarial.
+3. **The induced profit labels.** Step 7 covers it. If you disagree that this was worth doing at
+   all, that is a fair position — it exercises a code path that would otherwise never run.
+4. **Anything asserting AggLayer.** There should be nothing. If you find a claim that AggLayer
+   settlement was verified, it is a bug and I want it cut.
+
+Two ADRs in `docs/decisions/` were **rewritten against their own author** when the measurements came
+back wrong: ADR-018, where a mobile-layout emergency turned out to be my own measurement code
+ignoring scroll clipping, and ADR-019, where "crates.io is unreachable from this machine" was
+asserted without ever being tested and was simply false. Both are left in the repo with the
+correction attached rather than quietly fixed.

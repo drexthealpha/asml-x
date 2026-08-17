@@ -64,4 +64,75 @@ contract MockERC20 {
         balanceOf[to] += amount;
         emit Transfer(from, to, amount);
     }
+
+    // ------------------------------------------------------------------ EIP-2612 permit
+
+    /// @notice Per-owner nonce, so a signature cannot be replayed.
+    mapping(address => uint256) public nonces;
+
+    /// @dev keccak256("Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)")
+    bytes32 public constant PERMIT_TYPEHASH =
+        0x6e71edae12b1b97f4d1f60370fef10105fa2faae0126114a169c64845d6126c9;
+
+    /// @dev keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)")
+    bytes32 private constant DOMAIN_TYPEHASH =
+        0x8b73c3c69bb8fe3d512ecc4cf759cc79239f7b179b0ffacaa9a75d522b39400f;
+
+    error PermitExpired(uint256 deadline, uint256 nowTs);
+    error InvalidSignature();
+
+    /// @notice EIP-712 domain separator, computed on every call rather than cached at construction.
+    ///
+    /// Caching it is the usual optimisation and it is WRONG for a contract that might be deployed to
+    /// more than one chain from the same source: a cached separator freezes the chain id at
+    /// construction, and a fork would let a signature from one chain be replayed on the other. This
+    /// project deploys to testnet 1952 now and mainnet 196 in Phase 12, so the two must not share a
+    /// valid signature. Recomputing costs a few hundred gas on a path that already costs an SSTORE.
+    function DOMAIN_SEPARATOR() public view returns (bytes32) {
+        return keccak256(
+            abi.encode(
+                DOMAIN_TYPEHASH,
+                keccak256(bytes(name)),
+                keccak256(bytes("1")),
+                block.chainid,
+                address(this)
+            )
+        );
+    }
+
+    /// @notice Approve by signature instead of by transaction, EIP-2612.
+    ///
+    /// This is what makes a cold-start activation three interactions rather than four: the approval
+    /// stops being a transaction the user must confirm and becomes a signature they sign, with no
+    /// gas and no block.
+    function permit(
+        address owner,
+        address spender,
+        uint256 value,
+        uint256 deadline,
+        uint8 v,
+        bytes32 r,
+        bytes32 s
+    ) external {
+        // forge-lint flags block.timestamp in a comparison, and it is correct to in general. Here
+        // it is what EIP-2612 specifies, and the manipulation it warns about is a validator moving
+        // the timestamp by seconds against a deadline the UI sets minutes out. The deadline exists
+        // to bound how long a signature stays valid, not to order events, so second-level drift
+        // cannot change an outcome.
+        // forge-lint: disable-next-line(block-timestamp)
+        if (block.timestamp > deadline) revert PermitExpired(deadline, block.timestamp);
+
+        bytes32 structHash =
+            keccak256(abi.encode(PERMIT_TYPEHASH, owner, spender, value, nonces[owner]++, deadline));
+        bytes32 digest = keccak256(abi.encodePacked("\x19\x01", DOMAIN_SEPARATOR(), structHash));
+
+        address recovered = ecrecover(digest, v, r, s);
+        // address(0) is what ecrecover returns for a malformed signature, so checking it is not
+        // paranoia: without this, a garbage signature would "recover" to address(0) and, if owner
+        // were also address(0), approve on its behalf.
+        if (recovered == address(0) || recovered != owner) revert InvalidSignature();
+
+        allowance[owner][spender] = value;
+        emit Approval(owner, spender, value);
+    }
 }

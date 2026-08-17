@@ -1,0 +1,17 @@
+Toolchain floor gate, task 1.1
+Run 2026-08-10 20:31:46 UTC
+
+Versions found:
+  rustc    1.97.1         floor 1.94.0     PASS   [mutants.rs, TOML 1.1 needs Cargo 1.94]
+  cargo    1.97.1         floor 1.94.0     PASS   [same]
+  node     20.19.4        floor 20.19.0    PASS   [vite.dev, Vite 7 needs Node 20.19+]
+  python   3.10.12        floor 3.10.0     PASS   [paperscraper and river support 3.10; halmos uses uv's own 3.12]
+  java     17.0.19        floor 17.0.0     PASS   [solc/Z3 toolchain under halmos]
+  forge    1.7.1          floor 1.0.0      PASS   [foundry, any 1.x]
+
+  pnpm     10.33.2        PASS   [HypeTerminal is a pnpm monorepo]
+
+halmos interpreter, checked separately because uv brings its own:
+  halmos:  halmos 0.3.3   [uv-managed Python 3.12]
+
+failures: 0

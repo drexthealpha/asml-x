@@ -1,0 +1,102 @@
+revm local simulation vs the live chain, task 1.13
+Run 2026-08-12 01:15:20 UTC
+
+## Source 1: the selector, derived from the Solidity error declaration
+  contracts/src/RiskGuard.sol:60
+    60:    error MarketCapExceeded(bytes32 market, uint256 attempted, uint256 cap);
+  selector: 0x3e2ed028
+
+## Source 3 first, because it needs the live chain and it is cheap: eth_call over the cap
+  Calling the DEPLOYED guard with an amount above its per-market cap. eth_call costs
+  nothing and returns the revert data the chain would produce.
+  configured cap for tBASE/tQUOTE: 500000000000000000000 [5e20]
+  live eth_call result:
+    Error: server returned an error response: error code 3: execution reverted, data: "0x3e2ed0289b14309189a210d9c57d8f9988110c977884ed7629791ee202706dc43dbaab0e00000000000000000000000000000000000000000000152d8e997869c68f800000000000000000000000000000000000000000000000001b1ae4d6e2ef500000"
+  selector seen from the live chain: 0x3e2ed028
+
+## Source 2: revm 42, local simulation from the compiled artifact
+  120 |         ExecutionResult::Revert { output, gas_used, gas, logs } => {
+      |                                                   +++++++++++
+  help: if you don't care about these missing fields, you can explicitly ignore them
+      |
+  120 |         ExecutionResult::Revert { output, gas_used, gas: _, logs: _ } => {
+      |                                                   +++++++++++++++++
+  help: or always ignore missing fields here
+      |
+  120 |         ExecutionResult::Revert { output, gas_used, .. } => {
+      |                                                   ++++
+  
+  Some errors have detailed explanations: E0026, E0027.
+  For more information about an error, try `rustc --explain E0026`.
+  error: could not compile `revm-probe` (bin "revm-probe") due to 2 previous errors
+  build failed, nothing simulated
+
+## Three-way comparison
+  from the Solidity source:   0x3e2ed028
+  from the live chain:        0x3e2ed028
+  from the revm simulation:   none
+
+## Verdict, task 1.13
+  RESULT: FAIL. build exit 101, run exit 1, revm selector none
+  against 0x3e2ed028 from the source. No equivalence claimed.
+
+## Source 2 retry: revm 42 local simulation
+  binary:   /mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/target/debug/revm-probe
+  artifact: /mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/contracts/out/RiskGuard.sol/RiskGuard.json (162314 bytes)
+Error: Transaction(TxGasLimitGreaterThanCap { gas_limit: 30000000, cap: 16777216 })
+
+## Three-way comparison, final
+  from the Solidity source (cast keccak of the error signature): 0x3e2ed028
+  from the LIVE deployed guard (eth_call over its cap):          0x3e2ed028
+  from the revm local simulation:                                none
+
+## Verdict, task 1.13
+  RESULT: FAIL, exit 1, revm selector none against 0x3e2ed028. No equivalence claimed.
+
+## Source 2 retry: revm 42 local simulation
+  binary:   /mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/target/debug/revm-probe
+  artifact: /mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/contracts/out/RiskGuard.sol/RiskGuard.json (162314 bytes)
+    deployed into revm at 0x8F7a45eBDe059392E46A46DCc14AB24681A961Ea
+Error: Transaction(NonceTooLow { tx: 0, state: 1 })
+
+## Three-way comparison, final
+  from the Solidity source (cast keccak of the error signature): 0x3e2ed028
+  from the LIVE deployed guard (eth_call over its cap):          0x3e2ed028
+  from the revm local simulation:                                none
+
+## Verdict, task 1.13
+  RESULT: FAIL, exit 1, revm selector none against 0x3e2ed028. No equivalence claimed.
+
+## Source 2 retry: revm 42 local simulation
+  binary:   /mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/target/debug/revm-probe
+  artifact: /mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/contracts/out/RiskGuard.sol/RiskGuard.json (162314 bytes)
+    deployed into revm at 0x8F7a45eBDe059392E46A46DCc14AB24681A961Ea
+    setAgent: ok
+    setMarketCap(500e18): ok
+    addExposure(8e18) under the cap: ok
+    addExposure(600e18) REVERTED
+    revert data: 0x3e2ed0289b14309189a210d9c57d8f9988110c977884ed7629791ee202706dc43dbaab0e000000000000000000000000000000000000000000000020f5b1eaad8d80000000000000000000000000000000000000000000000000001b1ae4d6e2ef500000
+    revert selector: 0x3e2ed028
+    decoded attempted: 608000000000000000000
+    decoded cap:       500000000000000000000
+
+## Three-way comparison, final
+  from the Solidity source (cast keccak of the error signature): 0x3e2ed028
+  from the LIVE deployed guard (eth_call over its cap):          0x3e2ed028
+  from the revm local simulation:                                0x3e2ed028
+
+## Verdict, task 1.13
+  RESULT: PASS. All three agree on MarketCapExceeded, and the local simulation decodes the
+  attempted amount and the cap out of the revert payload.
+  Reproduce: bash scripts/72-revm-smoke.sh && bash scripts/72b-revm-run.sh
+
+  What this buys the product: the agent can refuse a cap-breaching batch LOCALLY, for free,
+  before signing. The v1 spine run proved the chain refuses a breach; this proves the same
+  refusal is predictable off-chain, which is the difference between paying gas to learn no
+  and knowing no in advance.
+
+  One limit stated plainly: this simulation deploys a FRESH guard into an empty in-memory
+  state and configures it, so it proves the CONTRACT LOGIC reverts as expected. It does not
+  simulate against live chain state. Doing that needs a state fork, which is task 7.6, and
+  the distinction matters: a pre-flight against the wrong state would authorise what the
+  chain refuses.

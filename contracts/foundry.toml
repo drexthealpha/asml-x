@@ -21,6 +21,7 @@ remappings = [
 runs = 128
 depth = 64
 fail_on_revert = false
+show_metrics = true
 
 [rpc_endpoints]
 xlayer_testnet = "https://testrpc.xlayer.tech"

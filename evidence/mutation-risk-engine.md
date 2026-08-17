@@ -1,6 +1,6 @@
 # Mutation gate: risk engine
 
-Task 2.1.8, standing rule R7. Captured 2026-08-09 06:33:28 UTC.
+Task 2.1.8, standing rule R7. Captured 2026-08-12 02:40:25 UTC.
 
 Method: break the exact thing a test guards, confirm the suite goes RED,
 restore, confirm GREEN. A mutation that stays GREEN proves the limit has

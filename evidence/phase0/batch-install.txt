@@ -1,0 +1,41 @@
+Batch install (corrected), tasks 1.5 / 1.7 / 1.10 / 1.14 / 1.16
+Run 2026-08-11 02:24:54 UTC
+
+## Already confirmed installed
+  rustc:         rustc 1.97.1 (8bab26f4f 2026-07-14)
+  cargo:         cargo 1.97.1 (c980f4866 2026-06-30)
+  cargo-mutants: cargo-mutants 27.1.0
+  just:          just 1.58.0
+  uv:            uv 0.12.3 (x86_64-unknown-linux-gnu)
+  halmos:        halmos 0.3.3
+  hevm:          0.57.0 [no git revision present]
+  z3:            Z3 version 5.0.0 - 64 bit
+  gitleaks:      8.30.1
+
+## FIX 1: scribble via a user-writable npm prefix (was EACCES, exit -13)
+  already present: 0.7.10
+
+## FIX 2: venv via uv (python3 -m venv produced nothing, venv module absent)
+Installed Python 3.12.13 in 525ms
+ + cpython-3.12.13-linux-x86_64-gnu (python3.12)
+  uv python 3.12 at: /home/zulab/.local/share/uv/python/cpython-3.12-linux-x86_64-gnu/bin/python3.12
+Using CPython 3.12.13
+Creating virtual environment at: /home/zulab/.asml-venv
+Activate with: source /home/zulab/.asml-venv/bin/activate
+  venv python: Python 3.12.13
+
+## paperscraper (1.10), river (1.14), duckdb (1.16) into that venv
+ + unidecode==1.4.0
+ + urllib3==2.7.0
+ + wcwidth==0.8.2
+ + webencodings==0.5.1
+ + webrequests==1.0.8
+ + websocket-client==1.9.0
+ + wrapt==2.3.0
+ + wsproto==1.3.2
+
+  paperscraper: import OK
+  river:        0.25.0
+  duckdb:       1.5.5
+
+venv for later scripts: /home/zulab/.asml-venv

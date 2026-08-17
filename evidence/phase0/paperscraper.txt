@@ -1,0 +1,37 @@
+paperscraper, task 1.10
+Run 2026-08-12 01:44:10 UTC
+
+## Setup
+  venv python: Python 3.12.13
+  kaggle creds materialised: yes
+  (KAGGLE_USERNAME and KAGGLE_KEY have been in ~/.profile since v1, unused until now)
+
+## Querying arxiv for the three topics that shape the scoring function
+WARNING:paperscraper.load_dumps: No dump found for biorxiv. Skipping entry.
+WARNING:paperscraper.load_dumps: No dump found for chemrxiv. Skipping entry.
+WARNING:paperscraper.load_dumps: No dump found for medrxiv. Skipping entry.
+WARNING:paperscraper.load_dumps: No dumps found for either biorxiv, medrxiv and chemrxiv. Consider using paperscraper.get_dumps.* to fetch the dumps.
+Processing "market making" AND "inventory risk": 0it [00:00, ?it/s]Processing "market making" AND "inventory risk": 0it [05:00, ?it/s]
+
+  inventory_risk: QUERY FAILED: HTTPError: Page request resulted in HTTP 429 (https://export.arxiv.org/api/query?search_query=%22market+making%22+AND+%22inventory+risk%22&id_list=&sortBy=relevance&sortOrder=descending&start=0&max_results=100)
+Processing "adverse selection" AND "limit order book": 0it [00:00, ?it/s]Processing "adverse selection" AND "limit order book": 0it [05:39, ?it/s]
+
+  adverse_selection: QUERY FAILED: HTTPError: Page request resulted in HTTP 429 (https://export.arxiv.org/api/query?search_query=%22adverse+selection%22+AND+%22limit+order+book%22&id_list=&sortBy=relevance&sortOrder=descending&start=0&max_results=100)
+Processing "online learning" AND "distribution shift": 0it [00:00, ?it/s]Processing "online learning" AND "distribution shift": 1it [03:34, 214.66s/it]Processing "online learning" AND "distribution shift": 5it [03:34, 42.93s/it] 
+
+  online_learning: 5 records
+    [2026-05-11] Sample-Mean Anchored Thompson Sampling for Offline-to-Online Learning with Distribution Shift
+    [2020-12-15] Detecting and Adapting to Irregular Distribution Shifts in Bayesian Online Learning
+    [2021-07-09] Online Adaptation to Label Distribution Shift
+
+  TOTAL RECORDS: 5
+  raw results: /home/zulab/paperscraper-results.json
+
+## Wiring one finding into a real design decision
+  written: docs/research-basis.md
+  entries: 4
+
+## Verdict, task 1.10
+  records returned:     5
+  cited decisions:      4
+  RESULT: PASS. Both halves hold.

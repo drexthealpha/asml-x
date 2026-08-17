@@ -1,0 +1,38 @@
+ui-study.md citation audit, tasks 3.7 and 3.8
+Run 2026-08-12 01:59:04 UTC
+
+## Source
+  study:  evidence/ui-study.md
+  clone:  /home/zulab/hypeterminal at a61992e
+
+  citations checked: 70
+  citations valid:   70
+  citations BAD:     0
+  distinct files cited: 20
+      3  apps/terminal/src/components/trade/layout/main-workspace.tsx
+      1  apps/terminal/src/components/trade/orderbook/orderbook-panel.tsx
+      5  apps/terminal/src/config/layout.ts
+      1  apps/terminal/src/routes/perp.tsx
+      1  apps/terminal/src/styles.css
+      2  batch-updater.ts
+      5  health.ts
+      2  main-workspace.tsx
+     16  orderbook-panel.tsx
+      8  orderbook-row.tsx
+      1  packages/hl-react/src/internal/websocket/batch-updater.ts
+      1  packages/hl-react/src/internal/websocket/health.ts
+      1  packages/hl-react/src/internal/websocket/reliability.ts
+      1  packages/hl-react/src/internal/websocket/staleness.ts
+      1  packages/hl-react/src/internal/websocket/visibility.ts
+     11  packages/ui/src/globals.css
+      1  perp.tsx
+      5  reliability.ts
+      1  staleness.ts
+      3  use-orderbook-rows.ts
+
+  gate threshold is 30 citations: MET
+
+## Verdict
+  RESULT: PASS. Every cited file exists and every cited line is inside it, and the
+  citation count clears the gate's threshold of 30.
+  Reproduce: bash scripts/74-verify-ui-study.sh

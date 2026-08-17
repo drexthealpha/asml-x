@@ -1,0 +1,18 @@
+Phase 4 red-team fixtures
+Run 2026-08-12 00:59:14 UTC
+
+## Attacks staged, each one a way a dashboard usually lies
+  1. truncated JSON line
+  2. valid JSON with every field the wrong type
+  3. a row with no decision_id
+  4. absurd magnitudes: 1e30 score, 999999999 bps confidence, a 20-digit block number
+  5. one GOOD row, so a silent drop of the bad ones would look like a working screen
+  6. learned-state.json that is not JSON
+  7. deployments.json served as HTML, which is what a dev server returns for a missing file
+
+## Serve
+  cd /home/zulab/redteam-check && python3 -m http.server 4175 --bind 127.0.0.1
+  then open http://127.0.0.1:4175/
+
+  journal lines: 5
+  fixtures at:   /home/zulab/redteam-check/data

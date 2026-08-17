@@ -1,0 +1,162 @@
+Compiling 2 files with Solc 0.8.28
+Solc 0.8.28 finished in 10.08s
+Compiler run successful with warnings:
+Warning (2072): Unused local variable.
+   --> src/AgentVault.sol:289:9:
+    |
+289 |         uint256 free = withdrawable(depositor);
+    |         ^^^^^^^^^^^^
+
+{"timestamp":1786907384,"event":"failure","invariant":"invariant_committedNeverExceedsBalance","target":"test/VaultInvariants.t.sol:VaultInvariantTest","reason":"committed exceeded balance: 3561 > 2328"}
+
+Ran 4 tests for test/VaultInvariants.t.sol:FeeInvariantTest
+[PASS] invariant_feeNeverExceedsTheCeiling() (runs: 128, calls: 8192, reverts: 0)
+
+╭------------+----------+-------+---------+----------╮
+| Contract   | Selector | Calls | Reverts | Discards |
++====================================================+
+| FeeHandler | charge   | 4122  | 0       | 0        |
+|------------+----------+-------+---------+----------|
+| FeeHandler | lowerFee | 4070  | 0       | 0        |
+╰------------+----------+-------+---------+----------╯
+
+[PASS] invariant_feeOnlyEverFalls() (runs: 128, calls: 8192, reverts: 0)
+
+╭------------+----------+-------+---------+----------╮
+| Contract   | Selector | Calls | Reverts | Discards |
++====================================================+
+| FeeHandler | charge   | 4122  | 0       | 0        |
+|------------+----------+-------+---------+----------|
+| FeeHandler | lowerFee | 4070  | 0       | 0        |
+╰------------+----------+-------+---------+----------╯
+
+[PASS] invariant_totalCollectedMatchesTheTreasury() (runs: 128, calls: 8192, reverts: 0)
+
+╭------------+----------+-------+---------+----------╮
+| Contract   | Selector | Calls | Reverts | Discards |
++====================================================+
+| FeeHandler | charge   | 4122  | 0       | 0        |
+|------------+----------+-------+---------+----------|
+| FeeHandler | lowerFee | 4070  | 0       | 0        |
+╰------------+----------+-------+---------+----------╯
+
+[PASS] test_chargingAndLoweringAreBothReachable() (gas: 169829)
+Suite result: ok. 4 passed; 0 failed; 0 skipped; finished in 12.59s (14.02s CPU time)
+
+Ran 6 tests for test/VaultInvariants.t.sol:VaultInvariantTest
+[FAIL: committed exceeded balance: 3561 > 2328]
+	[Sequence] (original: 59, shrunk: 4)
+		sender=0x5c83BBa26fEf9591B9Ec6B0934957423d2c70e2C addr=[test/VaultInvariants.t.sol:VaultHandler]0xF62849F9A0B5Bf2913b396098F7c7019b51A820a calldata=deposit(uint256,uint96,uint96) args=[2, 2224, 8680]
+		sender=0x3DA76C46BB6f258B3974a1365f2270F78c990000 addr=[test/VaultInvariants.t.sol:VaultHandler]0xF62849F9A0B5Bf2913b396098F7c7019b51A820a calldata=deposit(uint256,uint96,uint96) args=[315610542730498193730451820581335222115437611883634124465906708990003180 [3.156e71], 145582508213531918010498 [1.455e23], 23198 [2.319e4]]
+		sender=0x148C7Dc09d071B588becabF7C561e3f1E4A8636f addr=[test/VaultInvariants.t.sol:VaultHandler]0xF62849F9A0B5Bf2913b396098F7c7019b51A820a calldata=withdrawAll(uint256) args=[0]
+		sender=0x0000000000000000000000000000000000000517 addr=[test/VaultInvariants.t.sol:VaultHandler]0xF62849F9A0B5Bf2913b396098F7c7019b51A820a calldata=openTrade(uint256,uint96) args=[3099319252 [3.099e9], 3560]
+ invariant_committedNeverExceedsBalance() (runs: 0, calls: 0, reverts: 0)
+
+╭--------------+-------------+-------+---------+----------╮
+| Contract     | Selector    | Calls | Reverts | Discards |
++=========================================================+
+| VaultHandler | closeTrade  | 13    | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | deposit     | 11    | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | openTrade   | 10    | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | setPaused   | 7     | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | withdraw    | 8     | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | withdrawAll | 10    | 0       | 0        |
+╰--------------+-------------+-------+---------+----------╯
+
+[PASS] invariant_totalCommittedEqualsSumOfCommitted() (runs: 128, calls: 8192, reverts: 0)
+
+╭--------------+-------------+-------+---------+----------╮
+| Contract     | Selector    | Calls | Reverts | Discards |
++=========================================================+
+| VaultHandler | closeTrade  | 1378  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | deposit     | 1378  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | openTrade   | 1368  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | setPaused   | 1342  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | withdraw    | 1392  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | withdrawAll | 1334  | 0       | 0        |
+╰--------------+-------------+-------+---------+----------╯
+
+[PASS] invariant_totalDepositsEqualsSumOfBalances() (runs: 128, calls: 8192, reverts: 0)
+
+╭--------------+-------------+-------+---------+----------╮
+| Contract     | Selector    | Calls | Reverts | Discards |
++=========================================================+
+| VaultHandler | closeTrade  | 1378  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | deposit     | 1378  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | openTrade   | 1368  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | setPaused   | 1342  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | withdraw    | 1392  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | withdrawAll | 1334  | 0       | 0        |
+╰--------------+-------------+-------+---------+----------╯
+
+[PASS] invariant_vaultIsAlwaysSolvent() (runs: 128, calls: 8192, reverts: 0)
+
+╭--------------+-------------+-------+---------+----------╮
+| Contract     | Selector    | Calls | Reverts | Discards |
++=========================================================+
+| VaultHandler | closeTrade  | 1378  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | deposit     | 1378  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | openTrade   | 1368  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | setPaused   | 1342  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | withdraw    | 1392  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | withdrawAll | 1334  | 0       | 0        |
+╰--------------+-------------+-------+---------+----------╯
+
+[PASS] invariant_withdrawableIsBalanceMinusCommitted() (runs: 128, calls: 8192, reverts: 0)
+
+╭--------------+-------------+-------+---------+----------╮
+| Contract     | Selector    | Calls | Reverts | Discards |
++=========================================================+
+| VaultHandler | closeTrade  | 1378  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | deposit     | 1378  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | openTrade   | 1368  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | setPaused   | 1342  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | withdraw    | 1392  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | withdrawAll | 1334  | 0       | 0        |
+╰--------------+-------------+-------+---------+----------╯
+
+[PASS] test_everyInterestingStateIsReachable() (gas: 286204)
+Suite result: FAILED. 5 passed; 1 failed; 0 skipped; finished in 13.49s (32.93s CPU time)
+
+Ran 2 test suites in 13.53s (26.08s CPU time): 9 tests passed, 1 failed, 0 skipped (10 total tests)
+
+Failing tests:
+Encountered 1 failing test in test/VaultInvariants.t.sol:VaultInvariantTest
+[FAIL: committed exceeded balance: 3561 > 2328]
+	[Sequence] (original: 59, shrunk: 4)
+		sender=0x5c83BBa26fEf9591B9Ec6B0934957423d2c70e2C addr=[test/VaultInvariants.t.sol:VaultHandler]0xF62849F9A0B5Bf2913b396098F7c7019b51A820a calldata=deposit(uint256,uint96,uint96) args=[2, 2224, 8680]
+		sender=0x3DA76C46BB6f258B3974a1365f2270F78c990000 addr=[test/VaultInvariants.t.sol:VaultHandler]0xF62849F9A0B5Bf2913b396098F7c7019b51A820a calldata=deposit(uint256,uint96,uint96) args=[315610542730498193730451820581335222115437611883634124465906708990003180 [3.156e71], 145582508213531918010498 [1.455e23], 23198 [2.319e4]]
+		sender=0x148C7Dc09d071B588becabF7C561e3f1E4A8636f addr=[test/VaultInvariants.t.sol:VaultHandler]0xF62849F9A0B5Bf2913b396098F7c7019b51A820a calldata=withdrawAll(uint256) args=[0]
+		sender=0x0000000000000000000000000000000000000517 addr=[test/VaultInvariants.t.sol:VaultHandler]0xF62849F9A0B5Bf2913b396098F7c7019b51A820a calldata=openTrade(uint256,uint96) args=[3099319252 [3.099e9], 3560]
+ invariant_committedNeverExceedsBalance() (runs: 0, calls: 0, reverts: 0)
+
+Encountered a total of 1 failing tests, 9 tests succeeded
+
+Tip: Run `forge test --rerun` to retry only the 1 failed test
+
+Fuzz seed: 0x6570daed02f53faf02932cb8dc4d7bf0c0f9a5e88d386f5ee17c831db4635992 (use `--fuzz-seed` to reproduce)

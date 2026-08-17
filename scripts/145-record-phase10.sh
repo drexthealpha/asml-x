@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -uo pipefail
+cd "$(dirname "$0")"
+. ./lib.sh
+D=$(date -u '+%Y-%m-%d')
+cat >> "$REPO/evidence/CHAIN-OF-EVIDENCE.md" <<MD
+| C-1000 | The activation flow is instrumented with five marks, first paint, connected, defaults seen, deposit submitted and activated, POSTed by the page to the coordination API and appended to a file rather than logged to a console, so a timing claim has an artifact behind it. Deltas use performance.now rather than Date.now because a wall clock can step backwards mid-run and produce a negative duration that would be averaged into a headline number, and each mark is idempotent per run because React effects fire twice in StrictMode and again on remount, which would otherwise collapse the elapsed time toward zero | evidence/phase10/timing-instrumented.txt, evidence/phase10/flow-marks.jsonl, ui-v2/src/lib/flow-timing.ts | bash scripts/143-flow-timing.sh | DEMONSTRATED | 10.1 | $D |
+| C-1001 | Three cold runs, each with the allowance and vault balance zeroed and read back from chain first, give a median of 8.6 seconds from first paint to activated, min 8.5 and max 9.2, of which about 4.8 seconds is waiting for the chain to confirm and about 3.8 seconds is the product. EVERY RUN IS SCRIPTED, NOT HUMAN, and is labelled so wherever the number appears: a script does not hesitate and a person does, so this is the system's floor and a lower bound on a human time, never a human claim | evidence/phase10/cold-user-timing.md | bash scripts/142-cold-user-runs.sh | DEMONSTRATED | 10.2 | $D |
+| C-1002 | The measured figure appears in the README and on the landing page with its C-1001 id and its SCRIPTED label, and the consistency gate DERIVES the number from the marks file rather than hardcoding it, so a stale figure in a document produces a mismatch instead of silent agreement. Zero documents state a timing figure that disagrees with the measurement. docs/JUDGE-GUIDE.md does not exist until Phase 17 and is reported as a missing target rather than a pass | evidence/phase10/claim-consistency.txt | bash scripts/144-claim-consistency.sh | DEMONSTRATED | 10.3 | $D |
+MD
+echo "rows now: $(grep -c '^| C-' "$REPO/evidence/CHAIN-OF-EVIDENCE.md")"

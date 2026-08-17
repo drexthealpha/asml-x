@@ -1,0 +1,23 @@
+No-invented-numbers audit, task 5.2
+Run 2026-08-12 03:06:31 UTC
+
+  files scanned: 11
+  numeric literals found: 329
+    CONFIG    44
+    DOMAIN    10
+    INDEX     3
+    LAYOUT    42
+    REFERENCE 1
+    ZERO_ONE  229
+
+  UNEXPLAINED LITERALS: 0
+
+  What this does and does not prove:
+    It proves no literal reaches the screen as a data value.
+    It does NOT prove the data layer is honest; that is what task 4.7's no-data proof
+    covers, by deleting the sources and checking that zero numbers render.
+
+## Verdict, task 5.2
+  RESULT: PASS. Every numeric literal in ui-v2/src is either layout, configuration, a
+  domain bound, or index arithmetic. None is a data value.
+  Reproduce: bash scripts/87-assert-no-magic-numbers.sh

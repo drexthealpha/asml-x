@@ -1,0 +1,64 @@
+Task 11.4, mainnet deployment dry run
+run: 2026-08-16 07:41:37 UTC
+
+== chain assertion, before any estimate ==
+eth_chainId: 0xc4 (196)
+OK: this is X Layer mainnet.
+deployer:    0x7BdD2d0D1728Df5bEF8FAae8de85c3dD21a5dE46
+balance:     5000000000000000 wei (0.005000000 OKB)
+gas price:   20000001 wei
+
+== deployment estimates, cast estimate --create ==
+Nothing below signs or sends. No keystore is opened anywhere in this script.
+
+  MockERC20 tBASE              723067
+  MockERC20 tQUOTE             723091
+  OrderBookVenue               842999
+  RiskGuard                    899207
+  FeeCollector                 596290
+  BatchExecutor                591800
+  AgentVault                  1145009
+
+  deployment subtotal: 5521463 gas
+
+== wiring and operation estimates ==
+These call functions on contracts that do not exist on mainnet yet, so they cannot be
+estimated against a live address. The figures are the TESTNET measurements from task 11.2,
+carried over and LABELLED as such rather than silently presented as mainnet estimates.
+Both chains run the same EVM at the same gas schedule, so the transfer is sound, but it is a
+transfer and not a measurement.
+
+  guard setMarketCap                  30467 x1          30467  testnet estimate, 11.2
+  guard setAgent                      30467 x2          60934  testnet estimate, 11.2
+  token mint                          46556 x4         186224  testnet estimate, 11.2
+  token approve                       46556 x4         186224  testnet estimate, 11.2
+  venue setAuthorisedTaker            30467 x1          30467  testnet estimate, 11.2
+  fee setCharger                      30467 x1          30467  testnet estimate, 11.2
+  executor approveToken               46556 x3         139668  testnet estimate, 11.2
+  venue postOrder                    170404 x4         681616  testnet estimate, 11.2
+  agent cycle, take plus fee         255459 x3         766377  testnet RECEIPT, 9.6
+  user depositWithPermit             146682 x1         146682  testnet RECEIPT, 9.4
+  user withdrawAll                    52842 x1          52842  testnet estimate, 11.2
+  user setPaused                      26285 x2          52570  testnet estimate, 11.2
+
+  transaction subtotal: 2364538 gas
+
+== total, and the comparison task 11.4 asks for ==
+
+  dry-run deployment gas      5,521,463
+  carried transaction gas     2,364,538
+  DRY RUN TOTAL               7,886,001
+  task 11.3 estimate          7,886,001
+  difference                       0.0%
+
+  gas price                  20,000,001 wei
+  cost at this price       157,720,027,886,001 wei
+                           0.000157720 OKB
+
+  WITHIN 10%: the dry run agrees with the budget.
+
+== proof that nothing was sent ==
+  nonce after:   0   (a sent transaction would have raised this)
+  balance after: 5000000000000000 wei
+  balance before:5000000000000000 wei
+  UNCHANGED. Zero spend confirmed by the chain, not by assertion.

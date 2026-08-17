@@ -1,0 +1,43 @@
+hevm install, task 1.4, route three (correct repo)
+Run 2026-08-12 03:31:07 UTC
+
+## Correction being applied
+  Earlier attempts used ethereum/hevm. hevm has MOVED to argotorg/hevm.
+  Latest release 0.57.0, tag 'release/0.57.0', asset 'hevm-x86_64-linux'.
+  Source: github.com/argotorg/hevm/releases/tag/release/0.57.0
+  The stale binary from the old path segfaulted and reported no version. That was a
+  wrong artifact, not a broken kernel. My earlier conclusion was wrong.
+
+## Solver dependency: hevm needs z3 on PATH
+  z3 present: Z3 version 5.0.0 - 64 bit
+
+## Downloading the correct asset
+  https://github.com/argotorg/hevm/releases/download/release/0.57.0/hevm-x86_64-linux
+  HTTP 200, bytes 17012736
+  type: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked, stripped
+
+## Version check (this is what the stale binary could not do)
+  0.57.0 [no git revision present]
+
+=== REAL smoke test: symbolic execution on RiskGuard ===
+Checking 5 function(s) in contract test/HevmCapProofs.t.sol:HevmCapProofs
+[96m[RUNNING][0m prove_killedRefusesEveryAmount(uint256)
+   [32m[PASS][0m prove_killedRefusesEveryAmount
+
+[96m[RUNNING][0m prove_capNeverExceeded(uint256)
+   [32m[PASS][0m prove_capNeverExceeded
+
+[96m[RUNNING][0m prove_grossEqualsSumOfParts(uint256)
+   [32m[PASS][0m prove_grossEqualsSumOfParts
+
+[96m[RUNNING][0m prove_capHoldsAcrossTwoAdds(uint256,uint256)
+   [32m[PASS][0m prove_capHoldsAcrossTwoAdds
+
+[96m[RUNNING][0m prove_reduceNeverUnderflows(uint256,uint256)
+   [32m[PASS][0m prove_reduceNeverUnderflows
+
+
+## Verdict, task 1.4
+  hevm 0.57.0 exit code: 0
+  This is a SECOND INDEPENDENT SYMBOLIC ENGINE, not another halmos version.
+  Task 7.7 can now claim two independent engines rather than two versions.

@@ -1,0 +1,28 @@
+Signing path latency, task 6.6
+Run 2026-08-13 04:53:46 UTC
+
+## 1. keystore decrypt alone (scrypt), 3 runs
+  run 1: 1.514s
+  run 2: 0.089s
+  run 3: 0.072s
+
+## 2. cast process spawn with no crypto and no network, 3 runs
+  run 1: 0.022s
+  run 2: 0.023s
+  run 3: 0.024s
+
+## 3. one chain round trip, 3 runs
+  run 1: 5.396s
+  run 2: 0.657s
+  run 3: 1.655s
+
+## 4. the number that matters: read-to-landing drift, measured over 39 real submissions
+  From evidence/phase4/seam-test.md, every submitted decision checked against its receipt:
+      drift blocks  min 22  median 25  max 30
+      at 1.0s per block that is 22s to 30s from read to landing
+
+## Interpretation
+  Compare the parts against the whole. If keystore decrypt plus process spawn is a small
+  fraction of the 22 to 30 block read-to-landing drift, then replacing the subprocess with an
+  in-process signer removes a small part of the latency and leaves the dominant part, which is
+  the chain, untouched.

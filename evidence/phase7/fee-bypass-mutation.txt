@@ -1,0 +1,28 @@
+Task 7.3 mutation gate
+run: 2026-08-15 12:56:53 UTC
+
+== baseline, unmutated ==
+Suite result: ok. 8 passed; 0 failed; 0 skipped; finished in 325.52ms (326.25ms CPU time)
+
+Ran 3 test suites in 5.02s (332.69ms CPU time): 22 tests passed, 0 failed, 0 skipped (22 total tests)
+baseline exit: 0 (0 means GREEN)
+
+== M1: authorised-taker check DELETED from OrderBookVenue.take ==
+Encountered a total of 4 failing tests, 18 tests succeeded
+
+Tip: Run `forge test --rerun` to retry only the 4 failed tests
+M1 exit: 1 (non-zero means RED, which is the pass)
+
+== M2: last-leg-must-be-fee-collector check DELETED from BatchExecutor ==
+Encountered a total of 3 failing tests, 19 tests succeeded
+
+Tip: Run `forge test --rerun` to retry only the 3 failed tests
+M2 exit: 1 (non-zero means RED, which is the pass)
+
+== restored ==
+Suite result: ok. 8 passed; 0 failed; 0 skipped; finished in 118.23ms (114.73ms CPU time)
+
+Ran 3 test suites in 181.82ms (138.53ms CPU time): 22 tests passed, 0 failed, 0 skipped (22 total tests)
+restored exit: 0 (0 means GREEN again)
+
+GATE: PASS  both enforcement lines are load-bearing

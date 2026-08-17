@@ -1,0 +1,28 @@
+river incremental learning on real journal data, task 1.14
+Run 2026-08-12 01:58:42 UTC
+
+## Inputs
+  river:   0.25.0
+  journal: /mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/evidence/journal.jsonl
+  lines:   87
+
+  parsed journal entries: 87
+  baseline rows excluded: 8 (control group, not agent decisions)
+  agent decisions remaining: 79
+  usable samples: 79
+  class balance: 66 take, 13 not-take
+
+  river progressive-validation accuracy: 0.8608
+  correct predictions: 68 of 79
+  majority-class baseline:               0.8354
+
+  river BEATS the majority baseline on this journal.
+
+## Verdict, task 1.14
+  RESULT: PASS. river produced a metric on real journal rows.
+  Metric, baseline and sample count: 0.8608 0.8354 79
+
+  DECISION GATE 8.4 input: this benchmark is what the sidecar-or-benchmark decision
+  will rest on. Note the honest constraint already visible here: the journal has no
+  realized PnL until task 8.5, so this models BEHAVIOUR (did the agent take) rather
+  than PROFIT. A profit model is not possible from this data yet.

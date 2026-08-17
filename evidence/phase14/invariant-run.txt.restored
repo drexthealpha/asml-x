@@ -1,0 +1,133 @@
+Compiling 2 files with Solc 0.8.28
+Solc 0.8.28 finished in 10.94s
+Compiler run successful!
+
+Ran 4 tests for test/VaultInvariants.t.sol:FeeInvariantTest
+[PASS] invariant_feeNeverExceedsTheCeiling() (runs: 128, calls: 8192, reverts: 0)
+
+╭------------+----------+-------+---------+----------╮
+| Contract   | Selector | Calls | Reverts | Discards |
++====================================================+
+| FeeHandler | charge   | 4036  | 0       | 0        |
+|------------+----------+-------+---------+----------|
+| FeeHandler | lowerFee | 4156  | 0       | 0        |
+╰------------+----------+-------+---------+----------╯
+
+[PASS] invariant_feeOnlyEverFalls() (runs: 128, calls: 8192, reverts: 0)
+
+╭------------+----------+-------+---------+----------╮
+| Contract   | Selector | Calls | Reverts | Discards |
++====================================================+
+| FeeHandler | charge   | 4036  | 0       | 0        |
+|------------+----------+-------+---------+----------|
+| FeeHandler | lowerFee | 4156  | 0       | 0        |
+╰------------+----------+-------+---------+----------╯
+
+[PASS] invariant_totalCollectedMatchesTheTreasury() (runs: 128, calls: 8192, reverts: 0)
+
+╭------------+----------+-------+---------+----------╮
+| Contract   | Selector | Calls | Reverts | Discards |
++====================================================+
+| FeeHandler | charge   | 4036  | 0       | 0        |
+|------------+----------+-------+---------+----------|
+| FeeHandler | lowerFee | 4156  | 0       | 0        |
+╰------------+----------+-------+---------+----------╯
+
+[PASS] test_chargingAndLoweringAreBothReachable() (gas: 169829)
+Suite result: ok. 4 passed; 0 failed; 0 skipped; finished in 14.99s (15.23s CPU time)
+
+Ran 6 tests for test/VaultInvariants.t.sol:VaultInvariantTest
+[PASS] invariant_committedNeverExceedsBalance() (runs: 128, calls: 8192, reverts: 0)
+
+╭--------------+-------------+-------+---------+----------╮
+| Contract     | Selector    | Calls | Reverts | Discards |
++=========================================================+
+| VaultHandler | closeTrade  | 1340  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | deposit     | 1371  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | openTrade   | 1362  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | setPaused   | 1346  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | withdraw    | 1409  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | withdrawAll | 1364  | 0       | 0        |
+╰--------------+-------------+-------+---------+----------╯
+
+[PASS] invariant_totalCommittedEqualsSumOfCommitted() (runs: 128, calls: 8192, reverts: 0)
+
+╭--------------+-------------+-------+---------+----------╮
+| Contract     | Selector    | Calls | Reverts | Discards |
++=========================================================+
+| VaultHandler | closeTrade  | 1340  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | deposit     | 1371  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | openTrade   | 1362  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | setPaused   | 1346  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | withdraw    | 1409  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | withdrawAll | 1364  | 0       | 0        |
+╰--------------+-------------+-------+---------+----------╯
+
+[PASS] invariant_totalDepositsEqualsSumOfBalances() (runs: 128, calls: 8192, reverts: 0)
+
+╭--------------+-------------+-------+---------+----------╮
+| Contract     | Selector    | Calls | Reverts | Discards |
++=========================================================+
+| VaultHandler | closeTrade  | 1340  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | deposit     | 1371  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | openTrade   | 1362  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | setPaused   | 1346  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | withdraw    | 1409  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | withdrawAll | 1364  | 0       | 0        |
+╰--------------+-------------+-------+---------+----------╯
+
+[PASS] invariant_vaultIsAlwaysSolvent() (runs: 128, calls: 8192, reverts: 0)
+
+╭--------------+-------------+-------+---------+----------╮
+| Contract     | Selector    | Calls | Reverts | Discards |
++=========================================================+
+| VaultHandler | closeTrade  | 1340  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | deposit     | 1371  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | openTrade   | 1362  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | setPaused   | 1346  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | withdraw    | 1409  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | withdrawAll | 1364  | 0       | 0        |
+╰--------------+-------------+-------+---------+----------╯
+
+[PASS] invariant_withdrawableIsBalanceMinusCommitted() (runs: 128, calls: 8192, reverts: 0)
+
+╭--------------+-------------+-------+---------+----------╮
+| Contract     | Selector    | Calls | Reverts | Discards |
++=========================================================+
+| VaultHandler | closeTrade  | 1340  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | deposit     | 1371  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | openTrade   | 1362  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | setPaused   | 1346  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | withdraw    | 1409  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | withdrawAll | 1364  | 0       | 0        |
+╰--------------+-------------+-------+---------+----------╯
+
+[PASS] test_everyInterestingStateIsReachable() (gas: 286221)
+Suite result: ok. 6 passed; 0 failed; 0 skipped; finished in 14.99s (37.94s CPU time)
+
+Ran 2 test suites in 15.00s (29.99s CPU time): 10 tests passed, 0 failed, 0 skipped (10 total tests)

@@ -1,0 +1,544 @@
+### cargo test --workspace
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 5 tests
+.....
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.27s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 4 tests
+....
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+
+running 12 tests
+............
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.35s
+
+
+running 3 tests
+...
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+
+running 3 tests
+...
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+
+running 4 tests
+....
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+
+running 24 tests
+........................
+test result: ok. 24 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s
+
+
+running 17 tests
+.................
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+
+running 43 tests
+...........................................
+test result: ok. 43 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.41s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+### forge test (contracts)
+Compiling 3 files with Solc 0.8.28
+Solc 0.8.28 finished in 10.76s
+Compiler run successful!
+
+Ran 11 tests for test/Permit.t.sol:PermitTest
+[PASS] test_aFrontRunPermitMakesTheDepositRevertRatherThanProceedBlindly() (gas: 169916)
+[PASS] test_aGarbageSignatureCannotApproveOnBehalfOfAddressZero() (gas: 43659)
+[PASS] test_aReplayedSignatureIsRefused() (gas: 77585)
+[PASS] test_aSignatureCannotBeInflatedToALargerAmount() (gas: 47059)
+[PASS] test_aSignatureCannotBeRedirectedToADifferentSpender() (gas: 46904)
+[PASS] test_aSignatureFromAnotherChainIsRefused() (gas: 50924)
+[PASS] test_aSignatureFromTheWrongKeyIsRefused() (gas: 46970)
+[PASS] test_anExpiredSignatureIsRefused() (gas: 26481)
+[PASS] test_bothDepositPathsProduceIdenticalState() (gas: 234925)
+[PASS] test_depositWithPermitActivatesFromAColdAllowanceInOneTransaction() (gas: 164935)
+[PASS] test_permitGrantsTheAllowanceWithoutATransactionFromTheOwner() (gas: 75305)
+Suite result: ok. 11 passed; 0 failed; 0 skipped; finished in 10.05ms (8.59ms CPU time)
+
+Ran 18 tests for test/AgentVault.t.sol:AgentVaultTest
+[PASS] testFuzz_aDepositorAlwaysGetsBackExactlyWhatTheyPutIn(uint96) (runs: 256, μ: 113182, ~: 113189)
+[PASS] test_aDepositorCanTightenTheirOwnLimit() (gas: 126064)
+[PASS] test_aLossAlsoLandsOnlyOnThatDepositor() (gas: 251098)
+[PASS] test_aRotatedAgentGetsNoNewPowers() (gas: 137371)
+[PASS] test_aShortDeliveringTokenCannotCreditABalanceTheVaultDoesNotHold() (gas: 1331261)
+[PASS] test_committedFundsCannotAlsoBeWithdrawn() (gas: 178331)
+[PASS] test_depositRefusesZero() (gas: 11240)
+[PASS] test_limitsAreIndependentPerDepositor() (gas: 245019)
+[PASS] test_nobodyCanPauseAnotherDepositor() (gas: 206648)
+[PASS] test_onlyTheDepositorCanWithdraw() (gas: 161263)
+[PASS] test_onlyTheOwnerCanRotateTheAgent() (gas: 19269)
+[PASS] test_pauseIsPerDepositorAndDoesNotAffectAnyoneElse() (gas: 266664)
+[PASS] test_pauseStopsTheAgentAndNeverTheWithdrawal() (gas: 129657)
+[PASS] test_profitAndLossLandOnTheDepositorWhoseFundsWereTraded() (gas: 259454)
+[PASS] test_theAgentCannotExceedAUsersLimit() (gas: 185844)
+[PASS] test_theAgentCannotTradeMoreThanIsInTheVault() (gas: 130258)
+[PASS] test_theVaultIsSolventThroughAFullCycle() (gas: 213595)
+[PASS] test_thereIsNoFunctionThatMovesFundsToAnArbitraryAddress() (gas: 202169)
+Suite result: ok. 18 passed; 0 failed; 0 skipped; finished in 99.31ms (97.86ms CPU time)
+
+Ran 11 tests for test/FeeBypass.t.sol:FeeBypassTest
+[PASS] test_aBatchPointedAtAnImpostorCollectorReverts() (gas: 723478)
+[PASS] test_aBatchWithNoFeeLegReverts() (gas: 216215)
+[PASS] test_aFailingFeeLegRevertsTheFillToo() (gas: 418869)
+[PASS] test_aFeeLegThatIsNotLastReverts() (gas: 215602)
+[PASS] test_agentKeyCannotFillDirectlyAtTheVenue() (gas: 216286)
+[PASS] test_anArbitraryAddressCannotFillDirectlyEither() (gas: 253588)
+[PASS] test_approveTokenIsOwnerGatedAndActuallyGrants() (gas: 47150)
+[PASS] test_enumerateEveryRouteTheAgentKeyHas() (gas: 240648)
+[PASS] test_onlyTheVenueOwnerCanAuthoriseATaker() (gas: 13358)
+[PASS] test_takerAuthorisationCanBeRevoked() (gas: 279520)
+[PASS] test_theAuthorisedExecutorCanStillFill() (gas: 442898)
+Suite result: ok. 11 passed; 0 failed; 0 skipped; finished in 4.57ms (2.99ms CPU time)
+
+Ran 23 tests for test/Rwa.t.sol:RwaTest
+[PASS] testFuzz_riskViewNeverDisagreesWithTheIndividualGetters(uint32) (runs: 256, μ: 28724, ~: 28740)
+[PASS] testFuzz_theTwoTradeableViewsNeverDisagree(uint32,bool,uint96) (runs: 256, μ: 97189, ~: 95300)
+[PASS] test_aFlatOracleIsNotAStaleOracle() (gas: 101359)
+[PASS] test_agentCannotLoosenTheRwaPolicy() (gas: 16129)
+[PASS] test_agentStillCannotRevive() (gas: 63592)
+[PASS] test_deriskingIsNeverBlockedByAnyRwaCondition() (gas: 130100)
+[PASS] test_deriskingWorksEvenWhenKilled() (gas: 109996)
+[PASS] test_divergenceBetweenOracleAndMarketRefusesNewExposure() (gas: 99003)
+[PASS] test_divergenceIsSymmetric() (gas: 87053)
+[PASS] test_divergenceWithinToleranceIsFine() (gas: 143577)
+[PASS] test_exposureIsRefusedJustBeforeARedemptionWindow() (gas: 55434)
+[PASS] test_freshOracleAndFarWindowAllowsExposure() (gas: 94565)
+[PASS] test_inheritedCapsStillBind() (gas: 43808)
+[PASS] test_inheritedKillSwitchStillBlocks() (gas: 64770)
+[PASS] test_issuerPauseRefusesNewExposure() (gas: 63526)
+[PASS] test_onlyAgentCanObserveMarketPrice() (gas: 13907)
+[PASS] test_onlyIssuerCanMoveTheOracle() (gas: 11044)
+[PASS] test_onlyIssuerCanUseEveryIssuerOnlyEntryPoint() (gas: 28426)
+[PASS] test_oraclePriceCannotBeZero() (gas: 8495)
+[PASS] test_settingAPriceAlsoRefreshesItsTimestamp() (gas: 45960)
+[PASS] test_staleOracleRefusesNewExposure() (gas: 42834)
+[PASS] test_whileTheWindowIsOpenExposureIsAllowed() (gas: 42052)
+[PASS] test_yieldIndexCannotDecrease() (gas: 16895)
+Suite result: ok. 23 passed; 0 failed; 0 skipped; finished in 139.59ms (138.44ms CPU time)
+
+Ran 5 tests for test/ScribbleFire.t.sol:ScribbleFireTest
+[PASS] test_cumulativeBreachAlsoTrips() (gas: 33610)
+[PASS] test_cumulativeUnderCapDoesNotTrip() (gas: 29785)
+[PASS] test_theRevertComesFromInstrumentationNotArithmetic() (gas: 28496)
+[PASS] test_validInputPasses() (gas: 28596)
+[PASS] test_violatingInputTripsTheAssertion() (gas: 32499)
+Suite result: ok. 5 passed; 0 failed; 0 skipped; finished in 1.21ms (575.67µs CPU time)
+
+Ran 8 tests for test/FeeCollector.t.sol:FeeCollectorTest
+[PASS] testFuzz_feeIsAlwaysTheStatedFractionAndNeverExceedsTheCeiling(uint128) (runs: 256, μ: 11573, ~: 11573)
+[PASS] test_aTokenThatUnderDeliversRevertsRatherThanUnderCollecting() (gas: 351372)
+[PASS] test_chargeMovesTokensAndEmitsTheNumbers() (gas: 116732)
+[PASS] test_constructorRefusesAFeeAboveTheCeiling() (gas: 44145)
+[PASS] test_dustNotionalChargesNothingAndEmitsNothing() (gas: 25348)
+[PASS] test_feeCanOnlyBeLoweredNeverRaised() (gas: 22457)
+[PASS] test_onlyAnApprovedChargerCanCharge() (gas: 15703)
+[PASS] test_onlyOwnerCanChangeAnything() (gas: 18212)
+Suite result: ok. 8 passed; 0 failed; 0 skipped; finished in 48.40ms (47.65ms CPU time)
+
+Ran 11 tests for test/RiskGuard.t.sol:RiskGuardTest
+[PASS] testFuzz_headroomIsHonest(uint96,uint96) (runs: 256, μ: 113517, ~: 113517)
+[PASS] test_addExposure_respectsGrossCap() (gas: 90184)
+[PASS] test_addExposure_respectsMarketCap() (gas: 69677)
+[PASS] test_agentCannotRaiseCaps() (gas: 17044)
+[PASS] test_agentCannotRevive() (gas: 64626)
+[PASS] test_killedBlocksAddExposure() (gas: 65629)
+[PASS] test_killedStillAllowsReduce() (gas: 92033)
+[PASS] test_ownerCanRevive() (gas: 48278)
+[PASS] test_reduceCannotExceedExposure() (gas: 68123)
+[PASS] test_strangerCannotDoAnything() (gas: 23378)
+[PASS] test_unknownMarketIsRefused() (gas: 17832)
+Suite result: ok. 11 passed; 0 failed; 0 skipped; finished in 111.92ms (111.23ms CPU time)
+
+Ran 4 tests for test/Venue.t.sol:BatchExecutorTest
+[PASS] test_batchRequiresTheGuardAsItsFirstLeg() (gas: 16953)
+[PASS] test_capBreachInLegOneRevertsTheWholeBatchAndMovesNothing() (gas: 239224)
+[PASS] test_killedGuardStopsTheBatch() (gas: 268053)
+[PASS] test_withinCapTheWholeBatchLands() (gas: 459852)
+Suite result: ok. 4 passed; 0 failed; 0 skipped; finished in 2.80ms (1.41ms CPU time)
+
+Ran 8 tests for test/Venue.t.sol:VenueTest
+[PASS] testFuzz_venueRemainsSolventAcrossPartialFills(uint96) (runs: 256, μ: 250829, ~: 250829)
+[PASS] test_cancelRefundsTheUnfilledRemainder() (gas: 259534)
+[PASS] test_cannotOverfill() (gas: 198239)
+[PASS] test_onlyMakerCanCancel() (gas: 195189)
+[PASS] test_partialFillsAccumulateExactly() (gas: 261186)
+[PASS] test_postingABuyEscrowsTheQuote() (gas: 194961)
+[PASS] test_postingASellEscrowsTheBase() (gas: 194811)
+[PASS] test_takeMovesBothAssetsAndClearsEscrow() (gas: 255523)
+Suite result: ok. 8 passed; 0 failed; 0 skipped; finished in 181.74ms (180.33ms CPU time)
+
+Ran 4 tests for test/VaultInvariants.t.sol:FeeInvariantTest
+[PASS] invariant_feeNeverExceedsTheCeiling() (runs: 128, calls: 8192, reverts: 0)
+
+╭------------+----------+-------+---------+----------╮
+| Contract   | Selector | Calls | Reverts | Discards |
++====================================================+
+| FeeHandler | charge   | 4156  | 0       | 0        |
+|------------+----------+-------+---------+----------|
+| FeeHandler | lowerFee | 4036  | 0       | 0        |
+╰------------+----------+-------+---------+----------╯
+
+[PASS] invariant_feeOnlyEverFalls() (runs: 128, calls: 8192, reverts: 0)
+
+╭------------+----------+-------+---------+----------╮
+| Contract   | Selector | Calls | Reverts | Discards |
++====================================================+
+| FeeHandler | charge   | 4156  | 0       | 0        |
+|------------+----------+-------+---------+----------|
+| FeeHandler | lowerFee | 4036  | 0       | 0        |
+╰------------+----------+-------+---------+----------╯
+
+[PASS] invariant_totalCollectedMatchesTheTreasury() (runs: 128, calls: 8192, reverts: 0)
+
+╭------------+----------+-------+---------+----------╮
+| Contract   | Selector | Calls | Reverts | Discards |
++====================================================+
+| FeeHandler | charge   | 4156  | 0       | 0        |
+|------------+----------+-------+---------+----------|
+| FeeHandler | lowerFee | 4036  | 0       | 0        |
+╰------------+----------+-------+---------+----------╯
+
+[PASS] test_chargingAndLoweringAreBothReachable() (gas: 169829)
+Suite result: ok. 4 passed; 0 failed; 0 skipped; finished in 17.32s (12.37s CPU time)
+
+Ran 4 tests for test/RiskGuard.t.sol:RiskGuardInvariantTest
+[PASS] invariant_capsAreNeverExceeded() (runs: 128, calls: 8192, reverts: 0)
+
+╭--------------+------------+-------+---------+----------╮
+| Contract     | Selector   | Calls | Reverts | Discards |
++========================================================+
+| GuardHandler | addCounted | 4157  | 0       | 0        |
+|--------------+------------+-------+---------+----------|
+| GuardHandler | reduce     | 4035  | 0       | 0        |
+╰--------------+------------+-------+---------+----------╯
+
+[PASS] invariant_grossEqualsSumOfParts() (runs: 128, calls: 8192, reverts: 0)
+
+╭--------------+------------+-------+---------+----------╮
+| Contract     | Selector   | Calls | Reverts | Discards |
++========================================================+
+| GuardHandler | addCounted | 4157  | 0       | 0        |
+|--------------+------------+-------+---------+----------|
+| GuardHandler | reduce     | 4035  | 0       | 0        |
+╰--------------+------------+-------+---------+----------╯
+
+[PASS] invariant_grossNeverExceedsCapEvenAfterReduces() (runs: 128, calls: 8192, reverts: 0)
+
+╭--------------+------------+-------+---------+----------╮
+| Contract     | Selector   | Calls | Reverts | Discards |
++========================================================+
+| GuardHandler | addCounted | 4157  | 0       | 0        |
+|--------------+------------+-------+---------+----------|
+| GuardHandler | reduce     | 4035  | 0       | 0        |
+╰--------------+------------+-------+---------+----------╯
+
+[PASS] test_handlerCanReachARiskyState() (gas: 96376)
+Suite result: ok. 4 passed; 0 failed; 0 skipped; finished in 17.46s (9.03s CPU time)
+
+Ran 6 tests for test/VaultInvariants.t.sol:VaultInvariantTest
+[PASS] invariant_committedNeverExceedsBalance() (runs: 128, calls: 8192, reverts: 0)
+
+╭--------------+-------------+-------+---------+----------╮
+| Contract     | Selector    | Calls | Reverts | Discards |
++=========================================================+
+| VaultHandler | closeTrade  | 1425  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | deposit     | 1288  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | openTrade   | 1369  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | setPaused   | 1359  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | withdraw    | 1363  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | withdrawAll | 1388  | 0       | 0        |
+╰--------------+-------------+-------+---------+----------╯
+
+[PASS] invariant_totalCommittedEqualsSumOfCommitted() (runs: 128, calls: 8192, reverts: 0)
+
+╭--------------+-------------+-------+---------+----------╮
+| Contract     | Selector    | Calls | Reverts | Discards |
++=========================================================+
+| VaultHandler | closeTrade  | 1425  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | deposit     | 1288  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | openTrade   | 1369  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | setPaused   | 1359  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | withdraw    | 1363  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | withdrawAll | 1388  | 0       | 0        |
+╰--------------+-------------+-------+---------+----------╯
+
+[PASS] invariant_totalDepositsEqualsSumOfBalances() (runs: 128, calls: 8192, reverts: 0)
+
+╭--------------+-------------+-------+---------+----------╮
+| Contract     | Selector    | Calls | Reverts | Discards |
++=========================================================+
+| VaultHandler | closeTrade  | 1425  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | deposit     | 1288  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | openTrade   | 1369  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | setPaused   | 1359  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | withdraw    | 1363  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | withdrawAll | 1388  | 0       | 0        |
+╰--------------+-------------+-------+---------+----------╯
+
+[PASS] invariant_vaultIsAlwaysSolvent() (runs: 128, calls: 8192, reverts: 0)
+
+╭--------------+-------------+-------+---------+----------╮
+| Contract     | Selector    | Calls | Reverts | Discards |
++=========================================================+
+| VaultHandler | closeTrade  | 1425  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | deposit     | 1288  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | openTrade   | 1369  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | setPaused   | 1359  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | withdraw    | 1363  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | withdrawAll | 1388  | 0       | 0        |
+╰--------------+-------------+-------+---------+----------╯
+
+[PASS] invariant_withdrawableIsBalanceMinusCommitted() (runs: 128, calls: 8192, reverts: 0)
+
+╭--------------+-------------+-------+---------+----------╮
+| Contract     | Selector    | Calls | Reverts | Discards |
++=========================================================+
+| VaultHandler | closeTrade  | 1425  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | deposit     | 1288  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | openTrade   | 1369  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | setPaused   | 1359  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | withdraw    | 1363  | 0       | 0        |
+|--------------+-------------+-------+---------+----------|
+| VaultHandler | withdrawAll | 1388  | 0       | 0        |
+╰--------------+-------------+-------+---------+----------╯
+
+[PASS] test_everyInterestingStateIsReachable() (gas: 286221)
+Suite result: ok. 6 passed; 0 failed; 0 skipped; finished in 17.47s (39.12s CPU time)
+
+Ran 12 test suites in 17.54s (52.85s CPU time): 113 tests passed, 0 failed, 0 skipped (113 total tests)
+### 14.1 differential proof
+written: /mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/evidence/phase14/differential.md
+```
+
+## The comparison
+
+```
+live deployed revert selector   0x3e2ed028
+expected MarketCapExceeded      0x3e2ed028
+expected CapExceeded            0xf480e285
+```
+
+## What a divergence would look like, and why it is not absorbed
+
+If the three layers disagreed, the failure modes would be:
+
+- **engine permits, chain refuses**: the agent builds a batch that reverts, wasting gas on every
+  cycle. Loud, and caught by the first failed submission.
+- **engine refuses, chain permits**: the agent never attempts something it was allowed to do.
+  SILENT, and the expensive one, because nothing errors and the only symptom is an agent that
+  under-trades for a reason nobody can see.
+- **revm disagrees with either**: the pre-flight is worthless, and worse than absent, because it
+  would be trusted.
+
+The second is why this task exists. A differential test is the only thing that finds a silent
+over-refusal, since no single layer can observe its own excess caution.
+### 14.2 vault invariants
+=== baseline ===
+pass 10  fail 0
+mutation applied
+=== mutated ===
+fail 1  caught: invariant_committedNeverExceedsBalance 
+=== restored ===
+pass 10  fail 0
+
+written: /mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/evidence/phase14/invariants.md
+VERDICT: PASS
+### 14.6 learning effect
+=== typecheck and build ===
+dist/assets/index-BNIkAqXH.css   16.81 kB │ gzip:  4.41 kB
+dist/assets/index-45Nw93sF.js   328.39 kB │ gzip: 97.81 kB
+✓ built in 7.08s
+
+=== 1. every figure carries its sample ===
+PAIRED
+
+=== 2. no-data test: remove the source, the panel must ERROR, not show a zero ===
+figures reporting ERROR with no source: 4
+figures reporting ERROR after restore:  0
+
+written: /mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/evidence/phase14/learning-effect.md
+VERDICT: PASS
+### 15.1 adversarial fee/vault
+=== attacker: 0x00000000000000000000000000000000000000Ee ===
+=== vault 0x3e938422f11D53b62F6Fe4afa2e4f52B1aFF4382 ===
+
+  case                                           expected error and selector            verdict
+  eve opens a trade on someone else's deposit    NotAgent() 0x0d9ab13f                  PASS
+  eve closes a trade                             NotAgent() 0x0d9ab13f                  PASS
+  eve reassigns the agent to herself             NotOwner() 0x30cd7471                  PASS
+  eve withdraws from an empty balance            InsufficientBalance(uint256,uint256) 0xcf479181 PASS
+  eve deposits zero                              ZeroAmount() 0x1f2a2005                PASS
+  eve charges a fee, minting revenue             NotCharger() 0xd796045b                PASS
+  eve raises the fee rate                        NotOwner() 0x30cd7471                  PASS
+  eve points the treasury at herself             NotOwner() 0x30cd7471                  PASS
+  eve authorises herself as a charger            NotOwner() 0x30cd7471                  PASS
+
+=== negative controls: calls that MUST succeed ===
+  anyone may read the fee quote                  ok: 4900
+  anyone may read vault solvency                 ok: true
+  anyone may read a withdrawable balance         ok: 25000000000000000000 [2.5e19]
+
+written: /mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/evidence/phase15/adversarial-fee-vault.md
+VERDICT: PASS  (refused 9, unexpected 0, controls 3/3)
+### 15.2 protocol version
+    Finished `release` profile [optimized] target(s) in 4.83s
+server up after 40s
+Coordination protocol probe, task 15.2
+Run 2026-08-16 19:15:42 UTC, server up after 40s
+
+== GET /health (no key required) ==
+{"chain_id":1952,"ok":true,"protocol_version":"1.0.0","refused":0,"served":0}
+
+== GET /thesis ==
+{"block":38448865,"confidence_bps":0,"halted":false,"imbalance_bps":"-3928","live_orders":25,"market":"tBASE/tQUOTE","snapshot_age_ms":817,"spread_bps":"-6666","thesis":"BOOK IS CROSSED: best bid 2.400000 is at or above best ask 1.200000, so spread-based inference is unreliable; spread -6666 bps observed, volatility not yet estimable, fewer than three mid observations so far; depth is ask-heavy by 3928 bps"}
+
+== GET /capacity ==
+{"current_exposure_micro":"23456250","first_refusal_beyond":null,"halted":false,"max_permitted_size_micro":"12500000"}
+
+== POST /quote ==
+{"block":38448865,"expires_at_ms":1786907757513,"market":"tBASE/tQUOTE","price_micro":"1200000","quote_id":1,"requires_human_approval":false,"side":"Buy","size_micro":"250000","ttl_ms":15000}
+
+
+== POST /accept ==
+{"accepted":true,"handoff_error":null,"handoff_written":true,"held_ms":41,"market":"tBASE/tQUOTE","note":"queued for settlement by the brain runtime, which owns the keystore; this endpoint never signs","price_micro":"1200000","priced_at_block":38448865,"quote_id":1,"side":"Buy","size_micro":"250000"}
+
+== refusals a client must handle ==
+  no api key on /thesis:        401
+  unknown quote_id on /accept:  404
+  size_micro as a number:       400
+  unknown endpoint:             404
+
+written: /mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/docs/COORDINATION-PROTOCOL.md
+written: /mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/evidence/phase15/protocol-probe.txt
+VERDICT: PASS  (version 1.0.0, required fields 3/3)
+### 14.7 phase 14 audit
+=== every cited file exists and is non-empty ===
+  ok      evidence/phase14/differential.md (3484 bytes)
+  ok      evidence/phase14/invariants.md (4678 bytes)
+  ok      evidence/phase14/trace.md (3890 bytes)
+  ok      evidence/phase14/otel-stdout.txt (3303 bytes)
+  ok      evidence/phase14/decision-trace.jsonl (1003 bytes)
+  ok      evidence/phase14/realized-pnl.md (6906 bytes)
+  ok      evidence/phase14/pnl-settlement.md (2810 bytes)
+  ok      evidence/phase14/river-profit.txt (2120 bytes)
+  ok      evidence/phase14/learning-effect.md (3177 bytes)
+  ok      evidence/settlements.jsonl (3403 bytes)
+  ok      docs/decisions/ADR-019-tracing-not-full-otlp.md (4503 bytes)
+  ok      docs/decisions/ADR-020-settlements-in-a-sidecar.md (3454 bytes)
+
+=== chain rows for phase 14 ===
+  C-14xx rows: 9
+
+=== the Rust suites the phase's claims rest on ===
+  workspace: 115 passed, 0 failed
+
+=== claims re-read against their artefacts ===
+  ok      trace spans (C-1402 says five)             5
+  ok      distinct trace ids (must be one)           1
+  ok      root spans (must be one)                   1
+  ok      non-zero settlements (C-1403)              7
+  ok      settlements whose PnL fails recompute      0
+
+written: /mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/evidence/gates/phase14.md
+VERDICT: PASS  (missing 0, drift 0, rows 9)
+### chain inventory
+rows: 115
+malformed rows:        0
+duplicate ids:         0 []
+rows with no command:  0 []
+missing evidence files:0
+missing scripts:       0
+
+INVENTORY: CLEAN

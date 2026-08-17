@@ -1,0 +1,102 @@
+ASML-X runtime
+  mode        run
+  chain       1952 (verified)
+  venue       0xd79276538a39ae5247e7a0d33d40aad849e09b4d
+  guard       0x977a77af8891187c73c7cdbd145b6fd57a0d0a47
+  cycles      1
+
+  trace id    d17389906f4622459a999143af636073
+Spans
+Resource
+	 ->  telemetry.sdk.name=String(Static("opentelemetry"))
+	 ->  telemetry.sdk.language=String(Static("rust"))
+	 ->  service.name=String(Owned("unknown_service:asml"))
+	 ->  telemetry.sdk.version=String(Static("0.32.1"))
+Span #0
+	Instrumentation Scope
+		Name         : "asml-x.runtime"
+
+	Name         : perceive.read_snapshot
+	TraceId      : d17389906f4622459a999143af636073
+	SpanId       : 350ab88bea2ea77c
+	TraceFlags   : TraceFlags(1)
+	ParentSpanId : ce2e3f382e6b230d
+	Kind         : Internal
+	Start time   : 2026-08-16 14:52:13.495448
+	End time     : 2026-08-16 14:52:32.960370
+	Status       : Unset
+	Attributes:
+		 ->  block: String(Owned("38433098"))
+		 ->  live_orders: String(Owned("16"))
+		 ->  outcome: String(Owned("ok"))
+Spans
+Span #0
+	Instrumentation Scope
+		Name         : "asml-x.runtime"
+
+	Name         : perceive.signals
+	TraceId      : d17389906f4622459a999143af636073
+	SpanId       : 4fa4aeb4c3a71e8d
+	TraceFlags   : TraceFlags(1)
+	ParentSpanId : ce2e3f382e6b230d
+	Kind         : Internal
+	Start time   : 2026-08-16 14:52:32.978929
+	End time     : 2026-08-16 14:52:32.978934
+	Status       : Unset
+	Attributes:
+		 ->  mid_present: String(Owned("true"))
+Spans
+Span #0
+	Instrumentation Scope
+		Name         : "asml-x.runtime"
+
+	Name         : decide.thesis
+	TraceId      : d17389906f4622459a999143af636073
+	SpanId       : a0ae4cd8283fcd50
+	TraceFlags   : TraceFlags(1)
+	ParentSpanId : ce2e3f382e6b230d
+	Kind         : Internal
+	Start time   : 2026-08-16 14:52:32.991768
+	End time     : 2026-08-16 14:52:32.991779
+	Status       : Unset
+	Attributes:
+		 ->  confidence_bps: String(Owned("0"))
+Spans
+Span #0
+	Instrumentation Scope
+		Name         : "asml-x.runtime"
+
+	Name         : perceive.portfolio
+	TraceId      : d17389906f4622459a999143af636073
+	SpanId       : bf0ef977ba264ad3
+	TraceFlags   : TraceFlags(1)
+	ParentSpanId : ce2e3f382e6b230d
+	Kind         : Internal
+	Start time   : 2026-08-16 14:52:33.003248
+	End time     : 2026-08-16 14:52:33.645485
+	Status       : Unset
+cycle 0 block 38433098 | 16 live orders | 33 candidates | chose: take order 2 Sell 0.187500 base at 1.900000
+  thesis (0 bps): BOOK IS CROSSED: best bid 1.900000 is at or above best ask 1.700000, so spread-based inference is unreliable; spread -1111 bps observed, volatility not yet estimable, fewer than three mid observations so far; depth is ask-heavy by 8738 bps
+  risk:   approved, 0 candidate(s) refused by risk
+  submitted: 0xcb3841c90585bfa72d92ac29bd95f13363d37bf53af2e1901a31159040c319e0
+Spans
+Span #0
+	Instrumentation Scope
+		Name         : "asml-x.runtime"
+
+	Name         : decision_cycle
+	TraceId      : d17389906f4622459a999143af636073
+	SpanId       : ce2e3f382e6b230d
+	TraceFlags   : TraceFlags(1)
+	ParentSpanId : None (root span)
+	Kind         : Internal
+	Start time   : 2026-08-16 14:52:13.494836
+	End time     : 2026-08-16 14:52:41.223742
+	Status       : Unset
+	Attributes:
+		 ->  cycle: String(Owned("0"))
+		 ->  block: String(Owned("38433098"))
+		 ->  decision_id: String(Owned("163"))
+  trace spans written: 5
+
+journal entries total: 77

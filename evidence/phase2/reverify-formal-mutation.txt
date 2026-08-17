@@ -1,0 +1,184 @@
+Formal and mutation re-verification, task 2.5
+Run 2026-08-12 02:37:31 UTC
+
+## Tools, versions read live rather than quoted from the docs
+  halmos:  halmos 0.3.3
+  hevm:    0.57.0 [no git revision present]
+  forge:   forge Version: 1.7.1
+  cargo:   cargo 1.97.1 (c980f4866 2026-06-30)
+  z3:      Z3 version 5.0.0 - 64 bit
+
+==============================================================
+## Proof mutation, halmos with an injected violation
+   command: bash scripts/16-proof-mutation.sh
+   === 1. baseline: all proofs must PASS ===
+   Symbolic test result: 6 passed; 1 failed; time: 3.10s
+   BASELINE IS NOT CLEAN. Abort before drawing conclusions.
+
+==============================================================
+## RWA formal suite
+   command: bash scripts/21-rwa-formal.sh
+   [PASS] check_divergenceBoundaryIsExact(uint256) (paths: 9, time: 0.30s, bounds: [])
+   [PASS] check_inheritedCapsSurviveTheOverride(uint256,uint256) (paths: 5, time: 0.49s, bounds: [])
+   [PASS] check_killedRefusesEveryAmountOnTheRwaPath(uint256) (paths: 2, time: 0.11s, bounds: [])
+   [PASS] check_onlyOwnerCanLoosenTheRwaPolicy(address,uint256) (paths: 2, time: 0.04s, bounds: [])
+   [PASS] check_pausedRefusesEveryAmount(uint256) (paths: 2, time: 0.10s, bounds: [])
+   [PASS] check_reduceIsNeverBlockedByRwaConditions(uint256,uint256) (paths: 3, time: 0.21s, bounds: [])
+   [PASS] check_yieldIndexIsMonotonic(uint256,uint256) (paths: 2, time: 0.09s, bounds: [])
+   Symbolic test result: 7 passed; 0 failed; time: 1.52s
+   
+   === 2. inject a violation: drop the issuer-pause refusal ===
+   [FAIL] check_pausedRefusesEveryAmount(uint256) (paths: 3, time: 1.59s, bounds: [])
+   Symbolic test result: 6 passed; 1 failed; time: 3.59s
+   RESULT: prover CAUGHT the removed pause refusal (1 failed).
+   
+   === 3. restore ===
+   Symbolic test result: 7 passed; 0 failed; time: 2.64s
+   
+   caught=yes
+
+==============================================================
+## Rust mutation gate, risk engine
+   command: bash scripts/08-mutation-gate.sh
+     [data stale kill: neutralise] went RED (good)
+     [non-positive size guard: neutralise] went RED (good)
+     [fixed-point scale: drop MICRO divisor] went RED (good)
+   
+   === restore verified ===
+   restored GREEN
+   
+   === task 2.1.4: prove the risk gate cannot be bypassed at compile time ===
+   RESULT: forging RiskApproved FAILS TO COMPILE, as required.
+   error[E0308]: mismatched types
+   error: could not compile `executor` (lib) due to 1 previous error
+   
+   === final state must be GREEN ===
+   GREEN
+   
+   mutations RED (good): 14
+   mutations GREEN or inconclusive: 0
+   written: /mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/evidence/mutation-risk-engine.md
+
+==============================================================
+## Contract mutation gate
+   command: bash scripts/11-contract-mutation.sh
+     [setMarketCap loses onlyOwner] RED (good)
+     [unconfigured market no longer fails closed] RED (good)
+     [gross accounting drifts from parts] RED (good)
+     [reduce underflow guard removed] RED (good)
+   
+   === mutations: OrderBookVenue ===
+     [overfill guard removed] RED (good)
+     [fill accounting not recorded] RED (good)
+     [price scale divisor dropped in take] RED (good)
+     [sell escrow skipped at post] STAYED GREEN  <-- gap
+     [cancel refund skipped] sed did not apply
+     [only-maker cancel check removed] RED (good)
+   
+   === restore check ===
+   restored GREEN
+   
+   RED (good): 12   gaps: 3
+   written: /mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/evidence/mutation-contracts.md
+
+==============================================================
+## RWA mutation gate
+   command: bash scripts/25-rwa-mutation.sh
+     [onlyIssuer removed from setPaused] RED (good)
+   onchain restored GREEN
+   
+   === offchain baseline ===
+   GREEN
+   === offchain mutations ===
+     [missing RWA state defaults to healthy instead of failing closed] RED (good)
+     [pause refusal removed] RED (good)
+     [oracle staleness comparison inverted] RED (good)
+     [window buffer drops the untilWindow > 0 guard] RED (good)
+     [divergence comparison inverted] RED (good)
+     [RWA checks applied to every instrument kind, not just RWA] RED (good)
+     [reduce exemption removed, so exits get blocked] RED (good)
+     [is_reducing always true, so RWA checks never run] RED (good)
+   offchain restored GREEN
+   
+   RED (good): 17   gaps: 1
+   written: /mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/evidence/mutation-rwa.md
+
+==============================================================
+## Learning mutation gate
+   command: bash scripts/32-learning-mutation.sh
+   GREEN
+   === mutations ===
+     [momentum weight severed from the decision (parameter never read)] RED (good)
+     [dead band removed, so a flat market scores every forecast wrong] RED (good)
+     [dead band made enormous, so nothing is ever scored] RED (good)
+     [settle lag ignored, so a forecast is scored against its own price] RED (good)
+     [direction scoring inverted] RED (good)
+     [minimum sample guard removed, learning from noise] RED (good)
+     [momentum weight upper clamp removed] sed did not apply
+     [weight update sign inverted, so a good signal loses weight] RED (good)
+     [holds are scored instead of dropped] RED (good)
+     [pending forecasts no longer persisted] RED (good)
+     [learned params no longer persisted] RED (good)
+     [param change loses its sample-count attribution] RED (good)
+   restored GREEN
+   
+   RED (good): 11   gaps: 1
+   written: /mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/evidence/mutation-learning.md
+
+==============================================================
+## hevm independent proofs
+   command: bash scripts/47d-hevm-argotorg.sh
+   [96m[RUNNING][0m prove_capNeverExceeded(uint256)
+      [32m[PASS][0m prove_capNeverExceeded
+   
+   [96m[RUNNING][0m prove_grossEqualsSumOfParts(uint256)
+      [32m[PASS][0m prove_grossEqualsSumOfParts
+   
+   [96m[RUNNING][0m prove_capHoldsAcrossTwoAdds(uint256,uint256)
+      [32m[PASS][0m prove_capHoldsAcrossTwoAdds
+   
+   [96m[RUNNING][0m prove_reduceNeverUnderflows(uint256,uint256)
+      [32m[PASS][0m prove_reduceNeverUnderflows
+   
+   
+   ## Verdict, task 1.4
+     hevm 0.57.0 exit code: 0
+     This is a SECOND INDEPENDENT SYMBOLIC ENGINE, not another halmos version.
+     Task 7.7 can now claim two independent engines rather than two versions.
+   written: /mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/evidence/phase0/hevm.txt
+
+==============================================================
+## scribble instrument-and-fire
+   command: bash scripts/48-scribble-smoke.sh
+   
+   ## Does the assertion FIRE? Violating vs valid input
+   No files changed, compilation skipped
+   
+   Ran 5 tests for test/ScribbleFire.t.sol:ScribbleFireTest
+   [PASS] test_cumulativeBreachAlsoTrips() (gas: 33610)
+   [PASS] test_cumulativeUnderCapDoesNotTrip() (gas: 29785)
+   [PASS] test_theRevertComesFromInstrumentationNotArithmetic() (gas: 28496)
+   [PASS] test_validInputPasses() (gas: 28596)
+   [PASS] test_violatingInputTripsTheAssertion() (gas: 32499)
+   Suite result: ok. 5 passed; 0 failed; 0 skipped; finished in 1.35ms (735.28µs CPU time)
+   
+   Ran 1 test suite in 27.40ms (1.35ms CPU time): 5 tests passed, 0 failed, 0 skipped (5 total tests)
+   
+   ## Verdict, task 1.5
+     PASS requires BOTH: the valid input succeeds AND the violating input reverts.
+     A green instrumentation run on its own is the fake win this phase names.
+   written: /mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/evidence/phase0/scribble.txt
+
+==============================================================
+## Verdict, task 2.5
+  gates attempted: 8
+  scripts missing: 0
+0
+
+  Each gate above prints its own verdict, reproduced verbatim rather than summarised into
+  a single number here. A summary line would be the place where a failing gate could hide.
+
+  What to look for when reading this file: every mutation gate must show a RED phase (the
+  injected break is caught) followed by a GREEN phase (the restore is clean). A gate that
+  only shows GREEN has not demonstrated anything, because a test that cannot fail is
+  indistinguishable from a test that passes.

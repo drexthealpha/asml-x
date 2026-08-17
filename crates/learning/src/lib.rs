@@ -21,7 +21,7 @@
 //! - `MIN_SAMPLES_TO_UPDATE` blocks learning from noise. Adjusting a weight on three
 //!   observations is not learning, it is overfitting with extra steps.
 
-use core_types::{Micro, TimestampMs};
+use core_types::{Micro, TimestampMs, MICRO};
 use decision_engine::Params;
 use serde_json::{json, Value};
 use std::collections::HashMap;
@@ -72,6 +72,13 @@ pub struct Pending {
     /// is current when it settles.
     pub params_at_decision: Params,
     pub signal_name: String,
+    /// Size of the position taken, in micro base units. Zero for a hold.
+    ///
+    /// TASK 14.4. Without this the learner can score a DIRECTION but cannot produce a realized PnL,
+    /// because a move in basis points says nothing about money until it is multiplied by a size. A
+    /// system that reports hit rate and calls it a result is grading its forecasts, not its trading:
+    /// a signal can be right most of the time and lose, by being right small and wrong large.
+    pub size_micro: Micro,
 }
 
 /// A settled outcome.
@@ -90,6 +97,22 @@ pub struct Outcome {
     /// overestimated its own edge.
     pub edge_error_micro: Micro,
     pub settled_at_ms: TimestampMs,
+    /// Size the decision took, in micro base units, carried through from `Pending`.
+    pub size_micro: Micro,
+    /// The edge the decision expected, carried through so a consumer never has to reconstruct it
+    /// from `edge_error_micro`. Reconstructing it requires re-applying the direction sign and gets
+    /// the answer wrong for a short, which is precisely the kind of quietly-derived number this
+    /// project treats as a defect.
+    pub expected_edge_micro: Micro,
+    /// TASK 14.4. Realized PnL in micro QUOTE units, signed.
+    ///
+    /// `size * (mid_at_settle - mid_at_decision)` for a long, negated for a short, divided by the
+    /// micro scale once because both factors are micro-scaled.
+    ///
+    /// MARK TO MARKET, NOT CASH. This is the position's value change against a later observed mid,
+    /// not proceeds from a closing trade, and the evidence says so in those words. Calling it
+    /// realized cash would be claiming a round trip that did not happen.
+    pub realized_pnl_micro: Micro,
 }
 
 /// Per-signal accuracy tally.
@@ -231,6 +254,40 @@ impl Learner {
                         );
                     }
                 }
+                // HISTORY MUST BE RESTORED, and it was not. `save` wrote every parameter change and
+                // `load` silently dropped them, so the recorded history was only ever the CURRENT
+                // process's changes. Task 14.6 surfaced it: the panel showed momentum weight moving
+                // 411 -> 401 when it had actually fallen from its default of 2000, understating the
+                // learning effect by two orders of magnitude while looking perfectly plausible.
+                //
+                // Same defect shape as the pending queue, which was fixed for the same reason: a
+                // sequence of short runs learned nothing and reported `settled 0` while appearing to
+                // work. Anything written on save and not read on load is a lie the next run tells.
+                if let Some(hist) = v.get("history").and_then(Value::as_array) {
+                    for h in hist {
+                        let u = |k: &str| -> u32 {
+                            u32::try_from(h.get(k).and_then(Value::as_u64).unwrap_or(0)).unwrap_or(0)
+                        };
+                        me.history.push(ParamChange {
+                            at_ms: h.get("at_ms").and_then(Value::as_u64).unwrap_or(0),
+                            parameter: h
+                                .get("parameter")
+                                .and_then(Value::as_str)
+                                .unwrap_or("")
+                                .to_string(),
+                            from: u("from"),
+                            to: u("to"),
+                            trigger: h
+                                .get("trigger")
+                                .and_then(Value::as_str)
+                                .unwrap_or("")
+                                .to_string(),
+                            samples: u("samples"),
+                            hit_rate_bps: u("hit_rate_bps"),
+                        });
+                    }
+                }
+
                 me.settled_count = v.get("settled_count").and_then(Value::as_u64).unwrap_or(0);
                 me.unscored_flat = v.get("unscored_flat").and_then(Value::as_u64).unwrap_or(0);
 
@@ -264,6 +321,16 @@ impl Learner {
                                 .and_then(Value::as_str)
                                 .unwrap_or("imbalance_bps")
                                 .to_string(),
+                            // Absent in state files written before 14.4. Defaulting to zero makes
+                            // such a forecast settle with a realized PnL of exactly zero, which is
+                            // the honest reading: the size was never recorded, so no PnL can be
+                            // claimed for it. It is NOT dropped, because its direction is still
+                            // scoreable and discarding it would quietly shrink the sample.
+                            size_micro: p
+                                .get("size_micro")
+                                .and_then(Value::as_str)
+                                .and_then(|x| x.parse().ok())
+                                .unwrap_or(0),
                         });
                     }
                 }
@@ -314,6 +381,7 @@ impl Learner {
                     "expected_edge_micro": p.expected_edge_micro.to_string(),
                     "opened_at_ms": p.opened_at_ms,
                     "signal_name": p.signal_name,
+                    "size_micro": p.size_micro.to_string(),
                 })
             })
             .collect();
@@ -421,6 +489,19 @@ impl Learner {
             };
             let edge_error_micro = realized_edge - p.expected_edge_micro;
 
+            // TASK 14.4. Realized PnL in micro quote units. Integer arithmetic throughout, as the
+            // workspace lint denies floats in this crate: the division by MICRO happens once,
+            // because size and the price delta are each micro-scaled and their product is
+            // micro-squared. Truncation toward zero is acceptable and deliberate, since a rounding
+            // that could round a loss up to zero is the one that would flatter the result.
+            let price_delta = current_mid - p.mid_at_decision;
+            let directional = match p.predicted {
+                Predicted::Up => price_delta,
+                Predicted::Down => -price_delta,
+                Predicted::NoView => 0,
+            };
+            let realized_pnl_micro = (p.size_micro * directional) / MICRO;
+
             let s = self.stats.entry(p.signal_name.clone()).or_default();
             s.samples += 1;
             if direction_correct {
@@ -440,6 +521,9 @@ impl Learner {
                 direction_correct,
                 edge_error_micro,
                 settled_at_ms: now_ms,
+                size_micro: p.size_micro,
+                expected_edge_micro: p.expected_edge_micro,
+                realized_pnl_micro,
             });
         }
 

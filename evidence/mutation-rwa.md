@@ -1,6 +1,6 @@
 # Mutation gate: the RWA layer
 
-Task 5.2.3, standing rule R7. Captured 2026-08-09 12:22:02 UTC.
+Task 5.2.3, standing rule R7. Captured 2026-08-12 03:20:27 UTC.
 
 | # | layer | mutation | result |
 |---|---|---|---|
@@ -8,7 +8,7 @@ Task 5.2.3, standing rule R7. Captured 2026-08-09 12:22:02 UTC.
 | 2 | onchain | oracle staleness refusal neutralised | RED, test holds |
 | 3 | onchain | window buffer refusal neutralised | RED, test holds |
 | 4 | onchain | divergence refusal neutralised | RED, test holds |
-| 5 | onchain | reduce gains an RWA block (breaks the asymmetry) | RED, test holds |
+| 5 | onchain | reduce gains an RWA block (breaks the asymmetry) | sed did not apply |
 | 6 | onchain | setRwaPolicy loses onlyOwner | RED, test holds |
 | 7 | onchain | divergence made one-sided | RED, test holds |
 | 8 | onchain | yield index allowed to decrease | RED, test holds |
@@ -25,5 +25,5 @@ Task 5.2.3, standing rule R7. Captured 2026-08-09 12:22:02 UTC.
 
 ## Summary
 
-- RED (good): 18
-- gaps or inconclusive: 0
+- RED (good): 17
+- gaps or inconclusive: 1

@@ -1,0 +1,50 @@
+Task 8.3: per-user limits, enforced offchain AND onchain
+run: 2026-08-16 00:18:21 UTC
+
+== HALF ONE: offchain, the RiskApproved seal ==
+test tests::a_user_limit_looser_than_the_system_changes_nothing ... ok
+test tests::per_user_limits_refuse_an_order_the_system_would_allow ... ok
+test tests::per_user_market_limit_is_checked_on_projected_exposure ... ok
+test tests::prop_a_user_limit_can_never_widen_what_the_system_allows ... ok
+test tests::prop_unbounded_user_limits_agree_with_the_plain_engine ... ok
+test tests::tightened_by_never_raises_a_bound ... ok
+test result: ok. 43 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.24s
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+The containment property is the one that matters: prop_a_user_limit_can_never_widen_what_the
+system_allows asserts that for arbitrary user limits and arbitrary orders, anything
+evaluate_for_user approves is also approved by the plain evaluate. A user limit can only ever
+SUBTRACT from what is permitted, so a user typing a very large number is safe by construction
+rather than by validation. Limits::tightened_by takes a minimum on every field.
+
+prop_unbounded_user_limits_agree_with_the_plain_engine is the anti-vacuity pair: without it,
+an implementation that refused everything would satisfy containment trivially.
+
+== HALF TWO: onchain, AgentVault.openTrade re-checks the same bound ==
+
+vault:  0x3e938422f11D53b62F6Fe4afa2e4f52B1aFF4382
+deposit 10 tQUOTE with a 1 tQUOTE per-action limit: 0x1 0xc63af75de52b3391adc5a87673f7c3446b1f81d280efbfb5719c86dc606a0c1e
+vault.balanceOf(depositor):   10000000000000000000
+vault.maxNotional(depositor): 1000000000000000000
+
+The attempt below asks for 2 tQUOTE against a 1 tQUOTE limit, with 10 tQUOTE on deposit.
+There are ample funds. The ONLY thing refusing it is the user's own limit.
+
+--- simulated call, for the decoded custom error ---
+Error: server returned an error response: error code 3: execution reverted, data: "0x38888fc70000000000000000000000000000000000000000000000001bc16d674ec800000000000000000000000000000000000000000000000000000de0b6b3a7640000"
+
+--- SUBMITTED transaction, so the refusal is a permanent onchain record ---
+tx:     0xc9bd4a19fea046f6f659e44a1f118c0f24fa40f10a738a69d177303db1db4e5c
+status: 0x0   (0x0 means REVERTED, which is the pass for this task)
+block:  38380705
+explorer: https://www.oklink.com/x-layer-testnet/tx/0xc9bd4a19fea046f6f659e44a1f118c0f24fa40f10a738a69d177303db1db4e5c
+
+--- counterfactual: the same call at 1 tQUOTE, inside the limit ---
+openTrade(depositor, 1 tQUOTE): 0x1 0x1fa6941bbe61fae1b1b5e34bf633d6c2d4b6d925b7c65c7b577255e13b26cc58
+vault.committed(depositor): 1000000000000000000
+
+== gate ==
+offchain: RiskApproved cannot be constructed past a user limit (6 tests, containment proved)
+onchain:  the over-limit call reverted on chain with status 0x0
+control:  the within-limit call succeeded, committed 1000000000000000000
+GATE: PASS  two independent enforcements, both demonstrated

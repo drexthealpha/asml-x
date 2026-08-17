@@ -1,0 +1,48 @@
+scribble instrument-and-fire test, task 1.5
+Run 2026-08-12 03:31:49 UTC
+
+## Tool
+  scribble: 0.7.10
+  package:  eth-scribble (verified npmjs.com/package/eth-scribble)
+
+## Target and the annotated property
+  file: contracts/scribble/CapAccumulator.sol
+    26:    /// #if_succeeds {:msg "total never exceeds cap"} total <= cap;
+    31:    /// #if_succeeds {:msg "total never underflows"} total <= old(total);
+
+  This is RiskGuard's per-market cap invariant reduced to its smallest form.
+  RiskGuard itself is NOT instrumented: scribble rewrites source, and the deployed
+  bytecode is what every onchain claim rests on.
+
+## Instrumenting
+Found 2 annotations in 1 different files.
+CapAccumulator.sol -> CapAccumulator.sol.instrumented
+Scribble metadata file generated.
+  instrumentation exit 0
+  renamed CapAccumulator.sol.instrumented to CapAccumulator.instrumented.sol
+
+## Proof the annotation became a real runtime check
+  instrumented file: 2958 bytes
+  assertion machinery emitted into the source:
+    matches: 11
+    34:                emit __ScribbleUtilsLib__40.AssertionFailed("001447:0089:000 0: total never exceeds cap");
+    52:                emit __ScribbleUtilsLib__40.AssertionFailed("001962:0088:000 1: total never underflows");
+    64:    event AssertionFailed(string message);
+    66:    event AssertionFailedData(int eventId, bytes encodingData);
+
+## Does the assertion FIRE? Violating vs valid input
+No files changed, compilation skipped
+
+Ran 5 tests for test/ScribbleFire.t.sol:ScribbleFireTest
+[PASS] test_cumulativeBreachAlsoTrips() (gas: 33610)
+[PASS] test_cumulativeUnderCapDoesNotTrip() (gas: 29785)
+[PASS] test_theRevertComesFromInstrumentationNotArithmetic() (gas: 28496)
+[PASS] test_validInputPasses() (gas: 28596)
+[PASS] test_violatingInputTripsTheAssertion() (gas: 32499)
+Suite result: ok. 5 passed; 0 failed; 0 skipped; finished in 1.35ms (735.28µs CPU time)
+
+Ran 1 test suite in 27.40ms (1.35ms CPU time): 5 tests passed, 0 failed, 0 skipped (5 total tests)
+
+## Verdict, task 1.5
+  PASS requires BOTH: the valid input succeeds AND the violating input reverts.
+  A green instrumentation run on its own is the fake win this phase names.

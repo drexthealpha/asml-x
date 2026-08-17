@@ -78,6 +78,55 @@ impl Limits {
     }
 }
 
+/// Per-depositor limits, supplied by the user at deposit time and mirrored onchain in
+/// `AgentVault.maxNotional`.
+///
+/// TWO INDEPENDENT ENFORCEMENTS, offchain and onchain, and neither is decorative. This struct is the
+/// offchain half: it prevents the agent from even constructing an approved decision that exceeds a
+/// user's limit. `AgentVault.openTrade` is the onchain half and re-checks the same bound, so a
+/// compromised or replaced offchain binary still cannot exceed it. Task 8.3 demonstrates the onchain
+/// revert with a real testnet transaction, because "enforced offchain and also onchain" is a claim
+/// that has to be shown on chain to mean anything.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct UserLimits {
+    /// Maximum notional for one order placed with this user's funds, micro quote units.
+    pub max_order_notional_micro: Micro,
+    /// Maximum total exposure in one market for this user, micro quote units.
+    pub max_market_notional_micro: Micro,
+}
+
+impl UserLimits {
+    /// A user limit that constrains nothing, for callers with no per-user context.
+    #[must_use]
+    pub const fn unbounded() -> Self {
+        Self {
+            max_order_notional_micro: Micro::MAX,
+            max_market_notional_micro: Micro::MAX,
+        }
+    }
+}
+
+impl Limits {
+    /// Apply a user's limits by taking the MINIMUM of each bound.
+    ///
+    /// This is the whole safety argument, and it is one line long on purpose: `min` cannot widen.
+    /// A user asking for a larger limit than the system allows gets the system's, silently and
+    /// safely, and a user asking for a smaller one gets theirs. There is deliberately no branch
+    /// here that could be written the other way round by a later edit without the proptest in
+    /// tests.rs going red.
+    #[must_use]
+    pub fn tightened_by(&self, user: &UserLimits) -> Self {
+        let mut out = self.clone();
+        out.max_order_notional_micro = out
+            .max_order_notional_micro
+            .min(user.max_order_notional_micro);
+        out.max_market_notional_micro = out
+            .max_market_notional_micro
+            .min(user.max_market_notional_micro);
+        out
+    }
+}
+
 /// Conditions that halt the agent. Independent of the per-order checks, because
 /// a limit breach refuses one order while these stop everything.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -207,6 +256,12 @@ pub enum Refusal {
     RwaShareTooLarge {
         got_bps: u32,
         limit_bps: u32,
+    },
+    /// A limit set by the DEPOSITOR whose funds would be used, not by the system. Kept distinct from
+    /// `OrderNotionalTooLarge` so the refusal ledger can tell a user which of the two said no.
+    UserLimitExceeded {
+        got: Micro,
+        limit: Micro,
     },
     NonPositiveSize,
     NonPositivePrice,
@@ -388,6 +443,46 @@ impl RiskEngine {
     /// then per-order size, then book-level aggregates. An order that fails
     /// several checks reports the most fundamental one, which is what an operator
     /// needs to see first.
+    /// Evaluate an intent against a specific user's funds.
+    ///
+    /// The user's own bounds are checked FIRST, so the refusal names the user's limit rather than
+    /// the system's. A ledger row reading "your 10 unit limit refused a 12 unit order" is actionable;
+    /// one reading "the system limit of 25 refused a 12 unit order" would be actively confusing,
+    /// because it names a limit the order did not breach.
+    ///
+    /// Then the ordinary `evaluate` runs with tightened limits. Every global check still applies,
+    /// and `RiskApproved` still has exactly one constructor in the system.
+    pub fn evaluate_for_user(
+        &self,
+        intent: &OrderIntent,
+        pf: &Portfolio,
+        ctx: &RiskContext,
+        user: &UserLimits,
+    ) -> Verdict {
+        let order_notional = intent.notional_micro();
+        if order_notional > user.max_order_notional_micro {
+            return Err(Refusal::UserLimitExceeded {
+                got: order_notional,
+                limit: user.max_order_notional_micro,
+            });
+        }
+
+        let projected_market =
+            (pf.exposure_in_market_micro(&intent.market) + intent.signed_notional_micro()).abs();
+        if projected_market > user.max_market_notional_micro {
+            return Err(Refusal::UserLimitExceeded {
+                got: projected_market,
+                limit: user.max_market_notional_micro,
+            });
+        }
+
+        let tightened = Self {
+            limits: self.limits.tightened_by(user),
+            rwa_policy: self.rwa_policy,
+        };
+        tightened.evaluate(intent, pf, ctx)
+    }
+
     pub fn evaluate(&self, intent: &OrderIntent, pf: &Portfolio, ctx: &RiskContext) -> Verdict {
         if let Some(reason) = self.kill_check(pf, ctx) {
             return Err(Refusal::Killed(reason));
@@ -501,11 +596,17 @@ impl RiskEngine {
             let allowance = share_allowance.max(self.limits.max_rwa_absolute_micro);
             if projected_rwa > allowance {
                 // Report the share so the number in the refusal is the meaningful one.
-                let share_bps = if projected_gross > 0 {
-                    u32::try_from((projected_rwa * 10_000) / projected_gross).unwrap_or(u32::MAX)
-                } else {
-                    10_000
-                };
+                //
+                // This was `if projected_gross > 0 { .. } else { 10_000 }`. cargo-mutants showed
+                // that `> 0` and `>= 0` are indistinguishable here, and that is not a missing
+                // test: `projected_gross` is `gross_exposure_micro() + order_notional`, gross is
+                // non-negative by construction, and a zero or negative order size is already
+                // refused earlier in this function. So the divisor is always at least
+                // `order_notional`, which is strictly positive, and the else branch was
+                // unreachable. Deleting dead code is the right fix for an equivalent mutant;
+                // adding a test for a branch that cannot execute is not.
+                let share_bps =
+                    u32::try_from((projected_rwa * 10_000) / projected_gross).unwrap_or(u32::MAX);
                 return Err(Refusal::RwaShareTooLarge {
                     got_bps: share_bps,
                     limit_bps: self.limits.max_rwa_share_bps,

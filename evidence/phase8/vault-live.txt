@@ -1,0 +1,84 @@
+Task 8.6: live deposit, trade, withdraw on X Layer testnet (chain 1952)
+run: 2026-08-16 00:19:07 UTC
+chainId from chain: 1952
+vault: 0x3e938422f11D53b62F6Fe4afa2e4f52B1aFF4382
+asset: 0x5069c6C619EE23a8e2EBa15b4B95F7EE16869501
+
+== starting state, stated rather than assumed ==
+vault.balanceOf(depositor):  10000000000000000000
+vault.committed(depositor):  1000000000000000000   (left in flight by task 8.3's counterfactual)
+closing the 8.3 trade so this cycle starts clean: 0x1 0x300a15ee547ca2a169fb043795e881c41a6a3c1f8d3b162a05fe93afb16d9e3b
+withdrawing the residual balance: 0x1 0x53e0ab733be6a50b9c9d021f46088a3e518ec9661e7e0b20bc0fce93b34c34bd
+
+clean start: wallet tQUOTE = 999000000000000000000, vault balance = 0
+
+== 1. DEPOSIT 5 tQUOTE with a 2 tQUOTE per-action limit ==
+tx:     0x3d41876e789aaa6f98ea97c754d19895f3839ba568ec97e4d510709eb5cf242e
+status: 0x1
+vault.balanceOf:   5000000000000000000
+vault.maxNotional: 2000000000000000000
+vault.isSolvent:   true
+
+== 2. AGENT ACTION under that deposit's limits: openTrade for 2 tQUOTE ==
+tx:     0x8f60f8c16a3e174a79f829d84b4f6c10b4c5e65f9ae5212ce88b01a5cd764cb7
+status: 0x1
+vault.committed:    2000000000000000000
+vault.withdrawable: 3000000000000000000
+venue tQUOTE:       3000000000000000000
+
+The funds went to the venue, which is the IMMUTABLE tradeTarget set at construction. The agent
+named no destination because openTrade takes none.
+
+== 2b. close the action, returning the full notional ==
+tx:     0x050e6e895bdd866f11df4479080664db86321990a5a70a12a267eda772e2ac04
+status: 0x1
+vault.committed: 0
+vault.balanceOf: 5000000000000000000
+
+== 3. FULL WITHDRAWAL ==
+tx:     0x150c0a00bd32c8be136ee80502d9fd41bbd440e61f2976f356140c5ef35eb4ce
+status: 0x1
+vault.balanceOf after: 0
+vault.isSolvent:       true
+
+== the arithmetic, reconciled to the wei ==
+  Three addresses hold this token. All three are measured, because a two-term identity
+  cannot tell a loss from a transfer.
+
+  operator wallet:  999000000000000000000 -> 997000000000000000000   delta -2000000000000000000
+  venue:            1000000000000000000 -> 3000000000000000000   delta +2000000000000000000
+  vault (token):    0 -> 0   delta +0
+  sum of deltas:    +0
+
+  depositor deposited:        5000000000000000000
+  depositor vault balance now: 0
+
+  CUSTODY EXACT: the depositor put in 5000000000000000000 and the vault balance is back to 0, so the
+  full amount was returned. AgentVault charges no fee on custody; the 50 bps usage fee
+  lives in FeeCollector and applies to EXECUTION, which this cycle did not perform.
+  CUSTODY_OK
+
+  CONSERVED: the three deltas sum to zero. No token was created or destroyed.
+  The venue holds 2000000000000000000 more than it started with, and the operator wallet holds
+  2000000000000000000 less. That is not a custody loss, it is where the money is: openTrade sent
+  2000000000000000000 to the venue out of the VAULT, and closeTrade settles from the AGENT,
+  so the agent funded the return out of its own wallet rather than reclaiming it
+  from a fill that this cycle never performed. The design puts that difference on
+  the agent by construction: a depositor's balance moves only by the MEASURED delta
+  of what actually comes back, so an agent that loses funds at a venue absorbs it
+  instead of passing it on.
+  CONSERVED_OK
+
+== gate ==
+1. deposit   status 0x1  tx 0x3d41876e789aaa6f98ea97c754d19895f3839ba568ec97e4d510709eb5cf242e
+2. trade     status 0x1  tx 0x8f60f8c16a3e174a79f829d84b4f6c10b4c5e65f9ae5212ce88b01a5cd764cb7
+3. withdraw  status 0x1  tx 0x150c0a00bd32c8be136ee80502d9fd41bbd440e61f2976f356140c5ef35eb4ce
+custody exact (5 in, 5 out):  yes
+tokens conserved across all 3: yes
+vault balance now zero:   yes
+
+explorer:
+  https://www.oklink.com/x-layer-testnet/tx/0x3d41876e789aaa6f98ea97c754d19895f3839ba568ec97e4d510709eb5cf242e
+  https://www.oklink.com/x-layer-testnet/tx/0x8f60f8c16a3e174a79f829d84b4f6c10b4c5e65f9ae5212ce88b01a5cd764cb7
+  https://www.oklink.com/x-layer-testnet/tx/0x150c0a00bd32c8be136ee80502d9fd41bbd440e61f2976f356140c5ef35eb4ce
+GATE: PASS  three transactions with status 0x1 and the balance exactly restored

@@ -1,0 +1,47 @@
+Tool ledger check, tasks 1.18 and 10.5
+Run 2026-08-10 19:54:53 UTC
+
+total rows: 46
+
+  NOT-INSTALLED    5
+  PENDING          36
+  READ             1
+  USED             4
+
+PENDING rows remaining: 36
+   - kontrol
+   - hevm
+   - act
+   - scribble
+   - cargo-mutants
+   - eliza
+   - langgraph
+   - autogen
+   - crewAI
+   - MetaGPT
+   - (chosen framework)
+   - alloy
+   - revm
+   - hypeterminal
+   - Wick
+   - strata-pro-crypto-ui
+   - tbt-paper-terminal
+   - shadcn-fintech
+   - shadcn/ui
+   - lightweight-charts 5.2.0
+   - TanStack Table 8.21.3
+   - React 19 + Vite 7 + TS
+   - Tailwind v4
+   - lucide-react
+   - framer-motion
+   - river
+   - Burn / Candle
+   - tiny_http
+   - Axum / Actix / Tonic
+   - OpenTelemetry + tracing
+   - DuckDB or Polars
+   - codebase-memory-mcp
+   - gemini-grounding
+   - paperscraper
+   - just
+   - insta

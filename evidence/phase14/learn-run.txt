@@ -1,0 +1,30 @@
+cycle 7 block 38438805 | 35 candidates | chose take order 16 Sell 1.500000 base at 2.300000 | predicts Down | momentum 1017 | pending 2
+
+=== learning summary ===
+  settled outcomes      5
+  imbalance samples     5
+  imbalance correct     1
+  imbalance hit rate    2000 bps
+  mean edge error       -158796 micro
+  final params          Params { momentum_weight_bps: 1017, variance_weight_bps: 8000, capital_cost_bps: 20, thin_book_penalty_bps: 425, min_confidence_bps: 3000, max_take_fraction_bps: 5000 }
+  parameter changes     16
+    momentum_weight_bps 1662 -> 1563 (5 samples, hit rate 2000 bps)
+    thin_book_penalty_bps 225 -> 250 (5 samples, hit rate 2000 bps)
+    momentum_weight_bps 1563 -> 1470 (5 samples, hit rate 2000 bps)
+    thin_book_penalty_bps 250 -> 275 (5 samples, hit rate 2000 bps)
+    momentum_weight_bps 1470 -> 1382 (5 samples, hit rate 2000 bps)
+    thin_book_penalty_bps 275 -> 300 (5 samples, hit rate 2000 bps)
+    momentum_weight_bps 1382 -> 1300 (5 samples, hit rate 2000 bps)
+    thin_book_penalty_bps 300 -> 325 (5 samples, hit rate 2000 bps)
+    momentum_weight_bps 1300 -> 1222 (5 samples, hit rate 2000 bps)
+    thin_book_penalty_bps 325 -> 350 (5 samples, hit rate 2000 bps)
+    momentum_weight_bps 1222 -> 1149 (5 samples, hit rate 2000 bps)
+    thin_book_penalty_bps 350 -> 375 (5 samples, hit rate 2000 bps)
+    momentum_weight_bps 1149 -> 1081 (5 samples, hit rate 2000 bps)
+    thin_book_penalty_bps 375 -> 400 (5 samples, hit rate 2000 bps)
+    momentum_weight_bps 1081 -> 1017 (5 samples, hit rate 2000 bps)
+    thin_book_penalty_bps 400 -> 425 (5 samples, hit rate 2000 bps)
+  after 5 settled outcomes I changed thin_book_penalty_bps from 400 to 425 because mean edge error -158796 micro over 5 outcomes, decisions overestimated their own edge
+
+  NOTE: hit rate on 5 samples is not a performance claim. It is evidence
+  that outcomes are measured and parameters respond to them.

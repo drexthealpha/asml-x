@@ -1,0 +1,124 @@
+{
+  "chainId": 196,
+  "chainName": "X Layer",
+  "rpc": "https://rpc.xlayer.tech",
+  "explorerTx": "https://www.oklink.com/x-layer/evm/tx/",
+  "explorerAddress": "https://www.oklink.com/x-layer/evm/address/",
+  "contracts": [
+    {
+      "name": "aQUOTE",
+      "address": "0x12dcbE73416CDFe6de0681286C25ACe81B4644C0"
+    },
+    {
+      "name": "aBASE",
+      "address": "0xEC23954ef24b22600C3b72C61CCE99cbe19A5AF5"
+    },
+    {
+      "name": "OrderBookVenue",
+      "address": "0x7065781018E015779d42bcC3eEA7429F8e479a3F"
+    },
+    {
+      "name": "RiskGuard",
+      "address": "0x9D22e538a72a5d2c9A28D08c27999216A78343C9"
+    },
+    {
+      "name": "FeeCollector",
+      "address": "0x7ff884C412a1A2c416e931C59889e5335C5EFa0D"
+    },
+    {
+      "name": "BatchExecutor",
+      "address": "0x7092050F3C4e72A2df8610ae2CC8c39DcA3B7f52"
+    },
+    {
+      "name": "AgentVault",
+      "address": "0xE64b6e937Fd0d855161A5F6F0Aa1A3E01CB54c24"
+    }
+  ],
+  "transactions": [
+    {
+      "hash": "0xb4785fbcbd2ba5f007b5735c63ee671aa178547da066bceb6ae0bef75bbcec6f",
+      "what": "agent loop: perceive, thesis, risk gate, execute",
+      "source": "evidence/phase12/mainnet-loop.md"
+    },
+    {
+      "hash": "0x6b96e18e311cbaf06645140e28c8699906effa36fd1095ee0b6abe99542f9377",
+      "what": "fee charged, decoded from the receipt",
+      "source": "evidence/phase12/mainnet-fee.md"
+    },
+    {
+      "hash": "0x3e2ed0286b96e18e311cbaf06645140e28c8699906effa36fd1095ee0b6abe99",
+      "what": "risk refusal, reverted on chain",
+      "source": "evidence/phase12/mainnet-refusal.md"
+    },
+    {
+      "hash": "0x6a0237847f4d73794b56b3083f0603e91e831cfd3cf20281f8665ec63c83e48e",
+      "what": "risk refusal, reverted on chain",
+      "source": "evidence/phase12/mainnet-refusal.md"
+    },
+    {
+      "hash": "0x38888fc70000000000000000000000000000000000000000000000001bc16d67",
+      "what": "risk refusal, reverted on chain",
+      "source": "evidence/phase12/mainnet-refusal.md"
+    },
+    {
+      "hash": "0x0ab18cf298fceb230916aeb89805f8f63e1bf8b11ae63dbdb2460a0ddcf99024",
+      "what": "user deposit, agent action, withdrawal",
+      "source": "evidence/phase12/mainnet-personal.md"
+    },
+    {
+      "hash": "0x453584e3a993b8394bfc0d1b1e09bf2704455c912764fb86f078e5e12aac6836",
+      "what": "user deposit, agent action, withdrawal",
+      "source": "evidence/phase12/mainnet-personal.md"
+    },
+    {
+      "hash": "0xebd8973b3fd220dbcdb106672780d83cdbc2c8342eb6a6f54d90d97d43bff028",
+      "what": "user deposit, agent action, withdrawal",
+      "source": "evidence/phase12/mainnet-personal.md"
+    },
+    {
+      "hash": "0x776033b110759b9167dd8e578c700159edc89d20d51e0286335df0bd5fcbb10d",
+      "what": "user deposit, agent action, withdrawal",
+      "source": "evidence/phase12/mainnet-personal.md"
+    },
+    {
+      "hash": "0x74cdf48604041e79ad778d8af8d0c9a6c108795e7120c3ae9f5387bb3fd46ea4",
+      "what": "user deposit, agent action, withdrawal",
+      "source": "evidence/phase12/mainnet-personal.md"
+    },
+    {
+      "hash": "0xab5088576bf4adc6d549a143d0176624f35ba59ba9050bbfe1d10da753440760",
+      "what": "contract deployment",
+      "source": "docs/verified/deployments-mainnet.md"
+    },
+    {
+      "hash": "0x7f0df9e66b364ff815cea31a2bcb43b790fceb6315283aacaa523330f110ecf3",
+      "what": "contract deployment",
+      "source": "docs/verified/deployments-mainnet.md"
+    },
+    {
+      "hash": "0x04f3bc8b8b41ca373ddda5047126b312998bfc3c998315efa7e955b010a0e198",
+      "what": "contract deployment",
+      "source": "docs/verified/deployments-mainnet.md"
+    },
+    {
+      "hash": "0xacf02321f99778f1d631133b63d9a0f7a9e96c1edf0c1842d1cfa8ffdd2bf539",
+      "what": "contract deployment",
+      "source": "docs/verified/deployments-mainnet.md"
+    },
+    {
+      "hash": "0x5cedcec2cf527897cf3bc93c71597a7b63e8c4f366e54df67e2226eff72ec591",
+      "what": "contract deployment",
+      "source": "docs/verified/deployments-mainnet.md"
+    },
+    {
+      "hash": "0x5f76c2e865fb6db378d14e065897375aac4c8568c6444992e723bf20c667f181",
+      "what": "contract deployment",
+      "source": "docs/verified/deployments-mainnet.md"
+    },
+    {
+      "hash": "0xf862850d46cd38c349678723a1dd84e983b24785e9f4a40482dc13c49b6a9759",
+      "what": "contract deployment",
+      "source": "docs/verified/deployments-mainnet.md"
+    }
+  ]
+}

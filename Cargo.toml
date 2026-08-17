@@ -11,6 +11,8 @@ members = [
     "crates/runtime",
     "crates/coordination-api",
     "crates/learning",
+    "crates/revm-probe",
+    "crates/alloy-probe",
 ]
 
 [workspace.package]
@@ -29,6 +31,10 @@ decision-engine = { path = "crates/decision-engine" }
 learning = { path = "crates/learning" }
 proptest = "1"
 serde_json = "1"
+# Pinned to the current 0.12 line. Chosen over writing a thread pool around the existing
+# hand-rolled parser because the parser is where the burst stall lived, and R-SEARCH-3 says
+# integrate rather than hand-roll the moment something costs more than one attempt.
+tiny_http = "0.12"
 
 [workspace.lints.rust]
 unsafe_code = "forbid"

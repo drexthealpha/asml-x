@@ -1,0 +1,43 @@
+halmos install and version comparison, task 1.2
+Run 2026-08-12 01:41:01 UTC
+
+## Starting state
+  system python: Python 3.10.12
+  halmos on PATH: /home/zulab/.local/bin/halmos
+  halmos version: halmos 0.3.3
+
+  CORRECTION: the VERIFIED FACTS table claimed 0.3.3. The box has 0.1.13.
+  v1's 14 theorems were proven by 0.1.13, not by 0.3.3.
+
+## Installing uv (brings its own Python, so the system 3.10 is untouched)
+  uv: uv 0.12.3 (x86_64-unknown-linux-gnu)
+
+## Installing halmos 0.3.3 on Python 3.12 via uv
+ + toml==0.10.2
+ + urllib3==2.7.0
+ + xxhash==3.8.1
+ + yices-solver==2.6.4.post23
+ + z3-solver==4.12.6.0
+Installed 1 executable: halmos
+
+  halmos now: halmos 0.3.3
+[PASS] check_divergenceBoundaryIsExact(uint256) (paths: 9, time: 0.66s, bounds: [])
+[PASS] check_inheritedCapsSurviveTheOverride(uint256,uint256) (paths: 5, time: 0.60s, bounds: [])
+[PASS] check_killedRefusesEveryAmountOnTheRwaPath(uint256) (paths: 2, time: 0.14s, bounds: [])
+[PASS] check_onlyOwnerCanLoosenTheRwaPolicy(address,uint256) (paths: 2, time: 0.05s, bounds: [])
+[PASS] check_pausedRefusesEveryAmount(uint256) (paths: 2, time: 0.13s, bounds: [])
+[PASS] check_reduceIsNeverBlockedByRwaConditions(uint256,uint256) (paths: 3, time: 0.25s, bounds: [])
+[PASS] check_yieldIndexIsMonotonic(uint256,uint256) (paths: 2, time: 0.10s, bounds: [])
+Symbolic test result: 7 passed; 0 failed; time: 2.66s
+[FAIL] check_pausedRefusesEveryAmount(uint256) (paths: 3, time: 0.61s, bounds: [])
+Symbolic test result: 6 passed; 1 failed; time: 2.66s
+Symbolic test result: 7 passed; 0 failed; time: 1.76s
+caught=yes
+
+## Verdict
+  suite exit: PASS
+  version used: halmos 0.3.3
+
+  PASS condition for 1.2 is BOTH: 7 theorems pass AND the injected violation is
+  caught. A pass alone is not enough, because a prover that verifies zero tests
+  also exits 0. The caught= line above is the half that matters.

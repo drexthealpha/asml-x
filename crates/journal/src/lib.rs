@@ -115,6 +115,51 @@ impl Entry {
     }
 }
 
+/// TASK 14.4. A decision's outcome, recorded against the decision that made the prediction.
+///
+/// Every field carries the inputs the PnL was computed from, not just the result. A settlement that
+/// reported only a number would be unauditable: a reader could not tell a real move from an
+/// arithmetic slip, and this project's whole claim is that its numbers can be checked.
+#[derive(Debug, Clone)]
+pub struct Settlement {
+    /// The decision being closed. Joins to `decision_id` in `journal.jsonl`.
+    pub decision_id: u64,
+    pub settled_at_ms: TimestampMs,
+    pub signal_name: String,
+    /// "up", "down".
+    pub predicted: String,
+    pub mid_at_decision: i128,
+    pub mid_at_settle: i128,
+    pub size_micro: i128,
+    pub realized_move_bps: i128,
+    pub direction_correct: bool,
+    pub expected_edge_micro: i128,
+    pub edge_error_micro: i128,
+    /// Signed, in micro quote units. Mark to market against `mid_at_settle`, not cash proceeds.
+    pub realized_pnl_micro: i128,
+}
+
+impl Settlement {
+    fn to_json(&self) -> Value {
+        json!({
+            "record": "settlement",
+            "decision_id": self.decision_id,
+            "settled_at_ms": self.settled_at_ms,
+            "signal_name": self.signal_name,
+            "predicted": self.predicted,
+            "mid_at_decision": self.mid_at_decision.to_string(),
+            "mid_at_settle": self.mid_at_settle.to_string(),
+            "size_micro": self.size_micro.to_string(),
+            "realized_move_bps": self.realized_move_bps.to_string(),
+            "direction_correct": self.direction_correct,
+            "expected_edge_micro": self.expected_edge_micro.to_string(),
+            "edge_error_micro": self.edge_error_micro.to_string(),
+            "realized_pnl_micro": self.realized_pnl_micro.to_string(),
+            "basis": "mark to market: size * (mid_at_settle - mid_at_decision), signed by direction",
+        })
+    }
+}
+
 pub struct Journal {
     path: PathBuf,
     next_id: u64,
@@ -167,6 +212,38 @@ impl Journal {
             self.next_id = entry.decision_id + 1;
         }
         Ok(())
+    }
+
+    /// TASK 14.4. Append a settlement, closing the loop on a decision made earlier.
+    ///
+    /// WHY A SIDECAR AND NOT THE `outcome` FIELD. A decision's outcome is unknown when its row is
+    /// written, and the journal is append-only. There were three ways to close that gap and only one
+    /// survives contact with the rest of this system:
+    ///
+    ///   1. Rewrite the original row in place. Rejected outright. Append-only is the property the
+    ///      whole evidence chain rests on; a journal that can be edited after the fact cannot be
+    ///      cited as a record of what was decided at the time.
+    ///   2. Append settlement rows into `journal.jsonl` itself. Rejected on a MEASURED cost, not a
+    ///      guess: twenty-odd consumers read that file line by line and index `r["candidates"]` and
+    ///      `r["tx_hash"]` directly, so a differently-shaped row breaks the growth counters, the UI
+    ///      data build and the scale audit at once.
+    ///   3. An append-only sidecar keyed by `decision_id`. Chosen.
+    ///
+    /// The `outcome` field on a live row stays as it is, and ADR-020 records that it describes
+    /// SOMETHING ELSE'S settlement observed during that cycle, which is exactly the confusion this
+    /// method removes: a settlement here names the decision that made the prediction.
+    pub fn append_settlement(
+        &self,
+        path: impl AsRef<Path>,
+        s: &Settlement,
+    ) -> std::io::Result<()> {
+        let path = path.as_ref();
+        if let Some(parent) = path.parent() {
+            create_dir_all(parent)?;
+        }
+        let mut f = OpenOptions::new().create(true).append(true).open(path)?;
+        writeln!(f, "{}", s.to_json())?;
+        f.flush()
     }
 
     pub fn read_all(&self) -> std::io::Result<Vec<Value>> {

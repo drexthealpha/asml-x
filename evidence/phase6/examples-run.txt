@@ -1,0 +1,37 @@
+Example clients, task 6.7
+Run 2026-08-13 05:20:13 UTC
+  server up after 47s
+
+  Both examples are dependency-free and under 90 lines. A builder should be able to read one
+  and know whether this surface is worth depending on.
+
+## Python: examples/python_client.py
+   lines: 76
+  [200] thesis: BOOK IS CROSSED: best bid 2.300000 is at or above best ask 1.900000, so spread-based inference is un
+         block 38139532, snapshot age 721 ms
+  [200] capacity: 0 micro permitted, exposure 50662500
+         refuses beyond that with: MarketNotionalTooLarge { got: 51162500, limit: 50000000 }
+  [409] quote refused: MarketNotionalTooLarge { got: 51612500, limit: 50000000 }
+  [200] quote 1: sell 500000 at 2300000
+         valid for 15000 ms, priced at block 38139532
+  [200] accepted: True, handoff written: True
+         queued for settlement by the brain runtime, which owns the keystore; this endpoint never signs
+
+## TypeScript: examples/typescript_client.ts
+   lines: 90
+   node: v20.19.4
+  type-checked and compiled with tsc 5.9.3
+  [200] thesis: BOOK IS CROSSED: best bid 2.300000 is at or above best ask 1.900000, so spread-based inference is un
+         block 38139532, snapshot age 4069 ms
+  [200] capacity: 0 micro permitted, exposure 50662500
+         refuses beyond that with: MarketNotionalTooLarge { got: 51162500, limit: 50000000 }
+  [409] quote refused: MarketNotionalTooLarge { got: 51612500, limit: 50000000 }
+  [200] quote 2: sell 500000 at 2300000
+         valid for 15000 ms, priced at block 38139532
+  [200] accepted: true, handoff written: true
+         queued for settlement by the brain runtime, which owns the keystore; this endpoint never signs
+
+## Verdict, task 6.7
+  python exit: 0
+  typescript exit: 0
+  RESULT: PASS. Both examples ran against the live API and produced a quote.

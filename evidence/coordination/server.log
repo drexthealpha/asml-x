@@ -1,8 +1,12 @@
 ASML-X coordination API
-  listening   http://127.0.0.1:8737
   chain       1952 (verified)
+  priming     reading the book before binding the socket...
+  primed      block 38135292, 35 live orders, killed=false, took 41471ms
+  listening   http://127.0.0.1:8737
+  server      tiny_http, 8 worker threads, chain reads on a refresher thread
   endpoints   GET /health  GET /thesis  GET /capacity
               POST /quote  POST /accept
   auth        x-api-key header, demo keys: demo-agent-key-1, demo-agent-key-2
   quote ttl   15000 ms, rate limit 20/min per caller
+  freshness   snapshot refreshed every 2000 ms, refused past 120000 ms
 

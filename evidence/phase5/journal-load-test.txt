@@ -1,0 +1,19 @@
+Journal load test, task 5.3
+Run 2026-08-12 03:22:11 UTC
+
+## Fixture
+  SYNTHETIC rows, built by repeating the real journal with shifted decision ids and block
+  numbers. Served only from /home/zulab/loadtest-check, never staged into ui-v2/public/data, so the product build
+  cannot show them.
+  source rows: 43
+  fixture rows written: 600
+  bytes: 1734683
+
+## Serve
+  cd /home/zulab/loadtest-check && python3 -m http.server 4176 --bind 127.0.0.1
+  then open http://127.0.0.1:4176/ and run the measurement in scripts/measure-feed.js
+
+## What to look for
+  MOUNTED ROWS must stay near the window size (visible + 2 x OVERSCAN, so roughly 36 to 56
+  for a panel of this height), NOT 600. A virtualised list that mounts everything is a
+  virtualised list in name only, and the mounted count is the only honest way to tell.

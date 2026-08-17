@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -uo pipefail
+cd "$(dirname "$0")"
+. ./lib.sh
+D=$(date -u '+%Y-%m-%d')
+cat >> "$REPO/evidence/CHAIN-OF-EVIDENCE.md" <<MD
+| C-1300 | Nine growth counters, each carrying its own source string and each proved by a no-data test: removing the journal makes agentActions, candidatesEvaluated and refusalsTotal report ERROR with NO value key, and removing learned-state.json does the same for learningUpdates. The shape enforces it, since a failed counter has no value field at all and a consumer cannot render a number it was never given. Nothing is time-derived, so re-running without new activity produces identical numbers | evidence/phase13/counters.md, ui-v2/public/data/metrics.json | bash scripts/161-growth-counters.sh | DEMONSTRATED | 13.1 | $D |
+| C-1301 | Coordination usage is metered per caller from the same counters the API uses for rate limiting, so usage and throttling cannot disagree: external-agent-1 made 7 accepted calls on 3,500,000 micro of notional, which at the live FeeCollector rate of 49 bps read from the deployed contract would be 17,150 micro. The fee is QUOTED, NOT CHARGED, and the evidence says so: the API is unauthenticated by design and billing would need an identity system this project did not build, so the claim is that usage is measurable and priceable, never that it is monetised | evidence/phase13/metering.md | bash scripts/160-coordination-metering.sh | DEMONSTRATED | 13.2 | $D |
+| C-1302 | The growth loop is on the landing surface itself, so reaching it costs ZERO navigations and one 305px scroll against a two-minute budget, with all five stages carrying live measured values and printing their source on screen: 7 coordination calls, 52 agent actions, 11 fee events, 2,739 candidates evaluated, 2 settled forecasts and 0.088313 tQUOTE collected. Drawn in text and borders rather than as an image, because a diagram asset cannot carry a live number, and a stage whose source fails renders the word unavailable rather than a zero | evidence/phase13/growth-loop.md, ui-v2/src/components/growth-panel.tsx | bash scripts/161-growth-counters.sh | DEMONSTRATED | 13.3 | $D |
+MD
+echo "rows now: $(grep -c '^| C-' "$REPO/evidence/CHAIN-OF-EVIDENCE.md")"

@@ -1,0 +1,55 @@
+Task 7.5, fee mutation gate
+run: 2026-08-15 13:22:07 UTC
+
+baseline: exit 0, 31 tests passing
+
+== M1: fee divisor 10_000 -> 1_000 (10x overcharge) ==
+-- edit applied --
+   sed: s/uint256 public constant BPS_DENOMINATOR = 10_000;/uint256 public constant BPS_DENOMINATOR = 1_000;/
+   lines changed: 2
+-- KILLED, caught by these named tests --
+   test_dustNotionalChargesNothingAndEmitsNothing
+
+== M2: ceiling check deleted from the constructor ==
+-- edit applied --
+   sed: /if (feeBps_ > MAX_FEE_BPS) revert FeeAboveCeiling(feeBps_, MAX_FEE_BPS);/d
+   lines changed: 1
+-- KILLED, caught by these named tests --
+   test_constructorRefusesAFeeAboveTheCeiling
+
+== M3: can-only-lower check deleted from setFeeBps ==
+-- edit applied --
+   sed: /if (newBps >= feeBps) revert FeeNotLowered(feeBps, newBps);/d
+   lines changed: 1
+-- KILLED, caught by these named tests --
+   test_feeCanOnlyBeLoweredNeverRaised
+
+== M4: FeeCharged emits notional in place of feeAmount ==
+-- edit applied --
+   sed: s/emit FeeCharged(payer, market, token, notional, feeAmount, cachedBps);/emit FeeCharged(payer, market, token, notional, notional, cachedBps);/
+   lines changed: 2
+-- KILLED, caught by these named tests --
+   test_chargeMovesTokensAndEmitsTheNumbers
+
+== M5: ShortPay balance-delta check deleted ==
+-- edit applied --
+   sed: /if (received < feeAmount) revert ShortPay(feeAmount, received);/d
+   lines changed: 1
+-- KILLED, caught by these named tests --
+   test_aTokenThatUnderDeliversRevertsRatherThanUnderCollecting
+
+== M6: charger authorisation deleted from charge() ==
+-- edit applied --
+   sed: /if (!chargers\[msg.sender\]) revert NotCharger();/d
+   lines changed: 1
+-- KILLED, caught by these named tests --
+   test_enumerateEveryRouteTheAgentKeyHas
+   test_onlyAnApprovedChargerCanCharge
+
+== summary ==
+mutants injected: 6
+killed:           6
+survived:         0
+restored suite:   exit 0
+
+GATE: PASS  every mutant was caught by a named test and the source is restored green

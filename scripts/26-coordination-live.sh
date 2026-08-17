@@ -18,7 +18,7 @@ cd "$REPO"
 cargo build --release -p coordination-api 2>&1 | tail -1
 
 # Make sure nothing is already bound.
-pkill -f 'asml-coord' 2>/dev/null || true
+pkill -x asml-coord 2>/dev/null || true
 sleep 1
 
 echo "=== starting the coordination API in its own process ==="
@@ -36,9 +36,14 @@ cleanup() { kill "$SERVER_PID" 2>/dev/null || true; }
 trap cleanup EXIT
 
 # Wait for it to bind rather than sleeping blindly.
-for i in $(seq 1 30); do
+#
+# 180 seconds, not 30. The server now PRIMES BEFORE BINDING: it walks the whole order book once so
+# that no request ever triggers a chain read, and that walk took 34,979 ms for 35 live orders. The
+# old 30 second budget expired mid-prime, the suite ran anyway, and the agent's own timeout produced
+# a traceback indistinguishable from the burst stall this rewrite fixed.
+for i in $(seq 1 180); do
   if curl -sS --max-time 2 "http://127.0.0.1:$PORT/health" >/dev/null 2>&1; then
-    echo "server is up after ${i}s"
+    echo "server is up after ${i}s (includes the pre-bind book read)"
     break
   fi
   sleep 1

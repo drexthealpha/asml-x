@@ -1,0 +1,129 @@
+cargo-mutants on risk-engine, task 1.7
+Run 2026-08-11 19:32:56 UTC
+
+## Tool and target
+  cargo-mutants: cargo-mutants 27.1.0
+  rustc:         rustc 1.97.1 (8bab26f4f 2026-07-14)
+  target crate:  risk-engine, the crate holding RiskApproved<T> and every limit check
+
+## Why risk-engine specifically
+  It is the only crate whose failure is unbounded. A wrong score costs a bad trade; a
+  wrong limit check costs the cap. It is also the crate most amenable to mutation:
+  pure integer arithmetic, no clock reads, no floats, so every mutant is deterministic
+  and a survivor cannot be explained away as flakiness.
+
+## Bounds, and why each
+  --timeout 90        a mutant that hangs is a survivor by timeout, not by merit
+  --in-place          this box has 4.9 GB RAM; cargo-mutants' default copies the tree
+                      per job and that is what makes it thrash here
+  (serial)            --in-place is INHERENTLY serial: cargo-mutants rejects
+                      '--in-place with --jobs' outright, because one working tree
+                      cannot hold two mutants at once. My first invocation passed
+                      both and the tool refused, correctly.
+
+## Running
+  Found 107 mutants to test
+  ok       Unmutated baseline in 108s build + 4s test
+  MISSED   crates/risk-engine/src/lib.rs:69:38: replace * with + in Limits::conservative_testnet in 11s build + 2s test
+  MISSED   crates/risk-engine/src/lib.rs:69:38: replace * with / in Limits::conservative_testnet in 11s build + 2s test
+  MISSED   crates/risk-engine/src/lib.rs:70:40: replace * with + in Limits::conservative_testnet in 11s build + 4s test
+  MISSED   crates/risk-engine/src/lib.rs:76:40: replace * with + in Limits::conservative_testnet in 14s build + 3s test
+  MISSED   crates/risk-engine/src/lib.rs:335:32: replace > with >= in RiskEngine::rwa_check in 53s build + 18s test
+  MISSED   crates/risk-engine/src/lib.rs:347:31: replace > with >= in RiskEngine::rwa_check in 51s build + 7s test
+  MISSED   crates/risk-engine/src/lib.rs:432:20: replace > with >= in RiskEngine::evaluate in 32s build + 6s test
+  MISSED   crates/risk-engine/src/lib.rs:453:77: replace + with - in RiskEngine::evaluate in 23s build + 6s test
+  MISSED   crates/risk-engine/src/lib.rs:454:29: replace > with == in RiskEngine::evaluate in 14s build + 5s test
+  MISSED   crates/risk-engine/src/lib.rs:454:29: replace > with >= in RiskEngine::evaluate in 12s build + 3s test
+  MISSED   crates/risk-engine/src/lib.rs:466:57: replace + with - in RiskEngine::evaluate in 14s build + 4s test
+  MISSED   crates/risk-engine/src/lib.rs:467:28: replace > with == in RiskEngine::evaluate in 12s build + 3s test
+  MISSED   crates/risk-engine/src/lib.rs:467:28: replace > with >= in RiskEngine::evaluate in 14s build + 5s test
+  MISSED   crates/risk-engine/src/lib.rs:474:54: replace + with - in RiskEngine::evaluate in 13s build + 3s test
+  MISSED   crates/risk-engine/src/lib.rs:475:26: replace > with == in RiskEngine::evaluate in 14s build + 4s test
+  MISSED   crates/risk-engine/src/lib.rs:475:26: replace > with >= in RiskEngine::evaluate in 15s build + 3s test
+  MISSED   crates/risk-engine/src/lib.rs:482:48: replace - with + in RiskEngine::evaluate in 14s build + 3s test
+  MISSED   crates/risk-engine/src/lib.rs:483:24: replace < with == in RiskEngine::evaluate in 13s build + 5s test
+  MISSED   crates/risk-engine/src/lib.rs:483:24: replace < with <= in RiskEngine::evaluate in 11s build + 4s test
+  MISSED   crates/risk-engine/src/lib.rs:498:70: replace + with - in RiskEngine::evaluate in 12s build + 3s test
+  MISSED   crates/risk-engine/src/lib.rs:498:70: replace + with * in RiskEngine::evaluate in 13s build + 3s test
+  MISSED   crates/risk-engine/src/lib.rs:500:79: replace / with % in RiskEngine::evaluate in 14s build + 4s test
+  MISSED   crates/risk-engine/src/lib.rs:500:79: replace / with * in RiskEngine::evaluate in 13s build + 2s test
+  MISSED   crates/risk-engine/src/lib.rs:500:34: replace * with + in RiskEngine::evaluate in 13s build + 2s test
+  MISSED   crates/risk-engine/src/lib.rs:500:34: replace * with / in RiskEngine::evaluate in 13s build + 3s test
+  MISSED   crates/risk-engine/src/lib.rs:502:30: replace > with == in RiskEngine::evaluate in 13s build + 2s test
+  MISSED   crates/risk-engine/src/lib.rs:502:30: replace > with >= in RiskEngine::evaluate in 12s build + 2s test
+  MISSED   crates/risk-engine/src/lib.rs:504:52: replace > with == in RiskEngine::evaluate in 13s build + 2s test
+  MISSED   crates/risk-engine/src/lib.rs:504:52: replace > with < in RiskEngine::evaluate in 13s build + 3s test
+  MISSED   crates/risk-engine/src/lib.rs:504:52: replace > with >= in RiskEngine::evaluate in 11s build + 3s test
+  MISSED   crates/risk-engine/src/lib.rs:505:60: replace / with % in RiskEngine::evaluate in 14s build + 4s test
+  MISSED   crates/risk-engine/src/lib.rs:505:60: replace / with * in RiskEngine::evaluate in 13s build + 3s test
+  MISSED   crates/risk-engine/src/lib.rs:505:50: replace * with + in RiskEngine::evaluate in 12s build + 2s test
+  MISSED   crates/risk-engine/src/lib.rs:505:50: replace * with / in RiskEngine::evaluate in 23s build + 3s test
+  MISSED   crates/risk-engine/src/lib.rs:518:53: replace > with >= in RiskEngine::evaluate in 16s build + 3s test
+  MISSED   crates/risk-engine/src/lib.rs:527:9: replace RiskEngine::is_halted -> bool with true in 17s build + 4s test
+  MISSED   crates/risk-engine/src/lib.rs:527:9: replace RiskEngine::is_halted -> bool with false in 31s build + 11s test
+  107 mutants tested in 52m: 37 missed, 57 caught, 13 unviable
+
+## Outcome files
+  caught.txt
+  debug.log
+  diff
+  lock.json
+  log
+  missed.txt
+  mutants.json
+  outcomes.json
+  timeout.txt
+  unviable.txt
+  caught.txt: 57 lines
+  missed.txt: 37 lines
+  timeout.txt: 0 lines
+  unviable.txt: 13 lines
+
+## THE FINDING: mutants that SURVIVED, which is where the holes are
+    crates/risk-engine/src/lib.rs:69:38: replace * with + in Limits::conservative_testnet
+    crates/risk-engine/src/lib.rs:69:38: replace * with / in Limits::conservative_testnet
+    crates/risk-engine/src/lib.rs:70:40: replace * with + in Limits::conservative_testnet
+    crates/risk-engine/src/lib.rs:76:40: replace * with + in Limits::conservative_testnet
+    crates/risk-engine/src/lib.rs:335:32: replace > with >= in RiskEngine::rwa_check
+    crates/risk-engine/src/lib.rs:347:31: replace > with >= in RiskEngine::rwa_check
+    crates/risk-engine/src/lib.rs:432:20: replace > with >= in RiskEngine::evaluate
+    crates/risk-engine/src/lib.rs:453:77: replace + with - in RiskEngine::evaluate
+    crates/risk-engine/src/lib.rs:454:29: replace > with == in RiskEngine::evaluate
+    crates/risk-engine/src/lib.rs:454:29: replace > with >= in RiskEngine::evaluate
+    crates/risk-engine/src/lib.rs:466:57: replace + with - in RiskEngine::evaluate
+    crates/risk-engine/src/lib.rs:467:28: replace > with == in RiskEngine::evaluate
+    crates/risk-engine/src/lib.rs:467:28: replace > with >= in RiskEngine::evaluate
+    crates/risk-engine/src/lib.rs:474:54: replace + with - in RiskEngine::evaluate
+    crates/risk-engine/src/lib.rs:475:26: replace > with == in RiskEngine::evaluate
+    crates/risk-engine/src/lib.rs:475:26: replace > with >= in RiskEngine::evaluate
+    crates/risk-engine/src/lib.rs:482:48: replace - with + in RiskEngine::evaluate
+    crates/risk-engine/src/lib.rs:483:24: replace < with == in RiskEngine::evaluate
+    crates/risk-engine/src/lib.rs:483:24: replace < with <= in RiskEngine::evaluate
+    crates/risk-engine/src/lib.rs:498:70: replace + with - in RiskEngine::evaluate
+    crates/risk-engine/src/lib.rs:498:70: replace + with * in RiskEngine::evaluate
+    crates/risk-engine/src/lib.rs:500:79: replace / with % in RiskEngine::evaluate
+    crates/risk-engine/src/lib.rs:500:79: replace / with * in RiskEngine::evaluate
+    crates/risk-engine/src/lib.rs:500:34: replace * with + in RiskEngine::evaluate
+    crates/risk-engine/src/lib.rs:500:34: replace * with / in RiskEngine::evaluate
+    crates/risk-engine/src/lib.rs:502:30: replace > with == in RiskEngine::evaluate
+    crates/risk-engine/src/lib.rs:502:30: replace > with >= in RiskEngine::evaluate
+    crates/risk-engine/src/lib.rs:504:52: replace > with == in RiskEngine::evaluate
+    crates/risk-engine/src/lib.rs:504:52: replace > with < in RiskEngine::evaluate
+    crates/risk-engine/src/lib.rs:504:52: replace > with >= in RiskEngine::evaluate
+    crates/risk-engine/src/lib.rs:505:60: replace / with % in RiskEngine::evaluate
+    crates/risk-engine/src/lib.rs:505:60: replace / with * in RiskEngine::evaluate
+    crates/risk-engine/src/lib.rs:505:50: replace * with + in RiskEngine::evaluate
+    crates/risk-engine/src/lib.rs:505:50: replace * with / in RiskEngine::evaluate
+    crates/risk-engine/src/lib.rs:518:53: replace > with >= in RiskEngine::evaluate
+    crates/risk-engine/src/lib.rs:527:9: replace RiskEngine::is_halted -> bool with true
+    crates/risk-engine/src/lib.rs:527:9: replace RiskEngine::is_halted -> bool with false
+
+  Each line above is a source edit the test suite did NOT notice. These are addressed
+  individually in the follow-up task, not summarised into a score.
+
+## Verdict, task 1.7
+  RESULT: run completed, survivors listed above (exit 2).
+  cargo-mutants exits non-zero WHEN MUTANTS SURVIVE, so a non-zero exit here is a
+  finding, not a tool failure. That distinction matters: treating it as a crash
+  would have thrown away the only interesting output.
+  source restored from /home/zulab/risk-engine-src-backup

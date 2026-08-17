@@ -1,0 +1,23 @@
+Deployment bytecode re-verification, task 2.3
+Run 2026-08-12 01:59:19 UTC
+
+## Method
+  Addresses are parsed out of docs/verified/deployments.md, the document under test.
+  Nothing is typed in here from memory. Each one gets eth_getCode and a keccak of the
+  returned bytecode, so a redeploy shows up as a changed hash even when the address is
+  unchanged.
+
+  0x3BF12df3BB0b6f0dF8c57089ab78e402bf698F84  code   4054 hex chars  keccak 0x18c2d1db47087f45  RwaVault `0x3BF12df3BB0b6f0dF8c57089ab78e402bf698F84`
+  0x401Ef3E4b9b838A021109c3BBebb7FDC70Cb9278  code  12422 hex chars  keccak 0x16e7d6a2a20d535d  RwaRiskGuard `0x401Ef3E4b9b838A021109c3BBebb7FDC70Cb9278`
+  0x7092050F3C4e72A2df8610ae2CC8c39DcA3B7f52  code   7052 hex chars  keccak 0xcc5c05951af1fe01  OrderBookVenue `0x7092050F3C4e72A2df8610ae2CC8c39DcA3B7f52`
+  0x7ff884C412a1A2c416e931C59889e5335C5EFa0D  code   3270 hex chars  keccak 0x95f14dc6b70af7cd  MockERC20 tQUOTE
+  0x81beCFdE5ad4692Dc52F7eA6B9DEA0C5f1694d5e  code   3438 hex chars  keccak 0xaa151fc8eb53a331  BatchExecutor `0x81beCFdE5ad4692Dc52F7eA6B9DEA0C5f1694d5e`
+  0x9D22e538a72a5d2c9A28D08c27999216A78343C9  code   3270 hex chars  keccak 0x95f14dc6b70af7cd  MockERC20 tBASE
+  0xE64b6e937Fd0d855161A5F6F0Aa1A3E01CB54c24  code   7258 hex chars  keccak 0xe95fb8522bd00e6e  RiskGuard `0xE64b6e937Fd0d855161A5F6F0Aa1A3E01CB54c24`
+
+## Verdict, task 2.3
+  addresses checked: 7
+  empty code:        0
+  RESULT: PASS. Chain id is 1952 and every address in docs/verified/deployments.md
+  returns non-empty bytecode on the live chain.
+  Reproduce: bash scripts/67-verify-deployments.sh

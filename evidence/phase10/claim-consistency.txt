@@ -1,0 +1,16 @@
+Task 10.3, claim consistency
+run: 2026-08-16 20:27:18 UTC
+
+Measured median, computed from /mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/evidence/phase10/flow-marks.jsonl: 8.6s
+This script derives the number rather than hardcoding it, so a stale figure in a document
+produces a mismatch instead of silent agreement.
+
+== where the claim must appear ==
+  README           /mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/README.md OK, carries 8.6s and C-1001
+  JUDGE-GUIDE      /mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/JUDGE-GUIDE.md OK, carries 8.6s and C-1001
+  landing          /mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/src/components/personal-view.tsx OK, carries 8.6s and C-1001
+
+missing files: 0
+mismatches:    0
+
+GATE: PASS  no document states a timing figure that disagrees with the measurement.

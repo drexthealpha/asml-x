@@ -1,0 +1,74 @@
+alloy eth_call differential, task 1.12
+Run 2026-08-12 00:44:58 UTC
+
+## Version decision
+  CLAUDE.md pins alloy 1.7.3 with MSRV 1.91. That pin is STALE: docs.rs shows alloy
+  2.3.0, released 3 Aug 2026, and MSRV 1.94.1. Using 2.3.0 and recording the correction.
+  rustc here: rustc 1.97.1 (8bab26f4f 2026-07-14)
+
+## What is being compared
+  RiskGuard.sumOfParts() at a PINNED block, called twice:
+    1. through crates/chain-client, the hand-rolled JSON-RPC client
+    2. through alloy's provider.call
+  Pinning the block matters: sumOfParts changes as exposure changes, so comparing at
+  'latest' twice could disagree for a legitimate reason and would prove nothing either way.
+
+## Build
+     Compiling hyper-rustls v0.27.9
+     Compiling reqwest v0.13.4
+     Compiling tokio-tungstenite v0.29.0
+     Compiling alloy-transport-ws v2.3.0
+     Compiling chain-client v0.1.0 (/mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/crates/chain-client)
+     Compiling alloy-transport-http v2.3.0
+     Compiling alloy-rpc-client v2.3.0
+     Compiling alloy-provider v2.3.0
+     Compiling alloy-contract v2.3.0
+     Compiling alloy v2.3.0
+     Compiling alloy-probe v0.1.0 (/mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/crates/alloy-probe)
+      Finished `dev` profile [unoptimized + debuginfo] target(s) in 17m 10s
+
+## Resolved version, from the lockfile rather than from the request
+  name = "alloy"
+  version = "2.3.0"
+
+## Differential run
+
+## Verdict, task 1.12
+  RESULT: FAIL, build exit 0, run exit 124. No equivalence claimed.
+
+## Differential run, second attempt
+  binary: /mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/target/debug/alloy-probe (123187968 bytes)
+  The first attempt ran through cargo under a 300s timeout and hit it before producing
+  output. Running the built binary directly removes cargo's re-check and link from the
+  clock.
+  pinned block:      38038188
+  selector:          0x0xa72a226a
+  hand-rolled bytes: 0x0x0000000000000000000000000000000000000000000000008bd1971ed00f8000
+  alloy bytes:       0x0x0000000000000000000000000000000000000000000000008bd1971ed00f8000
+  alloy chain id:    1952
+
+  IDENTICAL. Both clients returned the same 32 bytes at block 38038188 on chain 1952.
+
+## Verdict, task 1.12 (second attempt)
+  RESULT: PASS. Identical bytes from both clients for the same call at the same block,
+  and alloy confirmed chain id 1952.
+  Reproduce: bash scripts/71-alloy-smoke.sh then bash scripts/71b-alloy-run.sh
+
+  What this buys for the 6.6 decision: alloy gives dynamic ABI encoding and an in-process
+  signer, which are exactly ADR-008's two recorded debts (no dynamic ABI, signing through
+  a cast subprocess). The differential is the evidence that migrating would not change
+  what the agent reads from the chain.
+
+  Cost recorded honestly: alloy 2.3.0 with the full feature took 17m10s to compile on this
+  box and pulled in a TLS stack including aws-lc-rs. For a probe that makes one eth_call
+  that is a large dependency, and 6.6 should weigh it against the two debts it clears.
+
+## Differential run, second attempt
+  binary: /mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/target/debug/alloy-probe (123187968 bytes)
+  The first attempt ran through cargo under a 300s timeout and hit it before producing
+  output. Running the built binary directly removes cargo's re-check and link from the
+  clock.
+  pinned block:      38038465
+  selector:          0xa72a226a
+  hand-rolled bytes: 0x0000000000000000000000000000000000000000000000008bd1971ed00f8000
+  alloy bytes:       0x0000000000000000000000000000000000000000000000008bd1971ed00f8000

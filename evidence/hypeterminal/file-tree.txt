@@ -1,0 +1,64 @@
+HypeTerminal structure map, task 3.1
+Run 2026-08-11 21:37:25 UTC
+
+## Clone
+  source: https://github.com/vipineth/hypeterminal
+  local:  /home/zulab/hypeterminal  (OUTSIDE the product repo: a reference, not a dependency)
+    Cloning into '/home/zulab/hypeterminal'...
+
+## Commit actually studied, so the citations below are pinned to something
+  commit a61992eda0fa269ea38d64dd50ed133db1236052
+  date   Sat Aug 8 01:38:24 2026 +0530
+  subject fix(deps): pin patched transitive deps and bump astro to clear audit
+
+## Top level
+    LICENSE
+    README.md
+    apps
+    biome.json
+    commitlint.config.js
+    docs
+    lefthook.yml
+    package.json
+    packages
+    pipeline
+    pnpm-lock.yaml
+    pnpm-workspace.yaml
+    research
+    scripts
+    skills-lock.json
+    tsconfig.base.json
+    vercel.json
+
+## Packages found under apps/ and packages/
+    apps/terminal                       517 files   70389 lines
+    apps/website                          4 files     536 lines
+    packages/hl-react                    53 files    4526 lines
+    packages/hyperliquid-api              0 files       0 lines
+    packages/ui                          42 files    5681 lines
+
+## The four packages TASKS.md 3.1 says to expect, checked rather than assumed
+    PRESENT  apps/terminal
+    PRESENT  packages/hl-react
+    PRESENT  packages/ui
+    PRESENT  packages/hyperliquid-api
+
+## Stack, read from the manifests rather than from the task description
+  package.json
+    "typescript": "5.7.2"
+  apps/terminal/package.json
+    "@base-ui/react": "1.3.0"
+    "@tanstack/query-sync-storage-persister": "5.101.0"
+    "@tanstack/react-query": "5.101.0"
+    "@tanstack/react-query-persist-client": "5.101.0"
+    "@tanstack/react-router": "1.170.15"
+    "@tanstack/react-router-ssr-query": "1.167.1"
+    "@tanstack/react-start": "1.168.25"
+    "@tanstack/react-table": "8.21.3"
+    "@tanstack/react-virtual": "3.14.2"
+    "class-variance-authority": "0.7.1"
+    "react": "19.2.0"
+    "react-dom": "19.2.0"
+    "tailwindcss": "4.3.0"
+    "@tanstack/router-plugin": "1.168.18"
+    "vite": "7.3.5"

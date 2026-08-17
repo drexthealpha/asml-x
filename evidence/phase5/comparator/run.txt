@@ -1,0 +1,60 @@
+RWA versus crypto comparator, three states, task 5.4
+Run 2026-08-12 11:35:14 UTC
+  vault:      0x3BF12df3BB0b6f0dF8c57089ab78e402bf698F84
+  rwa guard:  0x401Ef3E4b9b838A021109c3BBebb7FDC70Cb9278
+
+## STATE 1: healthy. Both markets should approve.
+   This is the state the task calls REQUIRED: an RWA layer that refuses in every state is a
+   global brake, not a risk control, and only the healthy capture distinguishes the two.
+  touchOracle:            "status":"0x1"
+  setPaused(false):       "status":"0x1"
+  observeMarketPrice(1x): "status":"0x1"
+  capturing state: healthy
+      rwa vault:   oracle age 55s, paused false, until window 0s, divergence 0 bps, yield index 1.000000
+    Identical order: Buy 2.000000 base at 1.000000
+      CRYPTO market (tBASE/tQUOTE, Spot):
+        APPROVED
+      RWA market (RWA/tQUOTE, RwaLinked):
+        APPROVED
+    DIVERGENT TREATMENT: false
+
+## STATE 2: issuer paused. Crypto approves, RWA refuses.
+  setPaused(true):        "status":"0x1"
+  capturing state: paused
+      rwa vault:   oracle age 142s, paused true, until window 0s, divergence 0 bps, yield index 1.000000
+    Identical order: Buy 2.000000 base at 1.000000
+      CRYPTO market (tBASE/tQUOTE, Spot):
+        APPROVED
+      RWA market (RWA/tQUOTE, RwaLinked):
+        REFUSED: RwaIssuerPaused (rwa-specific: true)
+    DIVERGENT TREATMENT: true
+    RWA market, and the refusal names an RWA-specific cause. A generic bot
+
+## STATE 3: oracle and market diverge by 1000 bps against a 300 bps policy.
+  setPaused(false):       "status":"0x1"
+  observeMarketPrice(1.10x): "status":"0x1"
+  capturing state: diverged
+      rwa vault:   oracle age 230s, paused false, until window 0s, divergence 1000 bps, yield index 1.000000
+    Identical order: Buy 2.000000 base at 1.000000
+      CRYPTO market (tBASE/tQUOTE, Spot):
+        APPROVED
+      RWA market (RWA/tQUOTE, RwaLinked):
+        REFUSED: RwaOracleMarketDivergence { got_bps: 1000, limit_bps: 300 } (rwa-specific: true)
+    DIVERGENT TREATMENT: true
+    RWA market, and the refusal names an RWA-specific cause. A generic bot
+
+## Restoring the instrument to healthy, so later runs are not distorted by this one
+  setPaused(false):       "status":"0x1"
+  observeMarketPrice(1x): "status":"0x1"
+  touchOracle:            "status":"0x1"
+  healthy   parsed=True crypto=APPROVED rwa=APPROVED divergent=False
+  paused    parsed=True crypto=APPROVED rwa=REFUSED divergent=True
+  diverged  parsed=True crypto=APPROVED rwa=REFUSED divergent=True
+  wrote /mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/public/data/comparator.json
+
+  healthy shows both approving: True
+  refusing states captured:     2 of 2
+
+## Verdict, task 5.4
+  RESULT: PASS. Three states captured from the live chain, verdicts produced by the risk
+  engine rather than written by this script. UI data at ui-v2/public/data/comparator.json.

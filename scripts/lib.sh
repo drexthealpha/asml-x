@@ -3,7 +3,9 @@
 # Exists because passing $vars or $(...) through `wsl -- bash -c` from the agent
 # shell strips them (ENVIRONMENT FACT E4). All real work goes in script files.
 
-export PATH="$HOME/.foundry/bin:$HOME/.local/bin:$PATH"
+# ~/.cargo/bin was missing here until task 1.1, which made rustc and cargo report as
+# MISSING in any script that relied on lib.sh for PATH.
+export PATH="$HOME/.cargo/bin:$HOME/.foundry/bin:$HOME/.local/bin:$PATH"
 
 # Verified 9 Aug 2026 by scripts/probe-rpc.sh
 export XLAYER_TESTNET_RPC="https://testrpc.xlayer.tech"

@@ -1,0 +1,298 @@
+{
+  "generated_at_utc": "2026-08-16T19:13:56Z",
+  "generated_by": "bash scripts/88-recompute-metrics.sh",
+  "explorer_tx_base": "https://www.oklink.com/x-layer-testnet/tx/",
+  "explorer_address_base": "https://www.oklink.com/x-layer-testnet/address/",
+  "fees": {
+    "collector": "0x2e0727C36c9F720E8d31C5eB3a3748A683610e38",
+    "source": "contract state + bounded eth_getLogs backward scan",
+    "event_count": 16,
+    "total_fees_wei": "116701875000000000",
+    "fee_bps": 49,
+    "treasury": "0x7BdD2d0D1728Df5bEF8FAae8de85c3dD21a5dE46",
+    "fee_token": "0x5069c6C619EE23a8e2EBa15b4B95F7EE16869501",
+    "totals_from": "FeeCollector.chargeCount() and totalCollected(token), read directly from contract state. Proved equal to the sum of FeeCharged events by check_totalCollectedAccumulatesExactly in test/FeeFormal.t.sol.",
+    "head_block": 38448796,
+    "scan_floor": 38380445,
+    "scan_floor_source": "deployments.json feeDeployBlock",
+    "scan_covered_blocks": [
+      38380445,
+      38448796
+    ],
+    "backfill_complete": true,
+    "recent": [],
+    "windows_scanned": 2,
+    "recent_from": "bounded backward eth_getLogs scan, 100-block windows (the RPC rejects anything wider with -32602 'block range greater than 100 max'), warm-started from a local cache of immutable past events",
+    "recent_is_complete": false
+  },
+  "growth": {
+    "feesCollectedWei": {
+      "value": "116701875000000000",
+      "source": "FeeCollector.totalCollected(token), read from contract state"
+    },
+    "feeEvents": {
+      "value": 16,
+      "source": "FeeCollector.chargeCount(), read from contract state"
+    },
+    "agentActions": {
+      "value": 57,
+      "source": "evidence/journal.jsonl, rows carrying a tx_hash"
+    },
+    "candidatesEvaluated": {
+      "value": 5094,
+      "source": "evidence/journal.jsonl, summed candidate arrays"
+    },
+    "refusalsTotal": {
+      "value": 4962,
+      "source": "evidence/journal.jsonl, unchosen candidates"
+    },
+    "refusalsByReason": {
+      "value": {
+        "lower score": 4682,
+        "risk refused: MarketNotionalTooLarge { got: 51249998, limit: 50000000 }": 6,
+        "risk refused: MarketNotionalTooLarge { got: 51137498, limit: 50000000 }": 5,
+        "risk refused: MarketNotionalTooLarge { got: 51537498, limit: 50000000 }": 5,
+        "risk refused: MarketNotionalTooLarge { got: 50374998, limit: 50000000 }": 4,
+        "risk refused: MarketNotionalTooLarge { got: 50474998, limit: 50000000 }": 4,
+        "risk refused: MarketNotionalTooLarge { got: 50274998, limit: 50000000 }": 4,
+        "risk refused: MarketNotionalTooLarge { got: 50674998, limit: 50000000 }": 4
+      },
+      "source": "evidence/journal.jsonl, unchosen candidates grouped by rejection_reason"
+    },
+    "volumeTouchedMicro": {
+      "value": 66593736,
+      "source": "evidence/journal.jsonl, size x price parsed from the action text of 56 of 57 submitted rows"
+    },
+    "learningUpdates": {
+      "value": 10,
+      "source": "ui-v2/public/data/learned-state.json, settled forecasts"
+    },
+    "coordinationCalls": {
+      "value": 8,
+      "source": "evidence/phase6/accepted-quotes.jsonl, accepted external quotes"
+    }
+  },
+  "learningEffect": {
+    "samples": {
+      "value": {
+        "scored": 10,
+        "settled": 10,
+        "droppedFlat": 36
+      },
+      "source": "learned-state.json: scored samples, settled outcomes, and forecasts dropped as flat"
+    },
+    "hitRateBps": {
+      "value": {
+        "value": 4000,
+        "samples": 10
+      },
+      "source": "learned-state.json stats.imbalance_bps.hit_rate_bps, paired with its sample count"
+    },
+    "changes": {
+      "value": [
+        {
+          "parameter": "momentum_weight_bps",
+          "from": 411,
+          "to": 401,
+          "samples": 10,
+          "trigger": "imbalance_bps hit rate 4000 bps over 10 settled outcomes, below a coin flip"
+        },
+        {
+          "parameter": "thin_book_penalty_bps",
+          "from": 1175,
+          "to": 1200,
+          "samples": 10,
+          "trigger": "mean edge error -141490 micro over 10 outcomes, decisions overestimated their own edge"
+        },
+        {
+          "parameter": "momentum_weight_bps",
+          "from": 401,
+          "to": 391,
+          "samples": 10,
+          "trigger": "imbalance_bps hit rate 4000 bps over 10 settled outcomes, below a coin flip"
+        },
+        {
+          "parameter": "thin_book_penalty_bps",
+          "from": 1200,
+          "to": 1225,
+          "samples": 10,
+          "trigger": "mean edge error -141490 micro over 10 outcomes, decisions overestimated their own edge"
+        }
+      ],
+      "source": "learned-state.json history: every parameter move with the sample count that triggered it"
+    },
+    "netMove": {
+      "value": [
+        {
+          "parameter": "momentum_weight_bps",
+          "default": 2000,
+          "current": 391,
+          "moved": true
+        },
+        {
+          "parameter": "variance_weight_bps",
+          "default": 8000,
+          "current": 8000,
+          "moved": false
+        },
+        {
+          "parameter": "thin_book_penalty_bps",
+          "default": 150,
+          "current": 1225,
+          "moved": true
+        }
+      ],
+      "source": "learned-state.json params against Params::default() in crates/decision-engine/src/lib.rs"
+    },
+    "realizedPnl": {
+      "value": {
+        "totalMicro": 337500,
+        "settlements": 8,
+        "profitable": 3,
+        "losing": 4,
+        "flat": 1,
+        "basis": "mark to market against a later observed mid, not cash proceeds"
+      },
+      "source": "evidence/settlements.jsonl, summed from the rows themselves"
+    }
+  },
+  "onchain": {
+    "head_block": 38448773,
+    "guard_address": "0x977A77aF8891187C73c7cdBd145B6fD57A0D0a47",
+    "venue_address": "0xd79276538A39ae5247e7a0d33D40AaD849e09B4D",
+    "fee_collector_address": "0x2e0727C36c9F720E8d31C5eB3a3748A683610e38",
+    "market_exposure_wei": 23456250000000000000,
+    "market_cap_wei": 500000000000000000000,
+    "market_utilisation_pct": 4.69,
+    "gross_exposure_wei": 23456250000000000000,
+    "gross_cap_wei": 1000000000000000000000,
+    "gross_utilisation_pct": 2.35,
+    "killed": "false",
+    "venue_order_count": 25,
+    "agent_key_nonce": 345,
+    "note_two_limits": "onchain cap 500 quote units, offchain engine cap 50. The offchain limit binds first by design, so onchain utilisation reads roughly a tenth of the offchain figure. See crates/risk-engine Limits::conservative_testnet."
+  },
+  "journal": {
+    "rows": 43,
+    "agent_decisions": 43,
+    "baseline_control_rows": 0,
+    "takes": 42,
+    "holds": 1,
+    "submitted": 39,
+    "candidates_total": 2279,
+    "refusals_total": 2236,
+    "refusals_by_reason": {
+      "lower score": 1956,
+      "MarketNotionalTooLarge": 280
+    },
+    "expected_edge_sum_micro": 4249741
+  },
+  "learning": {
+    "settled": 10,
+    "unscored_flat": 36,
+    "pending": 1,
+    "signals_tracked": 1
+  },
+  "recent_transactions": [
+    {
+      "decision_id": 129,
+      "block": 38042865,
+      "tx_hash": "0xcb336f5831098e6a6b37a13b16d5752c9c37739e584e011fd4f8d7f3d7f1ede1"
+    },
+    {
+      "decision_id": 128,
+      "block": 38042834,
+      "tx_hash": "0x1b13bcfc5a1f907eb0fecd91ef7fcb0096da47e214512e8724ef83995197ab8f"
+    },
+    {
+      "decision_id": 127,
+      "block": 38042806,
+      "tx_hash": "0x772621988a57a20bcf279d3a12f5e92bc75ce2e1e5a80121da36c6c67966ccf4"
+    },
+    {
+      "decision_id": 126,
+      "block": 38042775,
+      "tx_hash": "0xb023995a37a805673092c501af1ec67827647a08b8ea120be941e457704b4d8d"
+    },
+    {
+      "decision_id": 125,
+      "block": 38042732,
+      "tx_hash": "0xc7572c899aa231b9578bf59c22b443dcca280c1e85fa315b8c9b1b3d5c4d8b3a"
+    },
+    {
+      "decision_id": 124,
+      "block": 38042700,
+      "tx_hash": "0x33e9ea5009c5005bc233e0d6894f482259ed995937f32bafbe2c662774bc3c72"
+    },
+    {
+      "decision_id": 123,
+      "block": 38042669,
+      "tx_hash": "0x14c78338f0ef35d5c3c2e1007efe083a159dcf9898ccc396d434206818a61096"
+    },
+    {
+      "decision_id": 122,
+      "block": 38042641,
+      "tx_hash": "0xcc7721c11c06cabc67363bbaa4e814bfe14c9370fb5b8d60868da5a00fc5c674"
+    },
+    {
+      "decision_id": 121,
+      "block": 38042610,
+      "tx_hash": "0x6936b00aba42c0b4d5ae518f0ae68e81641d67b3b5bfed58efbb9aae867bb316"
+    },
+    {
+      "decision_id": 120,
+      "block": 38042576,
+      "tx_hash": "0x072f954e2594934eae98f2c298edc215b911ceeec0774226646555290c6e332a"
+    },
+    {
+      "decision_id": 119,
+      "block": 38042545,
+      "tx_hash": "0x0e3782b781d0d96a51f4cd394defd29d9efc410db871eef74b492d71fc2a4256"
+    },
+    {
+      "decision_id": 118,
+      "block": 38042512,
+      "tx_hash": "0x00c1057a013de24196f1f7367a3a82e4e2f636fe56a2c42701d4c56282e30020"
+    },
+    {
+      "decision_id": 117,
+      "block": 38042483,
+      "tx_hash": "0xaccb52ae7743496d02d2b180339fc0bae038c9b5a2d2e5170456642d5e29242d"
+    },
+    {
+      "decision_id": 116,
+      "block": 38042451,
+      "tx_hash": "0x1788b767e91db5eedf19dfe09bd3ae7a359b00ddde592761d2074d8317ced964"
+    },
+    {
+      "decision_id": 115,
+      "block": 38042420,
+      "tx_hash": "0x0e7ea11a678c8c31a1537d3812e2231edc963d8674ebb01a5d4f04aaa894f54a"
+    },
+    {
+      "decision_id": 114,
+      "block": 38042389,
+      "tx_hash": "0x52d7e356efb79aa8136ae6dfa3d2d8d9fb5b253b7ad8581da4a524191d44be5c"
+    },
+    {
+      "decision_id": 113,
+      "block": 38042360,
+      "tx_hash": "0xb8ca32f89c0398ccbde977c4bef556b54438d07fa4a0a684e9e0901387a50a6b"
+    },
+    {
+      "decision_id": 112,
+      "block": 38042328,
+      "tx_hash": "0xc3a8a1e1c3265d7e7678e816ab8c84463e5ec24ab649a6b3dba6ec1975b036db"
+    },
+    {
+      "decision_id": 111,
+      "block": 38042298,
+      "tx_hash": "0x1605c80c8d5138a251e1f4417f831c83452a2145f9a402ea146ff9fff084d6cd"
+    },
+    {
+      "decision_id": 110,
+      "block": 38042267,
+      "tx_hash": "0x490285691ee7692bab7dcac97dde0dbaa6e6c8738a9eb78448977fe31eef2857"
+    }
+  ]
+}

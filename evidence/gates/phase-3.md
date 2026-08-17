@@ -1,51 +1,86 @@
-# Phase 3 gate: formal verification green
+# Phase 3 gate: the HypeTerminal study
 
-Captured 9 Aug 2026. Tool: Halmos, local, no cloud key. ADR-007 records why not
-Certora.
+**The non-cuttable gate.** No frontend code existed until `evidence/ui-study.md` did. Between task
+1.15 (which installed the toolchain) and Phase 4 (which built the panels), `ui-v2/src/main.tsx` held
+a three-line placeholder whose text named the gate, so shipping it by accident would have been
+obvious rather than plausible.
 
-## Seven theorems proven for ALL inputs in range, not sampled
+## What was studied
 
-| theorem | invariant |
-|---|---|
-| check_noSequenceOfAddsCanBreakACap | 1, per-market cap over any two adds |
-| check_grossCapHoldsAcrossMarkets | 2, gross cap across two markets |
-| check_killedBlocksEveryAdd | 3, killed blocks every add for any amount |
-| check_onlyOwnerCanRevive | 4, symbolic over the caller address |
-| check_onlyOwnerCanRaiseCaps | 4, learning cannot widen a limit, structurally |
-| check_grossAlwaysEqualsSumOfParts | 5, across add/add/reduce |
-| check_unconfiguredMarketAlwaysFailsClosed | fail-closed for any market id |
+github.com/vipineth/hypeterminal at commit `a61992eda0fa269ea38d64dd50ed133db1236052`, cloned to
+`/home/zulab/hypeterminal`, **outside** the product repo, because it is a reference to read rather
+than a dependency to ship.
 
-Baseline: 7 passed, 0 failed. Output: evidence/formal/halmos-riskguard.txt
+Scale, measured rather than described: `apps/terminal` is 517 source files and 70,389 lines,
+`packages/hl-react` 53 files and 4,526 lines, `packages/ui` 42 files and 5,681 lines. The map with
+per-file line counts is `evidence/hypeterminal/file-tree.txt`, and it exists specifically so the
+study could cite `file:line` instead of describing an impression.
 
-## The proofs can fail
+## The output
 
-Injected violation: per-market cap check loosened by one wei.
-Result: 2 proofs FAILED with counterexamples. Restore: 7 passed, 0 failed.
-Output: evidence/formal/halmos-injected-violation.txt
+`evidence/ui-study.md`: **70 `path:line` citations across 20 distinct files, zero invalid.**
 
-## Three defects found while building this gate
+The count is not asserted. `scripts/74-verify-ui-study.sh` resolves every citation against the clone
+and fails on any that names a missing file or reaches past the end of one. Its first run reported
+**43 invalid** (short-form filenames the resolver could not find); the resolver now falls back to a
+unique-basename lookup and refuses ambiguous ones. Audit output:
+`evidence/hypeterminal/citation-audit.txt`.
 
-Each one made a broken run look like a passing one, which is the precise failure
-mode R7 exists to catch. All three are now guarded in the script rather than
-remembered.
+I had also written "fifty-one citations across six files" in the document from memory of writing it.
+The audit corrected that to 70 across 20. A study whose own summary is wrong by 40% is the small
+version of the failure this phase exists to prevent.
 
-1. halmos colours its output, so `grep '^\[FAIL\]'` never matched. The first run
-   reported "the prover missed a real violation" purely because of ANSI escapes.
-2. halmos shells out to `forge`, which was absent from its PATH. It died with
-   FileNotFoundError and the parser read the traceback as "no failures".
-3. halmos reads the Solidity AST from build artifacts. Running `forge build`
-   first wrote artifacts without an AST, so halmos skipped every file with
-   "KeyError: 'ast'", found no tests, and exited quietly. foundry.toml now sets
-   `ast = true`, and `assert_ran` refuses to draw any conclusion from a run that
-   produced no result line.
+## What the study found that a README skim would not
 
-Defect 3 is the one worth remembering: for two runs the pipeline was reporting a
-clean formal verification pass while verifying literally nothing.
+Five things, each with a citation and each now in `ui-v2`:
 
-## Also fixed this phase
+1. **Layout is a 40-line constants file** (`apps/terminal/src/config/layout.ts:1-40`), not sizes
+   scattered through components. It includes `positions.disconnectedMinHeightPx: 180` beside
+   `positions.minHeightPx: 400` (`config/layout.ts:12`): a panel reserves LESS height when there is
+   nothing to show. That single constant is a direct answer to "what fills this region when there is
+   no data", which is a named failure condition for this project.
+2. **The type scale is shifted one step down from stock Tailwind** (`packages/ui/src/globals.css:42-57`).
+   Their `text-2xs` is 12px/16px and their `text-sm` is 16px. Data rows use `text-2xs`. A rebuild on
+   default Tailwind sizes cannot reach terminal density no matter how the padding is tuned, which is
+   the kind of thing you only learn by reading the token file.
+3. **Row counts are derived from measured height and passed into the DATA layer**
+   (`use-orderbook-rows.ts:3-26`, consumed at `orderbook-panel.tsx:52-56`). The panel never renders
+   rows it will clip, which is why their panels have no dead strip at the bottom.
+4. **Updates are batched to one animation frame** (`batch-updater.ts:15-56`) and staleness is one
+   watchdog with per-key thresholds (`staleness.ts:20-109`), not a timer per component. Their
+   reliability numbers all live in a single table (`reliability.ts:1-48`) with per-stream thresholds:
+   20s for market data, 60s for user streams.
+5. **`memo` with a hand-written comparator on the hot row** (`orderbook-row.tsx:52-65`), plus
+   `useDeferredValue` on the incoming snapshot (`orderbook-panel.tsx:44`) and
+   `useRenderCommitTrack` (`orderbook-panel.tsx:17`) to measure the result rather than assume it.
 
-forge lint flagged unchecked ERC20 transfer return values in OrderBookVenue. Real
-finding, not noise: a token returning false rather than reverting would let a fill
-record itself while no value moved. All eight call sites now route through checked
-`_pull` and `_push` helpers that revert with `TransferFailed`. 27 contract tests
-still green after the change.
+One independent confirmation of a decision made earlier: their `apps/terminal/package.json` pins
+`@tanstack/react-table` at **8.21.3**, exactly the version task 1.15 pinned while 9.1.2 is current.
+
+## The conflict, resolved
+
+The product spec mandates shadcn/ui. HypeTerminal's `packages/ui` is Base UI + CVA. ADR-013 resolves
+it: shadcn as the primitive layer, HypeTerminal for density, tokens, spacing and data patterns. The
+two mandates only conflict if "study HypeTerminal" is read as "copy its components", and what makes
+their terminal good is not coupled to Base UI.
+
+Twelve patterns transfer, five do not, each with a reason:
+`docs/decisions/ADR-013-ui-primitives.md`.
+
+Not taken, and why: `packages/ui` itself (different primitive layer), the WebSocket transport (we
+poll JSON-RPC, though the batching and staleness IDEAS transfer because the problems are ours too),
+TanStack Start SSR (their own terminal route sets `ssr: false` at `routes/perp.tsx:7`), Lingui i18n
+(one locale), and `react-resizable-panels` (only if a draggable split earns it).
+
+## Reproduce
+
+```bash
+bash scripts/73-clone-hypeterminal.sh   # clone at the pinned commit, map it with line counts
+bash scripts/74-verify-ui-study.sh      # resolve all 70 citations, fail on any that points at nothing
+```
+
+## Gate status
+
+**OPEN.** `evidence/ui-study.md` exists with 70 verified citations against a threshold of 30. Every
+file added in Phase 4 names the pattern it applies in a header comment, and task 3.8 keeps that
+checkable.

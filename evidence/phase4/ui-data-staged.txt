@@ -1,0 +1,27 @@
+ui-v2 data staging
+Run 2026-08-12 05:40:02 UTC
+
+  parsed 7 deployment row(s) from docs/verified/deployments.md
+    MockERC20 tBASE            0x9D22e538a72a5d2c9A28D08c27999216A78343C9  self_deployed=True
+    MockERC20 tQUOTE           0x7ff884C412a1A2c416e931C59889e5335C5EFa0D  self_deployed=True
+    OrderBookVenue             0x7092050F3C4e72A2df8610ae2CC8c39DcA3B7f52  self_deployed=True
+    RiskGuard                  0xE64b6e937Fd0d855161A5F6F0Aa1A3E01CB54c24  self_deployed=True
+    BatchExecutor              0x81beCFdE5ad4692Dc52F7eA6B9DEA0C5f1694d5e  self_deployed=True
+    RwaVault                   0x3BF12df3BB0b6f0dF8c57089ab78e402bf698F84  self_deployed=True
+    RwaRiskGuard               0x401Ef3E4b9b838A021109c3BBebb7FDC70Cb9278  self_deployed=True
+  wrote /mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/public/data/deployments.json
+
+## Staged
+  journal.jsonl            643252 bytes
+  learned-state.json          599 bytes
+  deployments.json           1835 bytes
+
+## Verdict
+  RESULT: PASS. All three sources staged.
+
+  PROVENANCE, and this note is now the good news rather than the caveat: the staged journal
+  is the CURRENT binary's output. The 9 Aug rows whose refusal numbers were wei-scaled were
+  split out to evidence/journal-legacy-2026-08-09.jsonl and are NOT staged. Confirmed by
+  bash scripts/77-journal-scale-audit.sh: 0 wei-scaled values, and the limit refusals now
+  carry usable numbers, so the risk panel draws real utilisation.
+  Split record: evidence/phase4/journal-split.txt

@@ -1,0 +1,48 @@
+Task 7.6, live fee event on X Layer testnet (chain 1952)
+run: 2026-08-15 13:37:47 UTC
+
+chainId from chain: 1952
+FeeCollector  0x367FC329469497Ac87FA19Fb34dE4595610b381A
+BatchExecutor 0xad717b52AbD5bf15955E407cEb8d49FA19fA3e95
+treasury      0x00000000000000000000000000000000fEE00001
+feeBps        50
+
+== posting a resting sell order ==
+post tx:  0x10e567a94ae75c2cb51f663b38b83b8fdd73657ccf01d1b54fc0f272bdd81605
+order id: 1
+treasury tQUOTE before: 0
+fee.chargeCount before: 1
+
+== executing the batch through scripts/submit-take.sh, the same shim the runtime calls ==
+TX=0xd49391a1404815b742c7f6f25bce763bc18f77eebb8534835ef8785f1097a5c5
+
+== decoding FeeCharged from eth_getTransactionReceipt ==
+event topic0: 0x44b794560607cbc672bf6b7b5bf183f9f9f96c920fc55d076fe0f5f9bef8d261
+receipt status: 0x1
+block: 38342271
+gas used: 199448
+logs in receipt: 10
+
+  DECODED FeeCharged, from the receipt and nowhere else
+  payer      0xad717b52abd5bf15955e407ceb8d49fa19fa3e95
+  market     0x55ac56c8781d6347aa154c84ffc0fe29469b11f316410f19cc3ed91f9a384dbb
+  token      0xe849197b3f875412b725e0d1be1cf0c1c12880e9
+  notional   20000000000000000000
+  feeAmount  100000000000000000
+  feeBps     50
+  arithmetic check: notional*bps/10000 = 100000000000000000 == 100000000000000000 -> True
+NONZERO_FEE 100000000000000000
+FEE_LOGS_FOUND 1
+
+== cross-check: the event against what actually moved ==
+treasury tQUOTE after:  100000000000000000
+treasury delta:         100000000000000000
+event feeAmount:        100000000000000000
+fee.chargeCount after:  2 (was 1)
+
+explorer:
+  https://www.oklink.com/x-layer-testnet/tx/0xd49391a1404815b742c7f6f25bce763bc18f77eebb8534835ef8785f1097a5c5
+  https://www.oklink.com/x-layer-testnet/address/0x367FC329469497Ac87FA19Fb34dE4595610b381A
+
+GATE: PASS  tx 0xd49391a1404815b742c7f6f25bce763bc18f77eebb8534835ef8785f1097a5c5 carries a decoded FeeCharged with feeAmount 100000000000000000,
+            matched by a treasury balance delta of 100000000000000000 and chargeCount 1 -> 2

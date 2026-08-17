@@ -1,0 +1,294 @@
+claim_id,kind,file,line,assertion
+C-201,other,JUDGE-GUIDE.md,5,"If you only have sixty seconds, do step 2 and step 4."
+C-202,chain,JUDGE-GUIDE.md,52,It refuses to start on anything except chain 1952 and names 195 as the deprecated testnet.
+C-203,version,JUDGE-GUIDE.md,65,"Read that count with the correction it needs, because the earlier version of this sentence said it meant ""the engine wanted to trade larger and was refused"", and that is not what those 40 rows show."
+C-204,other,JUDGE-GUIDE.md,65,Every one of them carries a notional around 3e30 against a 25e6 limit: the candidates were 1e12 times too large because the recorded run predates the wei-to-micro conversion now at `crates/market-intel/src/lib.rs:95-110`.
+C-205,other,JUDGE-GUIDE.md,76,"Full finding, including why a fix that does not regenerate its artifacts leaves the artifacts asserting the bug: [evidence/phase4/journal-provenance.md](evidence/phase4/journal-provenance.md) `[C-121]`."
+C-206,other,JUDGE-GUIDE.md,87,"oracle diverged 1000 bps, REFUSED(OracleMarketDivergence)"
+C-207,other,JUDGE-GUIDE.md,96,It removes each refusal in turn and confirms the tests go RED. 18 of 18 RED means no refusal is decorative.
+C-208,other,JUDGE-GUIDE.md,106,"On its first run it generated 107 viable mutants of the risk engine and **37 survived**: no limit boundary was pinned anywhere, and the post-trade projection was never tested against a book that already held exposure."
+C-209,other,JUDGE-GUIDE.md,106,"Both survivor lists, before and after, are in the evidence `[C-230]` `[C-231]`."
+C-210,other,JUDGE-GUIDE.md,146,"Each is a multi-leg atomic batch through `BatchExecutor`: the risk guard leg runs first, so a cap breach or a halt reverts the whole batch before any token moves."
+C-211,other,JUDGE-GUIDE.md,150,"Full context, including how the agent adapted as its own fills moved the book (imbalance 3750 to 5172 to 6296 bps, a different order and size each cycle), is in [evidence/gates/phase-4.md](evidence/gates/phase-4.md)."
+C-212,other,JUDGE-GUIDE.md,165,"Every panel reports ""not readable"" or ""runtime has not run"", with red borders, and the numbers read 0 and n/a."
+C-213,other,JUDGE-GUIDE.md,180,"**The agent cannot bypass the risk gate.** Signing requires a `RiskApproved<OrderIntent>`, whose only constructor is inside the risk engine."
+C-214,testing,JUDGE-GUIDE.md,180,"Attempting to forge one does not fail a test, it fails to compile: [evidence/bypass-compile-error.txt](evidence/bypass-compile-error.txt)."
+C-215,other,JUDGE-GUIDE.md,185,**Learning cannot widen a risk limit.** `Learner` has no type in its API that mentions `Limits`.
+C-216,formal,JUDGE-GUIDE.md,188,"**The limits are proven, not sampled.** 14 Halmos theorems across the base guard and the RWA guard, each proven for all inputs in range."
+C-217,other,JUDGE-GUIDE.md,202,"**Exchange OS integration is not demonstrated.** It has no developer surface on X Layer testnet, established by four primary probes."
+C-218,other,JUDGE-GUIDE.md,204,**The venue and the RWA instrument are self-deployed** and labelled as such everywhere.
+C-219,other,JUDGE-GUIDE.md,219,"Answer: [docs/mainnet-path.md](docs/mainnet-path.md), and the venue interface is two calls wide."
+C-220,other,JUDGE-GUIDE.md,221,Point out the venue is self-dealing.
+C-221,chain,README.md,5,"It reads a real order book over JSON-RPC, forms a thesis from measured signals, scores a generated candidate set, puts every candidate through a risk gate the agent cannot bypass, submits multi-leg transactions atomically, and learns from realized outcomes."
+C-222,other,README.md,5,"It has a second layer of refusals that only make sense for RWA-linked instruments, and a coordination API that another agent can call over HTTP."
+C-223,other,README.md,33,"**Exchange OS has no developer surface on X Layer testnet.** The official 23-page Exchange OS whitepaper contains zero contract addresses and zero occurrences of the word ""testnet"", and the X Layer developer documentation navigation contains zero references to Exchange OS, TradeZone, venues, or order books."
+C-224,other,README.md,33,"Exchange OS is therefore a labelled `INFERRED` migration target in this project, never a claimed integration."
+C-225,chain,README.md,40,"**The venue and the RWA instrument are ours.** Chain 1952 carries roughly 110 user transactions across 7 distinct contracts per 300 blocks, and no Uniswap factory or router exists at any canonical address, so there was nothing liquid to integrate against: [docs/verified/chain-1952-reality.md](docs/verified/chain-1952-reality.md)."
+C-226,chain,README.md,95,"The agent cannot reach the chain except through the risk gate, and that is enforced by the type system.** The signing path requires a `RiskApproved<OrderIntent>`, a token whose only constructor lives inside the risk engine."
+C-227,other,README.md,101,"The risk engine is pure: no floats, no clock reads.** `float_arithmetic` is denied at the workspace lint level and time is passed in as an argument."
+C-228,other,README.md,101,"Both properties exist so the limits are formally verifiable, and retrofitting either later would have meant a rewrite."
+C-229,other,README.md,106,"Learning structurally cannot widen a risk limit.** The `Learner` type has no field, argument, or return type anywhere in its API that mentions `Limits`."
+C-230,testing,README.md,132,"`cargo-mutants` generated 107 viable mutants of the risk engine and **37 survived** the full suite: no test pinned a single limit boundary (so `>` could become `>=` everywhere unnoticed), no test used a book with existing exposure (so the post-trade projection that stops a book creeping past a limit one order at a time was never exercised), the shipped default limits were asserted nowhere, and `is"
+C-231,other,README.md,132,The 14/14 RED table above was true and incomplete at the same time: a hand-written gate tests the breaks its author thought of.
+C-232,other,README.md,132,"Eleven tests were added to kill those 37, and the before-and-after survivor lists are both in the evidence `[C-230]` `[C-231]`."
+C-233,chain,README.md,162,"Every address above returns non-empty bytecode on the live chain, and every transaction hash cited anywhere in this repository resolves with status `0x1`."
+C-234,chain,README.md,162,"Both are re-checked from chain, not from these tables: `bash scripts/67-verify-deployments.sh` and `bash scripts/68-verify-tx-claims.sh` `[C-204]` `[C-211]`."
+C-235,chain,README.md,169,"All measured on chain 1952, not taken from marketing material."
+C-236,other,README.md,218,"Once the kill switch is set, every guarded call reverts."
+C-237,other,README.md,219,The agent role can never clear the kill switch.
+C-238,other,README.md,227,Property 7 is the one that matters most.
+C-239,other,README.md,227,"A stale oracle or a paused issuer is exactly when an agent most needs to exit, and a guard that blocks the exit turns a risk control into the risk."
+C-240,other,README.md,235,"Exchange OS integration is not demonstrated, because no testnet surface exists."
+C-241,other,README.md,236,"The venue and RWA instrument are self-deployed, so their realism is bounded by what we wrote."
+C-242,other,docs/decisions/ADR-001-venue-strategy.md,6,"The spec assumes Exchange OS primitives (matching, margining, liquidation, settlement) are available to build against."
+C-243,other,docs/decisions/ADR-001-venue-strategy.md,16,There is no venue with liquidity to integrate against.
+C-244,other,docs/decisions/ADR-001-venue-strategy.md,22,Venue-level Exchange OS integration cannot be demonstrated.
+C-245,other,docs/decisions/ADR-001-venue-strategy.md,22,"A judge could read a self-deployed venue as self-dealing, which the honesty framing in ADR-002 is designed to pre-empt."
+C-246,other,docs/decisions/ADR-002-exchange-os-claims.md,6,"Every Exchange OS mention in README, docs, UI, and pitch becomes a labelled INFERRED forward claim citing docs/verified/exchangeos-availability.md."
+C-247,other,docs/decisions/ADR-002-exchange-os-claims.md,11,Claiming integration with a surface that has no testnet presence would be the exact fake win the reverse-reward-hacking mandate names: a mock behind a clean interface.
+C-248,other,docs/decisions/ADR-003-testnet-only.md,6,"Task 10.1.x collapses to writing docs/mainnet-path.md as a forward commitment with real migration steps and dates, and stating plainly in README and judge guide that the submission is testnet with a documented mainnet path."
+C-249,other,docs/decisions/ADR-003-testnet-only.md,12,Do not spend time verifying whether mainnet is required by submission.
+C-250,other,docs/decisions/ADR-003-testnet-only.md,12,"The rule text reads ""subsequently launched on X Layer mainnet"", which is a forward commitment."
+C-251,chain,docs/decisions/ADR-004-grounding-substitution.md,16,"That combination produced every verified finding so far, including the chain ID 1952 correction and the OP Stack determination."
+C-252,other,docs/decisions/ADR-004-grounding-substitution.md,26,"The ""unreachable from this network"" finding was WRONG, and the honesty note above is the reason the error was recoverable: it recorded the limit of what had been established instead of guessing."
+C-253,other,docs/decisions/ADR-004-grounding-substitution.md,33,"`GET /v1beta/models` returns the full model list, and a retired model name returns an authenticated HTTP 404 whose body names the retirement."
+C-254,other,docs/decisions/ADR-004-grounding-substitution.md,33,"E3 predicted exactly this: a 401 on an AQ. key means the route is wrong, not the key."
+C-255,other,docs/decisions/ADR-004-grounding-substitution.md,38,"The refusal is HTTP **429** on every available model, across three spaced attempts on `gemini-flash-latest` with 35 second backoff."
+C-256,other,docs/decisions/ADR-004-grounding-substitution.md,45,"The DECISION is unchanged: R-SEARCH-2 rung 1 is unavailable, and the ladder is satisfied at rung 2 (WebSearch), which has carried every verified finding in this build."
+C-257,other,docs/decisions/ADR-005-no-floats-no-clocks.md,6,The risk engine and all shared value types use integer micro-units (1e6 scale) and never read a clock.
+C-258,other,docs/decisions/ADR-006-onchain-surface.md,6,"The default answer to ""what goes onchain"" is nothing, because every contract is attack surface and audit burden."
+C-259,other,docs/decisions/ADR-006-onchain-surface.md,6,"But ADR-001 makes the venue ours, and a risk engine that only exists offchain is a claim a judge cannot verify."
+C-260,other,docs/decisions/ADR-006-onchain-surface.md,15,The Rust engine is the pre-check; this contract is the last word.
+C-261,other,docs/decisions/ADR-006-onchain-surface.md,15,Formally verified in Phase 3.
+C-262,chain,docs/decisions/ADR-006-onchain-surface.md,15,"Chosen because ""risk controls can and do stop the agent"" is a checklist item, and an onchain guard makes it provable by anyone with an explorer rather than trusting our offchain code."
+C-263,other,docs/decisions/ADR-006-onchain-surface.md,23,"Chosen because ""multi-step onchain execution driven by the agent"" is a checklist item, and atomicity is what makes a mid-sequence failure safe rather than leaving orphan exposure."
+C-264,other,docs/decisions/ADR-006-onchain-surface.md,39,"The venue is ours, so venue realism is bounded by what we wrote."
+C-265,other,docs/decisions/ADR-006-onchain-surface.md,39,"Mitigation: escrow, transfers, and events are genuinely real, so fills cannot be faked, and the guard binds the agent even against our own venue."
+C-266,other,docs/decisions/ADR-006-onchain-surface.md,47,The agent role never can.
+C-267,formal,docs/decisions/ADR-007-formal-verification-tool.md,12,"R16 applied before getting stuck rather than after: Halmos is a pip install, runs fully locally with no key, reads ordinary Solidity so the proofs sit beside the Foundry tests, and targets exactly the class of property ADR-006 needs."
+C-268,other,docs/decisions/ADR-007-formal-verification-tool.md,18,"Seven theorems over RiskGuard, each proven for ALL inputs in the declared ranges rather than sampled: per-market cap over any two adds, gross cap across two markets, killed blocks every add for any amount, only-owner revive over a symbolic caller address, only-owner cap raise, gross always equals sum of parts across add/add/reduce, and unconfigured markets failing closed for any market id."
+C-269,formal,docs/decisions/ADR-007-formal-verification-tool.md,26,"Prover caught it: **yes** (2 proof(s) failed under mutation, 0 after restore)."
+C-270,other,docs/decisions/ADR-007-formal-verification-tool.md,32,"Certora's CVL is more expressive for multi-contract and parametric rules, and a Certora report carries more weight with auditors."
+C-271,formal,docs/decisions/ADR-007-formal-verification-tool.md,32,"The theorems here are written as pre and post conditions rather than in Halmos-specific idiom, so they translate if a Certora run is wanted later."
+C-272,chain,docs/decisions/ADR-008-chain-client-and-signing.md,6,Transaction SIGNING is delegated to  as a subprocess against the encrypted keystore.
+C-273,other,docs/decisions/ADR-008-chain-client-and-signing.md,11,"The dependency tree of a full SDK would dominate build time for the whole workspace. keccak256 is NOT hand-rolled: tiny-keccak is used, because a subtly wrong hash produces wrong selectors and failures that look like contract bugs."
+C-274,other,docs/decisions/ADR-008-chain-client-and-signing.md,17,"If dynamic ABI types are ever needed, REPLACE this module with alloy-sol-types rather than extending it."
+C-275,chain,docs/decisions/ADR-008-chain-client-and-signing.md,21,"A hand-rolled secp256k1 signer and RLP encoder is exactly the brittle plumbing R9 forbids hiding behind a clean interface.  already produced every verified transaction in this project, holds the keystore, and is battle-tested."
+C-276,other,docs/decisions/ADR-009-rwa-standin.md,6,Task 0.4 established that no RWA-linked instrument is live on X Layer testnet.
+C-277,other,docs/decisions/ADR-009-rwa-standin.md,12,"Deploy `RwaVault`, a minimal instrument that models the four RWA properties that actually change agent behaviour, and label it `SELF-DEPLOYED STAND-IN` everywhere it appears."
+C-278,other,docs/decisions/ADR-009-rwa-standin.md,21,"A real issuer can halt the instrument, and an agent that ignores that can be long something it cannot exit."
+C-279,formal,docs/decisions/ADR-009-rwa-standin.md,33,"The refusals are real and enforced onchain by `RwaRiskGuard`, proven by seven Halmos theorems, 18 of 18 mutations RED, and live triggers on chain 1952 with transaction hashes."
+C-280,other,docs/decisions/ADR-009-rwa-standin.md,40,"Provenance is labelled in the contract header, in deployments.md, and in the gate report."
+C-281,other,docs/decisions/ADR-009-rwa-standin.md,50,The four reads the agent depends on are `riskView()` on the vault and `divergenceBps()` on the guard.
+C-282,other,docs/decisions/ADR-010-coordination-auth.md,7,"It needs to identify callers, because a quote is a short-lived option written to whoever asked for it and per-caller rate limits are meaningless without identity."
+C-283,other,docs/decisions/ADR-010-coordination-auth.md,34,"An unauthenticated `/quote` endpoint is a free option written to the internet, and it reveals the agent's book view and remaining risk capacity."
+C-284,other,docs/decisions/ADR-010-coordination-auth.md,34,Rate limits cannot exist without identity.
+C-285,other,docs/decisions/ADR-010-coordination-auth.md,48,"The boundary is the risk gate: every external request passes through the same `RiskEngine::evaluate` the brain applies to itself, so a caller with a valid key still cannot obtain a quote the agent would be refused."
+C-286,other,docs/decisions/ADR-010-coordination-auth.md,48,"That was demonstrated live, with an oversized request returning 409 from the risk gate rather than from any auth check."
+C-287,other,docs/decisions/ADR-011-river-role.md,6,"THINKING: #10 bayesian (both river's model and the hand-rolled learner update beliefs incrementally, so they are directly comparable), #61 circle of competence (river is Python and the brain is Rust, so ""sidecar"" means a live process boundary on the learning path), #33 pareto (what does the second option buy for what it costs)."
+C-288,other,docs/decisions/ADR-011-river-role.md,11,"TASKS.md 1.14 states the gate explicitly: ""either river becomes a sidecar the Rust learner consults, or it is a benchmark only."
+C-289,other,docs/decisions/ADR-011-river-role.md,18,"The file has 87 rows; **8 are naive-baseline control rows** (thesis ""naive baseline, no signals consulted"") and are excluded, see the contamination note below."
+C-290,other,docs/decisions/ADR-011-river-role.md,28,"river beats the baseline by 2.5 points, which on 79 samples is **two extra correct predictions**."
+C-291,version,docs/decisions/ADR-011-river-role.md,33,"The first version of this benchmark scored **0.8736 against a 0.7586 baseline**, an 11.5 point margin, and it was wrong."
+C-292,other,docs/decisions/ADR-011-river-role.md,33,"It included the 8 naive-baseline control rows and labelled them not-take because their action string does not start with ""take""."
+C-293,other,docs/decisions/ADR-011-river-role.md,33,"Those rows have `thesis_confidence_bps` of exactly 0 and no candidates, so they are trivially separable from real decisions."
+C-294,other,docs/decisions/ADR-011-river-role.md,33,The model was partly learning to tell the agent apart from its own control group.
+C-295,other,docs/decisions/ADR-011-river-role.md,40,"It was caught by a different tool, not by re-reading the script: task 1.16's DuckDB aggregation grouped the journal by action and put a row reading `Buy 2.000000 base, 8 decisions, avg_conf 0` on screen next to the others."
+C-296,other,docs/decisions/ADR-011-river-role.md,50,**Benchmark only.** river does not run in the product.
+C-297,other,docs/decisions/ADR-011-river-role.md,55,"The journal carries no realized PnL until task 8.5, so the only learnable target today is BEHAVIOUR: did the agent take. river is therefore predicting the decision engine's own output from the decision engine's own inputs."
+C-298,other,docs/decisions/ADR-011-river-role.md,55,"A deterministic scoring function is a nearly-learnable function by construction. 0.8608 measures how closely a linear model can imitate `score_take`, not how well anything predicts profit."
+C-299,other,docs/decisions/ADR-011-river-role.md,55,"And once the control rows are removed, it beats always-guessing-take by two predictions out of 79."
+C-300,other,docs/decisions/ADR-011-river-role.md,70,The clamped update in `crates/learning` was chosen at this sample size for the same reason task 1.10 rejected drift detectors: at this volume a detector or a fitted model fires on noise.
+C-301,other,docs/decisions/ADR-011-river-role.md,70,Adding a second learner does not add data.
+C-302,other,docs/decisions/ADR-011-river-role.md,73,"**The learning safety property.** `Learner` has no type mentioning `Limits`, which is what makes ""learning cannot widen a limit"" a structural fact rather than a promise."
+C-303,other,docs/decisions/ADR-011-river-role.md,73,"A Python sidecar returning a JSON blob that influences the learner is a place where that structure has to be re-established by hand, and hand-maintained invariants are the ones that break."
+C-304,other,docs/decisions/ADR-011-river-role.md,80,It is the external check on the hand-rolled learner.
+C-305,other,docs/decisions/ADR-011-river-role.md,80,"When 8.5 lands realized PnL in the journal, the same script re-runs against the profit target and answers a question the internal learner cannot answer about itself: is there signal in these features at all."
+C-306,other,docs/decisions/ADR-011-river-role.md,80,"If river cannot beat the baseline on the profit target, then neither can the Rust learner, and that is a finding about the features rather than about either implementation."
+C-307,other,docs/decisions/ADR-011-river-role.md,88,"At that point the sidecar question is live again, because the model would be predicting something the decision engine does not already know."
+C-308,other,docs/decisions/ADR-012-agent-framework.md,5,"THINKING: #11 second-order (a framework choice propagates into every later phase and is the most expensive thing to reverse), #23 systems (the question is where a framework would sit in the existing process boundary, not which framework is best in the abstract), #3 first principles (what does the coordination path actually need to do), #61 circle of competence (these frameworks are Python or TypeS"
+C-309,other,docs/decisions/ADR-012-agent-framework.md,40,"Every framework above orchestrates LLM calls, and there is no LLM call on this agent's decision path, so a framework would be orchestrating nothing."
+C-310,other,docs/decisions/ADR-012-agent-framework.md,45,"The decision path is: read a market snapshot, compute signals, score candidate actions, pass the winner through the risk engine, receive a `RiskApproved<OrderIntent>` or a refusal, sign, submit."
+C-311,other,docs/decisions/ADR-012-agent-framework.md,45,"Scoring is integer arithmetic in `crates/decision-engine/src/lib.rs:289` (`score_take`); the seal is a Rust type at `crates/risk-engine/src/lib.rs:251` (`RiskApproved`, with `_seal`, private, at :256)."
+C-312,other,docs/decisions/ADR-012-agent-framework.md,51,`RiskApproved<T>` cannot be constructed outside `risk-engine`.
+C-313,other,docs/decisions/ADR-012-agent-framework.md,51,"On the far side of a JSON boundary, `RiskApproved` is a dict."
+C-314,other,docs/decisions/ADR-012-agent-framework.md,59,"It is rejected for the plainer reason: it is a library for building LLM applications, and this agent's decisions contain no LLM step."
+C-315,other,docs/decisions/ADR-012-agent-framework.md,70,"Built here instead: the journal at `crates/journal` is append-only and every decision is replayable from it, which is the property that mattered."
+C-316,other,docs/decisions/ADR-012-agent-framework.md,70,"Evidence: `evidence/journal.jsonl`, 87 rows, and the river benchmark in task 1.14 reads them as a dataset, which only works because the record is complete."
+C-317,other,docs/decisions/ADR-012-agent-framework.md,77,"Already present and stronger: `RiskApproved` carries `requires_human_approval` (`crates/risk-engine/src/lib.rs:274`), so the escalation is part of the sealed value the executor must inspect, not a framework callback that can be forgotten."
+C-318,other,docs/decisions/ADR-012-agent-framework.md,81,"Here there is ground truth: the risk engine either approves or refuses, and a debate that could talk its way past a refusal would be a defect."
+C-319,other,docs/decisions/ADR-013-ui-primitives.md,5,"THINKING: #13 dialectical (two mandates that appear to conflict, and the resolution is not a compromise between them), #27 opportunity-cost (a component library is days of work either way, so the question is which days buy more), #30 trade-off."
+C-320,other,docs/decisions/ADR-013-ui-primitives.md,11,"HypeTerminal's `packages/ui` is Base UI + CVA, 42 files and 5,681 lines, and it is the reference this project was told to study for density."
+C-321,other,docs/decisions/ADR-013-ui-primitives.md,18,"What makes it good is in `evidence/ui-study.md`: a 40-line layout constants file, a two-layer token architecture, a type scale shifted one step down from Tailwind's default, `tabular-nums` on every numeric cell, row counts derived from measured height, and updates batched to animation frames."
+C-322,other,docs/decisions/ADR-013-ui-primitives.md,30,"This project's equivalent of ""disconnected"" is ""no journal rows yet"", and the same answer applies."
+C-323,other,docs/decisions/ADR-013-ui-primitives.md,34,"**Two-layer tokens.** Primitives in `@theme`, semantics under `:root` and `.dark`, per `packages/ui/src/globals.css:25-107` and `:110-260`. shadcn already expects CSS variables, so this is the layer where the two systems meet rather than fight."
+C-324,other,docs/decisions/ADR-013-ui-primitives.md,37,"**The shifted type scale.** `text-2xs` at 12px/16px for data rows (`packages/ui/src/globals.css:42-45`). shadcn's defaults are one step larger throughout, and a rebuild on default sizes cannot reach terminal density regardless of padding."
+C-325,other,docs/decisions/ADR-013-ui-primitives.md,49,"**The WebSocket transport.** `packages/hl-react/src/internal/websocket/` is 1,031 lines of subscription lifecycle, reconnect backoff and payload guards."
+C-326,chain,docs/decisions/ADR-013-ui-primitives.md,49,"X Layer testnet gives us JSON-RPC over HTTP, so there is no socket to keep alive."
+C-327,chain,docs/decisions/ADR-013-ui-primitives.md,49,"Two ideas from it do transfer, because the underlying problems are ours too: `batch-updater.ts:15-56` (a block-driven poll produces the same burst-of-updates problem) and `staleness.ts:20-109` (stale data is already a kill-switch condition in `crates/risk-engine`, so a UI that cannot show staleness would be showing less than the agent knows)."
+C-328,other,docs/decisions/ADR-013-ui-primitives.md,56,"Their own terminal route disables SSR (`apps/terminal/src/routes/perp.tsx:7` sets `ssr: false`), which is the strongest available evidence that the SSR layer buys little for a page like this."
+C-329,other,docs/decisions/ADR-013-ui-primitives.md,69,"The concrete defence is that the token layer is replaced before any component is generated: the type scale, the 4px spacing base, the `--radius-factor: 0.5` (`globals.css:78-79`), and the three-shadow palette (`globals.case:90-92`) all land first."
+C-330,formal,docs/invariants.md,52,**Property 9 is the most important invariant in the project.** A stale oracle or a paused issuer is exactly when an agent most needs to exit.
+C-331,onchain,docs/invariants.md,52,"It is proven symbolically for all amounts with pause and enormous divergence both active, unit-tested, and demonstrated live onchain (tx `0xd2ae42fd`, in `evidence/rwa-live/live-triggers.txt`)."
+C-332,formal,docs/invariants.md,58,**Proof mutation:** removing the issuer-pause refusal causes theorem 8 to FAIL.
+C-333,other,docs/invariants.md,131,The last one exists because a document claiming 49 tests when there are 50 is an unbacked claim.
+C-334,other,docs/limitations.md,14,The risk engine is **not** fully institutional grade.
+C-335,other,docs/limitations.md,19,"The claim is narrower: this is a working prototype of an AI financial operating system with specialised depth in AI-RWA risk, running live on X Layer testnet, with a documented path to mainnet."
+C-336,other,docs/limitations.md,29,"The specification's core assumed Exchange OS primitives (matching, margining, liquidation, settlement) were available to build against."
+C-337,other,docs/limitations.md,29,"They are not, on testnet, as of 9 Aug 2026."
+C-338,other,docs/limitations.md,41,"Press states external-builder venue deployment is scheduled for Q3 2026 via XIP governance, and the first venue was run by X Layer itself."
+C-339,other,docs/limitations.md,48,**What we did instead:** every Exchange OS reference is tagged `INFERRED` and points at the availability document.
+C-340,other,docs/limitations.md,52,"**Cost:** the strongest differentiator in the original plan is unavailable, and ""integration with X Layer"" rests instead on real deploys, real transactions, OP Stack predeploy use, and Multicall3."
+C-341,chain,docs/limitations.md,62,"Chain 1952 carries roughly **110 user transactions across 7 distinct contracts per 300 blocks**, and there is no Uniswap V2 or V3 factory, router, or position manager at any canonical address."
+C-342,chain,docs/limitations.md,62,There was nothing liquid to integrate against: [verified/chain-1952-reality.md](verified/chain-1952-reality.md).
+C-343,other,docs/limitations.md,67,"**Cost, stated rather than minimised:** the venue's realism is bounded by what we wrote."
+C-344,other,docs/limitations.md,67,A judge could reasonably read a self-deployed venue as self-dealing.
+C-345,other,docs/limitations.md,67,"Escrow, transfers and events are genuinely real so fills cannot be faked, and the guard binds the agent even against our own venue, but venue-level realism is not demonstrated."
+C-346,other,docs/limitations.md,78,"**Status:** deliberate, labelled `SELF-DEPLOYED STAND-IN` in the contract header, in deployments, in the UI, and in every gate report."
+C-347,formal,docs/limitations.md,88,"The four refusals are enforced onchain, proven by seven Halmos theorems, mutation-tested 18 of 18 RED, and demonstrated live with transaction hashes."
+C-348,other,docs/limitations.md,108,The rate limiter's 429 path has never been **observed** tripping.
+C-349,other,docs/limitations.md,118,"**Why it was not done:** Phase 7 and Phase 8 were unbuilt at the time, and an absent deliverable costs more than a disclosed limitation."
+C-350,other,docs/limitations.md,121,"12 of 13 other coordination checks pass with real HTTP status codes, including an oversized request refused by the same risk engine the brain applies to itself."
+C-351,other,docs/limitations.md,137,"The corrected, worse-looking number is what ships: [evidence/gates/phase-4.md](../evidence/gates/phase-4.md)."
+C-352,other,docs/limitations.md,150,"What is proven: outcomes settle against a genuinely later price, state persists across restarts, parameters respond to measured accuracy, every change records its trigger and sample size, and a learned parameter demonstrably changes the chosen action (12 of 12 mutations RED, including severing the parameter from the decision path)."
+C-353,other,docs/limitations.md,155,What is not proven: that the agent trades better afterwards.
+C-354,chain,docs/limitations.md,157,"**The counterparty flow is simulated and labelled.** Because chain 1952 has no organic flow, `scripts/34-learn-clean-market.sh` cancels the live book and posts a new level to drive a price path in both directions."
+C-355,testing,docs/limitations.md,190,"Fourteen times during this build an artifact looked green while proving nothing: vacuous property tests, mutation patterns that silently failed to apply, a formal verification pipeline that verified zero tests for two runs, an 18-versus-6 decimal mismatch that made a broken agent look merely cautious, backwards taker economics that made it hold forever and look prudent, a comparison scoped to ever"
+C-356,other,docs/mainnet-path.md,3,"This submission is **testnet only**, deliberately."
+C-357,other,docs/mainnet-path.md,13,"""Subsequently"" reads as a forward commitment, so no mainnet deployment was made and no real funds were spent."
+C-358,other,docs/mainnet-path.md,50,"Exchange OS has no testnet developer surface today ([verified/exchangeos-availability.md](verified/exchangeos-availability.md)), and press indicates external-builder venue deployment via XIP governance in Q3 2026."
+C-359,chain,docs/mainnet-path.md,54,"It is the reverse-engineering step this project already ran against the rest of the chain: pull the deployed contracts and ABIs, decode 50 or more real transactions from a live venue, write down the actual calldata shapes and event topics, and diff that against the documentation."
+C-360,chain,docs/mainnet-path.md,54,"`docs/verified/` exists to hold that output, and `docs/verified/chain-1952-reality.md` is the template: it corrected chain ID 195 to 1952 and settled the OP Stack question from bytecode rather than prose."
+C-361,other,docs/mainnet-path.md,73,"Replace the `cast` signing shim with an in-process signer, with the keystore never leaving the process."
+C-362,other,docs/mainnet-path.md,75,The current values are testnet-conservative in the wrong way: small absolute caps rather than sensible ratios.
+C-363,other,docs/mainnet-path.md,77,"Run the 60-minute unattended soak that was never done, then a 24-hour one."
+C-364,formal,docs/mainnet-path.md,84,Re-run all four mutation gates and both Halmos suites against the deployed bytecode.
+C-365,other,docs/mainnet-path.md,91,"Priority order: Exchange OS if XIP deployment has opened, otherwise whatever DEX has genuine liquidity on X Layer mainnet."
+C-366,other,docs/mainnet-path.md,115,"**API-executed volume is excluded.** This is the constraint that matters most for an autonomous agent, because an agent's natural execution path is exactly the excluded one."
+C-367,other,docs/mainnet-path.md,120,**Honest assessment:** the API exclusion means an autonomous agent cannot itself generate qualifying volume by trading through an API.
+C-368,other,docs/mainnet-path.md,120,"Given the 31 Aug cutoff is ten days after submission, the realistic position is that the Launch Grant is **not** reachable for this project in that window, and claiming otherwise would be arithmetic nobody should believe."
+C-369,testing,docs/mainnet-path.md,136,A mainnet transaction from `RiskGuard` with the mutation gates re-run against deployed bytecode.
+C-370,other,docs/mainnet-path.md,143,Items 1 through 3 are scheduled above within two weeks of submission.
+C-371,other,docs/mainnet-path.md,143,"Item 4 is the honest gate on any claim that this system makes money, and it is deliberately not promised early."
+C-372,other,docs/research-basis.md,13,"Directly on-topic: adverse selection measured on a live perp DEX order book, which is the closest published setting to this agent's venue."
+C-373,other,docs/research-basis.md,24,"Full query output, including the two queries per topic and all 15 records, is in evidence/phase0/paperscraper.txt."
+C-374,other,docs/research-basis.md,53,"This agent takes discrete liquidity against a self-deployed venue with roughly 110 user transactions per 300 blocks, so the model's central assumption does not hold here."
+C-375,other,docs/research-basis.md,53,Adopting the formula would have produced a precise-looking number resting on an assumption the venue violates.
+C-376,other,docs/verified/chain-1952-reality.md,3,Verified 9 Aug 2026 from onchain evidence only.
+C-377,other,docs/verified/chain-1952-reality.md,8,"BLOCKER-LOG-002 is CLOSED by bytecode, not by prose."
+C-378,other,docs/verified/chain-1952-reality.md,8,All OP Stack Bedrock predeploys are present:
+C-379,chain,docs/verified/chain-1952-reality.md,19,"Corroborating: block `miner` is `0x4200...0011` (SequencerFeeVault), the OP Stack signature."
+C-380,chain,docs/verified/chain-1952-reality.md,19,"`L1Block.number()` returns 11449046, a real L1 block height."
+C-381,other,docs/verified/chain-1952-reality.md,22,"Conclusion: the EXECUTION layer is OP Stack Bedrock, unambiguously."
+C-382,other,docs/verified/chain-1952-reality.md,22,"Both docs were describing different layers, and the ""OP Stack versus Polygon CDK"" question was malformed."
+C-383,other,docs/verified/chain-1952-reality.md,69,"There is no Uniswap at any canonical address, and 110 user transactions across 7 contracts in five minutes means there is no venue with meaningful liquidity to integrate against."
+C-384,other,docs/verified/chain-1952-reality.md,82,"What this costs, stated rather than hidden: ""deep Exchange OS integration"" cannot be demonstrated, and ""integration with X Layer"" rests on real deploys, real txs, OP Stack predeploy use, and Multicall3 rather than on venue-level integration."
+C-385,onchain,docs/verified/deployments.md,3,Every address below was deployed by 0x7BdD2d0D1728Df5bEF8FAae8de85c3dD21a5dE46 and read back from chain.
+C-386,other,docs/verified/deployments.md,37,Deployed because task 0.4 established no RWA-linked instrument is live on X Layer testnet.
+C-387,other,docs/verified/exchangeos-availability.md,3,This is the Phase 2 gate.
+C-388,other,docs/verified/exchangeos-availability.md,7,Exchange OS has NO public developer surface on X Layer testnet as of this date.
+C-389,other,docs/verified/exchangeos-availability.md,23,There is no Exchange OS developer section to read.
+C-390,formal,docs/verified/exchangeos-availability.md,28,"These hostnames were guesses, so this is weak corroboration, not proof."
+C-391,testing,docs/verified/exchangeos-availability.md,31,"Press coverage states external-builder venue deployment is ""scheduled for Q3 2026 through the XIP-Exchange OS governance process"", and the first venue (2026 World Cup Outcomes) was a simulated market run by X Layer itself, not an open developer environment."
+C-392,chain,docs/verified/exchangeos-availability.md,47,"The chain itself: verified, chain ID 1952, blocks producing at roughly 0.8s, gas price 20,000,001 wei, deploys and transactions confirmed working."
+C-393,other,docs/verified/exchangeos-availability.md,53,"Fully real onchain, but the venue is ours, so ""deep Exchange OS integration"" is not demonstrable."
+C-394,other,evidence/gates/phase-1.md,6,"It bought one thing that does count, and it was not on the plan: **cargo-mutants found 37 surviving mutants in the risk engine**, the crate holding every limit check."
+C-395,testing,evidence/gates/phase-1.md,39,"**No limit boundary was pinned anywhere.** `>` could become `>=` on the mark-age check, the market cap, the gross cap, the net skew cap, the free-margin floor, the RWA share cap and the human-approval threshold, and every test still passed."
+C-396,other,evidence/gates/phase-1.md,42,"**The post-trade projection was never exercised against a non-empty book.** `existing + order` could become `existing - order` unnoticed, which is exactly the creep-past-a-limit-one-order-at-a-time bug the code comment at `lib.rs:448` says the projection exists to prevent."
+C-397,testing,evidence/gates/phase-1.md,46,"**The shipped defaults were asserted nowhere.** Every test built its own limits, so `Limits::conservative_testnet` (the configuration the demo actually runs) could have `5 * MICRO` become `5 + MICRO` with no failure."
+C-398,testing,evidence/gates/phase-1.md,52,"Twelve tests were written, each naming the mutant it kills."
+C-399,other,evidence/gates/phase-1.md,52,"Result: **91 caught, 0 survived.**"
+C-400,testing,evidence/gates/phase-1.md,54,"One of the two final survivors was an EQUIVALENT mutant: `projected_gross > 0` where the else branch was unreachable, because gross is non-negative and a zero-size order is already refused."
+C-401,chain,evidence/gates/phase-2-v21.md,7,"`evidence/CHAIN-OF-EVIDENCE.md` now holds **33 rows**, each with a claim, an artifact, an exact reproduce command, a DEMONSTRATED or INFERRED label, and a task number."
+C-402,chain,evidence/gates/phase-2-v21.md,7,"Every row was added through `scripts/43-chain-add.sh`, which REFUSES a DEMONSTRATED row whose artifact is not on disk, so a row's presence means the artifact exists."
+C-403,other,evidence/gates/phase-2-v21.md,26,**Recall was far too low.** Requiring a digit in the sentence found only 4 assertions in a 236-line README.
+C-404,other,evidence/gates/phase-2-v21.md,28,"An inventory that misses claims is worse than one that over-includes, because 2.6 deletes claims that fail and a claim missing from the inventory is never checked at all."
+C-405,other,evidence/gates/phase-2-v21.md,33,"R-SEARCH-4 was in v1's rules and was never once obeyed, because the tool was never installed."
+C-406,chain,evidence/gates/phase-2-v21.md,37,"The graph shows `now_ms` inside `risk-engine` is a **Field** (`crates/risk-engine/src/lib.rs:138`), not a call, while the actual clock reads live in `coordination-api` and `chain-client`."
+C-407,other,evidence/gates/phase-2-v21.md,42,"One honest limit is recorded with it: `search_graph` ranks by BM25 over identifier names, so it finds what is NAMED for a concept and can miss what implements it under another name."
+C-408,formal,evidence/gates/phase-2-v21.md,42,"It is a better starting point than grep and it is not a proof of absence, which is why the clock question alone carries a second independent check."
+C-409,chain,evidence/gates/phase-2-v21.md,51,"chain id **1952**, confirmed live."
+C-410,chain,evidence/gates/phase-2-v21.md,52,"block time **1.000s**, measured as 300 seconds over 300 blocks rather than quoted."
+C-411,other,evidence/gates/phase-2-v21.md,52,"The README said ""~1.0 s, measured twice independently"" and now says the measured number."
+C-412,other,evidence/gates/phase-2-v21.md,54,"**7 of 7** addresses in `docs/verified/deployments.md` return non-empty bytecode, each with a keccak of the returned code so a redeploy would show as a changed hash at an unchanged address."
+C-413,chain,evidence/gates/phase-2-v21.md,63,"**18 transactions resolved, 18 with status 0x1, 0 reverted.** Twelve further 32-byte values are reported as NOT-A-TX (market ids, keccak hashes), because the difference between ""not a transaction"" and ""a transaction that does not exist"" is the whole point of the task."
+C-414,other,evidence/gates/phase-2-v21.md,86,"The JUDGE-GUIDE said 40 `OrderNotionalTooLarge` refusals meant ""the engine wanted to trade larger and was refused""."
+C-415,other,evidence/gates/phase-2-v21.md,94,**2.6** cut anything that does not reproduce.
+C-416,chain,evidence/gates/phase-2-v21.md,94,`scripts/44-chain-verify.sh` exists and runs every row's command; the cut list is produced from its report.
+C-417,formal,evidence/gates/phase-2.md,25,invariant 5 holds live onchain: gross equals sum of parts
+C-418,other,evidence/gates/phase-2.md,35,The venue is self-deployed.
+C-419,formal,evidence/gates/phase-2.md,43,"Foundry invariant campaign was near-vacuous: an ungated kill in the handler halted the guard in roughly a third of calls, after which no cap could break even in principle."
+C-420,formal,evidence/gates/phase-2.md,52,"Item 2 is the one worth keeping in mind: two of the three most impressive-looking artifacts in this phase, the invariant campaign and the property suite, were initially passing for the wrong reason."
+C-421,other,evidence/gates/phase-3.md,3,"Between task 1.15 (which installed the toolchain) and Phase 4 (which built the panels), `ui-v2/src/main.tsx` held a three-line placeholder whose text named the gate, so shipping it by accident would have been obvious rather than plausible."
+C-422,other,evidence/gates/phase-3.md,14,"Scale, measured rather than described: `apps/terminal` is 517 source files and 70,389 lines, `packages/hl-react` 53 files and 4,526 lines, `packages/ui` 42 files and 5,681 lines."
+C-423,other,evidence/gates/phase-3.md,23,Its first run reported **43 invalid** (short-form filenames the resolver could not find); the resolver now falls back to a unique-basename lookup and refuses ambiguous ones.
+C-424,version,evidence/gates/phase-3.md,29,A study whose own summary is wrong by 40% is the small version of the failure this phase exists to prevent.
+C-425,other,evidence/gates/phase-3.md,37,"**Layout is a 40-line constants file** (`apps/terminal/src/config/layout.ts:1-40`), not sizes scattered through components."
+C-426,other,evidence/gates/phase-3.md,37,It includes `positions.disconnectedMinHeightPx: 180` beside `positions.minHeightPx: 400` (`config/layout.ts:12`): a panel reserves LESS height when there is nothing to show.
+C-427,other,evidence/gates/phase-3.md,42,**The type scale is shifted one step down from stock Tailwind** (`packages/ui/src/globals.css:42-57`).
+C-428,other,evidence/gates/phase-3.md,42,Their `text-2xs` is 12px/16px and their `text-sm` is 16px.
+C-429,other,evidence/gates/phase-3.md,46,"**Row counts are derived from measured height and passed into the DATA layer** (`use-orderbook-rows.ts:3-26`, consumed at `orderbook-panel.tsx:52-56`)."
+C-430,other,evidence/gates/phase-3.md,49,"**Updates are batched to one animation frame** (`batch-updater.ts:15-56`) and staleness is one watchdog with per-key thresholds (`staleness.ts:20-109`), not a timer per component."
+C-431,version,evidence/gates/phase-3.md,57,"One independent confirmation of a decision made earlier: their `apps/terminal/package.json` pins `@tanstack/react-table` at **8.21.3**, exactly the version task 1.15 pinned while 9.1.2 is current."
+C-432,other,evidence/gates/phase-3.md,67,"Twelve patterns transfer, five do not, each with a reason: `docs/decisions/ADR-013-ui-primitives.md`."
+C-433,chain,evidence/gates/phase-3.md,70,"Not taken, and why: `packages/ui` itself (different primitive layer), the WebSocket transport (we poll JSON-RPC, though the batching and staleness IDEAS transfer because the problems are ours too), TanStack Start SSR (their own terminal route sets `ssr: false` at `routes/perp.tsx:7`), Lingui i18n (one locale), and `react-resizable-panels` (only if a draggable split earns it)."
+C-434,other,evidence/gates/phase-3.md,84,**OPEN.** `evidence/ui-study.md` exists with 70 verified citations against a threshold of 30.
+C-435,other,evidence/gates/phase-4.md,26,"The agent adapted as its own fills changed the book: measured depth imbalance went 3750 to 5172 to 6296 bps, and it chose a different order and a different size each cycle."
+C-436,testing,evidence/gates/phase-4.md,43,"`assert_real_search` refuses to journal a cycle that evaluated one candidate, and a test asserts the count is never 1."
+C-437,other,evidence/gates/phase-4.md,48,"Raw values were fed straight across, making every notional read about 1e24 times too large, so the risk engine refused 10 of 11 candidates every cycle."
+C-438,other,evidence/gates/phase-4.md,53,"After the fix the agent sells into bids when the book is ask-heavy, which is the correct read."
+C-439,other,evidence/gates/phase-4.md,61,"Both changed the agent from ""does nothing, looks careful"" to ""acts for a stated reason""."
+C-440,other,evidence/gates/phase-4.md,72,"Variety appears when state changes, which is visible in the run-mode sequence above where the agent's own fills moved the book."
+C-441,version,evidence/gates/phase-4.md,79,"The unflattering number is kept here rather than replaced, because the first version of this script compared every journal entry ever written, which inflated the engine's variety to 5 distinct actions against the baseline's 1."
+C-442,other,evidence/gates/phase-4.md,91,"The venue is self-deployed and thin, so adverse selection, the main real cost of taking liquidity, is not represented."
+C-443,testing,evidence/gates/phase-4.md,99,"55 Rust tests green across 7 crates, including proptest properties for ""approved actions always satisfy the risk engine"" and ""ranking is deterministic""."
+C-444,onchain,evidence/gates/phase-5.md,36,"onchain live: with the issuer paused, `addExposure` REFUSED and `reduceExposure` ACCEPTED in the same session (`0xd2ae42fd...`)"
+C-445,other,evidence/gates/phase-5.md,42,A flag is something an agent could set wrongly and slip past every RWA refusal.
+C-446,formal,evidence/gates/phase-5.md,67,"7 Halmos theorems on the RWA guard, all passing; injected violation caught (removing the pause refusal made `check_pausedRefusesEveryAmount` FAIL)"
+C-447,other,evidence/gates/phase-5.md,86,The RWA concentration cap was originally a pure share of gross.
+C-448,other,evidence/gates/phase-5.md,86,"On an empty book the first RWA position is 100 percent of gross, so any share cap below 10000 bps refused it forever."
+C-449,other,evidence/gates/phase-5.md,86,"That is not a conservative limit, it is an unsatisfiable one."
+C-450,other,evidence/gates/phase-5.md,86,"The cap is also skipped when reducing, for the same reason every other RWA check is."
+C-451,version,evidence/gates/phase-5.md,98,Yield-aware quote skew and RWA hedging from the plan's 5.3.1 and 5.3.3 are not built.
+C-452,other,evidence/gates/phase-6.md,3,"Captured 9 Aug 2026, re-verified after a WSL restart."
+C-453,other,evidence/gates/phase-6.md,17,A caller cannot obtain a quote the agent itself would be refused.
+C-454,other,evidence/gates/phase-6.md,19,"Quotes expire (15s) and carry an id, so an open-ended quote is not a free option written to the world."
+C-455,other,evidence/gates/phase-6.md,22,"`GET /capacity` discovers headroom by ASKING the risk engine in a size ladder, never by recomputing limits locally."
+C-456,other,evidence/gates/phase-6.md,22,Two implementations of one limit is how they diverge.
+C-457,other,evidence/gates/phase-6.md,32,"The named fake win was ""the second agent is a button in our own UI calling an internal function""."
+C-458,other,evidence/gates/phase-6.md,49,"The 409 on an oversized request is the most important line: it came from the same `RiskEngine::evaluate` the brain applies to itself, over HTTP, to a stranger."
+C-459,chain,evidence/gates/phase-6.md,54,"The first run failed three checks for one cause: every authenticated request performed seven sequential chain reads costing seconds, so a 15 second quote expired before the client's next request completed, and the 60 second rate window reset mid-burst so the count could never accumulate."
+C-460,other,evidence/gates/phase-6.md,67,"What was tried: per-socket read and write timeouts of 3 seconds, on the theory that a slow or half-open client was parked in `read_line`."
+C-461,other,evidence/gates/phase-6.md,72,The rate limiter's 429 path has therefore never been OBSERVED tripping.
+C-462,other,evidence/gates/phase-6.md,78,"It was deprioritised because Phase 7 and Phase 8 were unbuilt at the time, and an absent deliverable costs more than a disclosed limitation."
+C-463,other,evidence/gates/phase-7.md,13,"`Learner` has no field, argument, or return type anywhere in its API that mentions `risk_engine::Limits`."
+C-464,formal,evidence/gates/phase-7.md,17,"Pinned by `learning_cannot_reach_a_risk_limit_because_it_has_no_type_for_one`, which runs a full learning cycle and asserts the limits object is unchanged, and by the Phase 5 symbolic proof `check_onlyOwnerCanLoosenTheRwaPolicy` on the onchain side."
+C-465,other,evidence/gates/phase-7.md,39,"That is not a bad signal, it is a broken scorer: on a static book the realized move is zero, `realized > 0` is false, so every forecast was counted incorrect and any signal decayed to no weight regardless of quality."
+C-466,other,evidence/gates/phase-7.md,39,"Fixed with `DEAD_BAND_BPS`: moves under 5 bps are UNSCORED, not wrong, and counted in `unscored_flat` so a quiet venue is visible rather than hidden."
+C-467,other,evidence/gates/phase-7.md,45,"**Pending forecasts were dropped on process exit.** A sequence of short runs reported `settled 0` while appearing to work, because outstanding forecasts never survived the process."
+C-468,testing,evidence/gates/phase-7.md,45,"Pending decisions are now persisted, with a regression test that saves, reloads in a fresh `Learner`, and settles afterwards."
+C-469,other,evidence/gates/phase-7.md,50,**The forecast horizon was shorter than the market's cadence.** At 6 seconds every forecast settled inside the same run against an unchanged price.
+C-470,other,evidence/gates/phase-7.md,50,Raised to 60 seconds so settlement lands after the market has actually moved.
+C-471,other,evidence/gates/phase-7.md,65,"The 12 parameter changes in the earlier run were driven by samples that the dead-band fix would now correctly exclude, so that run demonstrates the update MECHANISM rather than a sound learning outcome."
+C-472,chain,evidence/gates/phase-7.md,75,"**The counterparty flow is SIMULATED and labelled.** Chain 1952 has 110 user transactions across 7 contracts per 300 blocks, so there is no organic flow to learn from."
+C-473,version,evidence/gates/phase-7.md,82,Retrieval of similar past states from the plan's 7.2.3 is not built.
+C-474,chain,evidence/gates/phase-8.md,25,"Loaded against the real repo it displayed: 87 journal entries, 79 cycles containing a refusal, `OrderNotionalTooLarge` refused 40 times, learning state with 2 settled outcomes and 1 unscored flat sample, the live thesis at block 37833004, and a candidate table where the chosen action and every rejected alternative carry their own score breakdown."
+C-475,other,evidence/gates/phase-8.md,39,"Risk: ""no journal entries, runtime has not run"""
+C-476,other,evidence/gates/phase-8.md,41,"Thesis, candidates, journal: ""no journal entries"" / ""journal.jsonl is empty or missing"""
+C-477,other,evidence/gates/phase-8.md,42,"Measured numbers: 0 and n/a, never invented values"
+C-478,other,evidence/gates/phase-8.md,52,"**A crossed book was paying the agent to trade.** The live thesis showed a spread of **-1333 bps**: the simulator had posted a bid above the resting ask, so the book was crossed."
+C-479,chain,evidence/gates/phase-8.md,62,"**The footer claimed nothing was hardcoded while two values were.** Block time and gas price were transcribed from `docs/verified/chain-1952-reality.md`, not read live."
+C-480,other,evidence/gates/phase-8.md,69,"It is a static file, so Vercel or Cloudflare Pages will host it as-is, but that is a Phase 9 task and it has not been done."
+C-481,version,evidence/gates/phase-8.md,73,The coordination playground from the plan's 8.1.6 is not built.
+C-482,other,evidence/gates/phase-8.md,73,"The API exists and the external Python agent exercises it, but there is no in-browser control for it."
+C-483,formal,evidence/gates/phase-8.md,79,"Formal: 7 + 7 Halmos theorems, each with an injected violation caught."
+C-484,other,evidence/gates/phase-9.md,27,**The docs claimed 49 Foundry tests when there were 50.** The crossed-book tests added in Phase 8 were never counted.
+C-485,other,evidence/gates/phase-9.md,29,"**README linked `docs/invariants.md`, which did not exist.** It had been planned in Phase 3 and never written."
+C-486,other,evidence/gates/phase-9.md,29,"Now written, and it is one of the more useful documents in the repo because it separates the 14 proven properties from the five explicitly unproven ones."
+C-487,other,evidence/gates/phase-9.md,33,"It also produced ten false mismatches on its very first run, caused by a bug in the audit itself: `grep -c` prints `0` and *also* exits non-zero, so `|| echo 0` appended a second zero and every comparison against `""0""` failed."
+C-488,other,evidence/gates/phase-9.md,40,"Exchange OS has no testnet surface and the venue and RWA instrument are self-deployed, so a judge learns that from us in the first screen rather than discovering it later."
+C-489,formal,evidence/gates/phase-9.md,47,The most valuable entry in it is that no proof relates the offchain risk engine to the onchain guard.
+C-490,formal,evidence/gates/phase-9.md,47,"They implement the same refusals deliberately and agreed in every observed case, but that agreement is not proven, and it is the highest-value future proof in the project."
+C-491,other,evidence/gates/phase-9.md,51,`docs/mainnet-path.md` states plainly that **the Launch Grant is not reachable** for this project.
+C-492,other,evidence/gates/phase-9.md,51,"API-executed volume is excluded and the cutoff is 31 Aug, ten days after submission, so an autonomous agent trading through an API cannot generate qualifying volume."
+C-493,chain,evidence/gates/phase-9.md,64,"Must show a real explorer page with a real tx, the risk engine refusing an action, and the external Python agent in its own terminal, and must state on screen whether the run is continuous or edited."

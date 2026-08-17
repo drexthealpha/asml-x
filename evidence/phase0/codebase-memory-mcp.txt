@@ -1,0 +1,61 @@
+codebase-memory-mcp, task 1.9
+Run 2026-08-12 01:43:47 UTC
+
+## Install, via npm user prefix rather than curl-pipe-bash
+  npm prefix: /home/zulab/.npm-global
+  binary: codebase-memory-mcp
+  version: codebase-memory-mcp 0.9.0
+
+## Its actual subcommands, read from --help rather than guessed
+    codebase-memory-mcp 0.9.0
+    
+    Usage:
+      codebase-memory-mcp              Run MCP server on stdio
+      codebase-memory-mcp cli <tool> [json]  Run a single tool
+      codebase-memory-mcp install [-y|-n] [--force] [--dry-run]
+      codebase-memory-mcp uninstall [-y|-n] [--dry-run]
+      codebase-memory-mcp update [-y|-n]
+      codebase-memory-mcp config <list|get|set|reset>
+      codebase-memory-mcp --version    Print version
+      codebase-memory-mcp --help       Print this help
+    
+    UI options:
+      --ui=true    Enable HTTP graph visualization (persisted)
+      --ui=false   Disable HTTP graph visualization (persisted)
+      --port=N     Set UI port (default 9749, persisted)
+    
+    Supported agents (auto-detected):
+      Claude Code, Codex CLI, Gemini CLI, Zed, OpenCode,
+      Antigravity, Aider, KiloCode, Kiro
+    
+    Tools: index_repository, search_graph, query_graph, trace_path,
+      get_code_snippet, get_graph_schema, get_architecture, search_code,
+      list_projects, delete_project, index_status, detect_changes,
+      manage_adr, ingest_traces
+
+## Indexing this repo
+  level=info msg=index.supervisor.reap outcome=clean exit_code=0 signal=0
+  {"project":"asml-x","excluded":{"dirs":[".claude",".git","docs","scripts","target","ui-v2/dist","ui-v2/node_modules","ui-v2/public","evidence/hygiene","evidence/internal","contracts/cache","contracts/out","contracts/lib/forge-std/scripts","contracts/lib/forge-std/test/fixtures","agents/__pycache__"],"count":15,"truncated":false},"skipped_count":0,"nodes":5319,"edges":13652,"expected_nodes":5319,"expected_edges":13652,"adr_present":false,"adr_hint":"Project indexed. Consider creating an Architecture Decision Record: explore the codebase with get_architecture(aspects=['all']), then use manage_adr(mode='update') to persist architectural insights across sessions.","artifact_present":false,"status":"indexed"}
+  project registered as: asml-x
+
+## The queries that make this a PASS. Real symbols from this repo.
+
+  Q1: where is RiskApproved defined and what touches it? This is the type-system seal
+      the whole safety claim rests on, so if the graph knows anything it knows this.
+    {"total":7,"search_mode":"bm25","results":[{"name":"get","qualified_name":"asml-x.crates.risk-engine.src.lib.RiskApproved.get","label":"Method","file_path":"crates/risk-engine/src/lib.rs","start_line":264,"end_line":266,"rank":-17.098731480010947},{"name":"into_inner","qualified_name":"asml-x.crates.risk-engine.src.lib.RiskApproved.into_inner","label":"Method","file_path":"crates/risk-engine/src/lib.rs","start_line":269,"end_line":271,"rank":-16.69602446534092},{"name":"requires_human_approval","qualified_name":"asml-x.crates.risk-engine.src.lib.RiskApproved.requires_human_approval","label":"Method","file_path":"crates/risk-engine/src/lib.rs","start_line":274,"end_line":276,"rank":-16.33655527493071},{"name":"approved_at_ms","qualified_name":"asml-x.crates.risk-engine.src.lib.RiskApproved.approved_at_ms","label":"Method","file_path":"crates/risk-engine/src/lib.rs","start_line":279,"end_line":281,"rank":-16.33655527493071},{"name":"RiskApproved","qualified_name":"asml-x.crates.risk-engine.src.lib.RiskApproved","label":"Struct","file_path":"crates/risk-engine/src/lib.rs","start_line":251,"end_line":257,"rank":-9.51792062429641},{"name":"inner","qualified_name":"asml-x.crates.risk-engine.src.lib.RiskApproved.inner","label":"Field","file_path":"crates/risk-engine/src/lib.rs","start_line":252,"end_line":252,"rank":-7.098731480010948},{"name":"_seal","qualified_name":"asml-x.crates.r
+
+  Q2: score_take, the scoring function corrected by task 1.10's research basis.
+    {"total":1,"search_mode":"bm25","results":[{"name":"score_take","qualified_name":"asml-x.crates.decision-engine.src.lib.DecisionEngine.score_take","label":"Method","file_path":"crates/decision-engine/src/lib.rs","start_line":289,"end_line":361,"rank":-22.979191567773952}],"has_more":false}
+
+  Q3: RiskGuard, the Solidity contract halmos and hevm both prove.
+    {"total":99,"search_mode":"bm25","results":[{"name":"revive","qualified_name":"asml-x.contracts.src.RiskGuard.RiskGuard.revive","label":"Method","file_path":"contracts/src/RiskGuard.sol","start_line":112,"end_line":116,"rank":-16.36197127882443},{"name":"kill","qualified_name":"asml-x.contracts.src.RiskGuard.RiskGuard.kill","label":"Method","file_path":"contracts/src/RiskGuard.sol","start_line":125,"end_line":130,"rank":-16.36197127882443},{"name":"headroom","qualified_name":"asml-x.contracts.src.RiskGuard.RiskGuard.headroom","label":"Method","file_path":"contracts/src/RiskGuard.sol","start_line":192,"end_line":198,"rank":-16.36197127882443},{"name":"onlyOwner","qualified_name":"asml-x.contracts.src.RiskGuard.RiskGuard.onlyOwner","label":"Method","file_path":"contracts/src/RiskGuard.sol","start_line":64,"end_line":67,"rank":-16.295654292926084},{"name":"onlyAgent","qualified_name":"asml-x.contracts.src.RiskGuard.RiskGuard.onlyAgent","label":"Method","file_path":"contracts/src/RiskGuard.sol","start_line":69,"end_line":72,"rank":-16.295654292926084},{"name":"notKilled","qualified_name":"asml-x.contracts.src.RiskGuard.RiskGuard.notKilled","label":"Method","file_path":"contracts/src/RiskGuard.sol","start_line":76,"end_line":79,"rank":-16.295654292926084},{"name":"setAgent","qualified_name":"asml-x.contracts.src.RiskGuard.RiskGuard.setAgent","label":"Method","file_path":"contracts/s
+
+## Break-attempt: does it return hits for a symbol that does NOT exist?
+  A graph that answers everything answers nothing. Querying a made-up name must come
+  back empty, otherwise the three results above are noise.
+    {"total":0,"search_mode":"bm25","results":[],"has_more":false}
+
+## Verdict, task 1.9
+  PASS requires: real symbols found AND the invented symbol NOT found.
+  See the four query blocks above. If the invented symbol returned hits, this tool is
+  not usable for R-SEARCH-4 regardless of how fast it indexed.

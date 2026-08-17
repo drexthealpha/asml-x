@@ -1,0 +1,43 @@
+{
+  "generatedBy": "cargo test -p risk-engine export_conservative_defaults_for_the_ui",
+  "source": "crates/risk-engine/src/lib.rs Limits::conservative_testnet",
+  "microPerUnit": 1000000,
+  "limits": [
+    {
+      "key": "maxOrderNotional",
+      "label": "Largest single order",
+      "micro": 25000000,
+      "protects": "Caps one bad decision. Nothing the agent does can risk more than this at once."
+    },
+    {
+      "key": "maxMarketNotional",
+      "label": "Largest position in one market",
+      "micro": 50000000,
+      "protects": "Stops the agent concentrating everything in a single market."
+    },
+    {
+      "key": "maxGrossNotional",
+      "label": "Total exposure across all markets",
+      "micro": 200000000,
+      "protects": "Bounds total risk even if every individual order is small."
+    },
+    {
+      "key": "dailyLossLimit",
+      "label": "Daily loss limit",
+      "micro": 20000000,
+      "protects": "Halts the agent for the day once losses reach this, rather than letting a bad day compound."
+    },
+    {
+      "key": "maxConsecutiveLosses",
+      "label": "Consecutive losing trades",
+      "count": 4,
+      "protects": "Halts the agent when it is repeatedly wrong, which usually means conditions changed."
+    },
+    {
+      "key": "maxActionsPerMinute",
+      "label": "Actions per minute",
+      "count": 30,
+      "protects": "A runaway guard. A loop that misfires cannot spend the account in seconds."
+    }
+  ]
+}
