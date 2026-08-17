@@ -67,45 +67,90 @@ explorer. What it costs is stated plainly in [docs/limitations.md](docs/limitati
 
 ## Architecture
 
+Two chains, one codebase. **Mainnet 196 is where the product runs**; testnet 1952 is where it was
+developed and where the RWA layer still lives.
+
+```mermaid
+flowchart TB
+    User([User wallet]):::user
+
+    subgraph Brain["Rust runtime, bin: asml"]
+        direction LR
+        CC[chain-client<br/>JSON-RPC, static ABI]
+        MI[market-intel<br/>signals, confidence, staleness]
+        DE[decision-engine<br/>candidates, 4-term scoring]
+        RE[risk-engine<br/>limits, kill switch]
+        CC --> MI --> DE --> RE
+    end
+
+    RA{{"RiskApproved&lt;T&gt;<br/>sealed token"}}:::seal
+    JR[(journal<br/>JSONL audit)]
+    LN[learning<br/>settled outcomes to params]
+
+    RE -->|"only path that authorises"| RA
+    RA --> JR
+    JR --> LN
+    LN -->|"can only tighten"| DE
+
+    subgraph Chain196["X Layer MAINNET, chain 196"]
+        AV[AgentVault<br/>non-custodial]
+        RG[RiskGuard<br/>caps, kill switch]
+        BE[BatchExecutor<br/>atomic multi-leg]
+        FC[FeeCollector]
+        OV[OrderBookVenue]
+    end
+
+    subgraph Chain1952["X Layer testnet, chain 1952"]
+        RV[RwaVault<br/>oracle, pause, window]
+        RRG[RwaRiskGuard<br/>4 extra refusals]
+        RRG --> RV
+    end
+
+    User -->|deposit / withdraw| AV
+    RA -->|eth_sendRawTransaction| BE
+    BE --> OV
+    BE --> FC
+    BE --> RG
+    RE -.->|"RWA refusals, testnet only"| RRG
+
+    CA[coordination-api<br/>bin: asml-coord]
+    EX[agents/external_agent.py<br/>separate process]
+    UI[ui-v2 dashboard]
+
+    EX -->|HTTP quote / accept| CA
+    CA --> MI
+    JR --> UI
+    Chain196 --> UI
+
+    classDef user fill:#10B981,stroke:#059669,color:#fff
+    classDef seal fill:#F59E0B,stroke:#D97706,color:#000
 ```
-                    chain 1952 (X Layer testnet, OP Stack Bedrock)
-   ┌──────────────────────────────────────────────────────────────────────┐
-   │  OrderBookVenue      RiskGuard ◄── BatchExecutor      RwaVault       │
-   │  escrow, fills       caps,         atomic multi-leg   oracle, pause, │
-   │                      kill switch   all-or-nothing     window, yield  │
-   │                          ▲                                ▲          │
-   │                    RwaRiskGuard ───────────────────────────┘          │
-   │                    4 extra refusals, extends RiskGuard               │
-   └──────────────────────────────────────────────────────────────────────┘
-              ▲ eth_call / eth_sendRawTransaction (via cast)
-              │
-   ┌──────────┴───────────────────────────────────────────────────────────┐
-   │  runtime (bin: asml)                                                 │
-   │                                                                      │
-   │  chain-client ──► market-intel ──► decision-engine ──► risk-engine   │
-   │  JSON-RPC,        signals with     candidates,         limits, kill,  │
-   │  static ABI       confidence and   4-term scoring      RWA refusals   │
-   │                   staleness              │                  │        │
-   │                                          ▼                  ▼        │
-   │                                     journal ◄──── RiskApproved<T>    │
-   │                                     JSONL audit    sealed token      │
-   │                                          │                           │
-   │                                     learning                         │
-   │                                     outcomes, params, persistence    │
-   └──────────────────────────────────────────────────────────────────────┘
-              ▲                                    │
-              │ HTTP                               ▼
-   ┌──────────┴───────────┐              ┌────────────────────┐
-   │ coordination-api     │              │ ui/index.html      │
-   │ (bin: asml-coord)    │              │ reads journal +    │
-   │ quote, accept,       │              │ learned state +    │
-   │ thesis, capacity     │              │ deployments        │
-   └──────────┬───────────┘              └────────────────────┘
-              │
-   ┌──────────▼─────────────────────┐
-   │ agents/external_agent.py        │
-   │ separate process and language   │
-   └─────────────────────────────────┘
+
+### The money path, and what can stop it
+
+```mermaid
+sequenceDiagram
+    actor U as User
+    participant V as AgentVault
+    participant A as Agent (Rust)
+    participant R as Risk gate
+    participant C as Chain 196
+
+    U->>V: deposit + set MY limit
+    Note over V: limit can only ever tighten
+    A->>C: read order book
+    A->>A: form thesis, score candidates
+    A->>R: submit intent
+    alt within every limit
+        R-->>A: RiskApproved&lt;T&gt;
+        A->>C: execute atomically
+        C-->>U: fee event + journal row
+    else breaches any limit
+        R-->>A: REFUSED with the numbers
+        Note over A,C: nothing reaches the chain
+    end
+    U->>V: withdraw
+    Note over V: works even while the agent is paused
 ```
 
 ## The three design decisions that matter
@@ -318,10 +363,7 @@ docs/verified/   facts established from primary sources, with retrieval dates
 docs/decisions/  ADR-001 to ADR-012
 ```
 
-Two files the build uses internally, `CLAUDE.md` and `RESUME.md`, are deliberately NOT in the
-repository. An earlier version of this section listed them, which was wrong: they are gitignored,
-so a judge reading that line would look for files that are not there. They hold the build's
-working rules and session state, neither of which is a product claim.
+Internal working notes are gitignored and not part of the submission.
 
 ## License
 

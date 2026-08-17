@@ -26,22 +26,22 @@ if [ ! -d "$VENV" ]; then
 fi
 . "$VENV/bin/activate"
 
-if ! command -v halmos >/dev/null 2>&1; then
-  echo "=== installing halmos (local, no cloud key) ==="
+if ! command -v halmos --solver yices >/dev/null 2>&1; then
+  echo "=== installing halmos --solver yices (local, no cloud key) ==="
   pip install --quiet --upgrade pip
-  pip install --quiet halmos 2>&1 | tail -5
+  pip install --quiet halmos --solver yices 2>&1 | tail -5
 fi
 echo "halmos: $(halmos --version 2>&1 | head -1)"
 echo "z3: $(python3 -c 'import z3; print(z3.get_version_string())' 2>&1 | head -1)"
 
 cd "$REPO/contracts"
 echo
-echo "=== forge build (halmos consumes forge artifacts) ==="
+echo "=== forge build (halmos --solver yices consumes forge artifacts) ==="
 forge build 2>&1 | tail -3
 
 echo
 echo "=== proving RiskGuardSymbolic ==="
-timeout 900 halmos --contract RiskGuardSymbolic --solver-timeout-assertion 240000 2>&1 | tee "$EVID/halmos-riskguard.txt" | tail -40
+timeout 900 halmos --solver yices --contract RiskGuardSymbolic --solver-timeout-assertion 240000 2>&1 | tee "$EVID/halmos-riskguard.txt" | tail -40
 
 echo
 echo "=== summary ==="

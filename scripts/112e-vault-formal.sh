@@ -32,7 +32,7 @@ PROVED=0; BROKEN=0; STALLED=0
 for T in $THEOREMS; do
   LOG=$(mktemp)
   START=$(date +%s)
-  timeout 600 halmos --contract VaultFormalTest --function "$T" \
+  timeout 600 halmos --solver yices --contract VaultFormalTest --function "$T" \
     --solver-timeout-assertion 240000 2>&1 | sed -r 's/\x1B\[[0-9;]*[mK]//g' > "$LOG"
   RC=${PIPESTATUS[0]}
   ELAPSED=$(( $(date +%s) - START ))

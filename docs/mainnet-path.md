@@ -1,5 +1,23 @@
 # Mainnet path
 
+> **SUPERSEDED. This is now DONE, not planned.**
+>
+> ASML-X is deployed and running on **X Layer mainnet, chain 196, with real OKB**: agent loop, risk
+> refusal, fee event, user deposit and full withdrawal. Every mainnet claim is re-verified read-only
+> against the chain by `bash scripts/184-mainnet-reverify.sh` `[C-1602]`, and the addresses are in
+> `deployments-mainnet.json`.
+>
+> This document is kept because the plan below is what was actually followed, and because deleting
+> a forward commitment after meeting it hides whether it was met on its own terms. Everything under
+> it was written BEFORE the launch and is left unedited.
+>
+> **What is still testnet-only:** the RWA layer (`RwaVault`, `RwaRiskGuard`) exists on chain 1952
+> and has not been deployed to mainnet. That gap is real and is stated in `docs/limitations.md`.
+
+---
+
+*Original text, written before the mainnet launch, follows unchanged.*
+
 This submission is **testnet only**, deliberately. This document is the forward commitment:
 what changes, what the risk differences are, and the volume roadmap.
 

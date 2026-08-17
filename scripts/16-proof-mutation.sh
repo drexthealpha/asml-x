@@ -26,7 +26,7 @@ if [ -f "$HOME/.asml-venv/bin/activate" ]; then . "$HOME/.asml-venv/bin/activate
 
 export PATH="$HOME/.foundry/bin:$HOME/.local/bin:$PATH"
 command -v forge  >/dev/null || { echo "forge not on PATH, abort";  exit 1; }
-command -v halmos >/dev/null || { echo "halmos not on PATH, abort"; exit 1; }
+command -v halmos --solver yices >/dev/null || { echo "halmos --solver yices not on PATH, abort"; exit 1; }
 
 cd "$REPO/contracts"
 
@@ -42,7 +42,7 @@ strip_ansi() { sed -r 's/\x1b\[[0-9;]*[a-zA-Z]//g'; }
 
 run_halmos() {
   touch "$G"
-  timeout 900 halmos --contract RiskGuardSymbolic --solver-timeout-assertion 240000 \
+  timeout 900 halmos --solver yices --contract RiskGuardSymbolic --solver-timeout-assertion 240000 \
     > "$EVID/raw-$1.txt" 2>&1
   strip_ansi < "$EVID/raw-$1.txt" > "$EVID/clean-$1.txt"
 }

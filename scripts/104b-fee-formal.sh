@@ -42,7 +42,7 @@ for T in $THEOREMS; do
   # halmos colours its verdicts, so the log is stripped of ANSI escapes before anything greps it.
   # Without this the PASS match fails on every line and five proved theorems read as five failures,
   # which is exactly the direction of error that must never be silent.
-  timeout 600 halmos --contract FeeFormalTest --function "$T" \
+  timeout 600 halmos --solver yices --contract FeeFormalTest --function "$T" \
     --solver-timeout-assertion 240000 2>&1 | sed -r 's/\x1B\[[0-9;]*[mK]//g' > "$LOG"
   RC=${PIPESTATUS[0]}
   ELAPSED=$(( $(date +%s) - START ))

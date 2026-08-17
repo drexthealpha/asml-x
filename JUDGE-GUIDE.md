@@ -146,7 +146,7 @@ duplicate claim id that made `[C-710]` ambiguous, and two rows citing scripts th
 `[C-1601]`. It runs an inventory pass *before* any re-execution, because a row citing a missing file
 produces a runner failure indistinguishable from a flaky test.
 
-All **33 fake wins named in TASKS.md** have a claim covering their subtask `[C-1603]`. The register
+All **33 declared fake wins** have a claim covering their subtask `[C-1603]`. The register
 prints each claim's text and deliberately **refuses to score whether the refusal is convincing** — a
 script asserting that thirty traps were avoided, written by the same process that might have fallen
 into them, would be that task's own fake win.

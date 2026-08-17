@@ -10,7 +10,7 @@ set -uo pipefail
 cd "$(dirname "$0")"
 . ./lib.sh
 export PATH="$HOME/.foundry/bin:$HOME/.local/bin:$PATH"
-command -v halmos >/dev/null || { echo "halmos missing"; exit 1; }
+command -v halmos --solver yices >/dev/null || { echo "halmos --solver yices missing"; exit 1; }
 cd "$REPO/contracts"
 
 EVID="$REPO/evidence/formal"
@@ -25,7 +25,7 @@ strip_ansi() { sed -r 's/\x1b\[[0-9;]*[a-zA-Z]//g'; }
 
 run() {
   touch "$G"
-  timeout 900 halmos --contract RwaRiskGuardSymbolic --solver-timeout-assertion 240000 \
+  timeout 900 halmos --solver yices --contract RwaRiskGuardSymbolic --solver-timeout-assertion 240000 \
     > "$EVID/raw-rwa-$1.txt" 2>&1
   strip_ansi < "$EVID/raw-rwa-$1.txt" > "$EVID/clean-rwa-$1.txt"
 }

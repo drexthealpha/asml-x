@@ -30,7 +30,7 @@ RUN_HALMOS="${RUN_HALMOS:-1}"
 {
 echo "Task 8.5, vault mutation gate"
 echo "run: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
-echo "halmos theorems included: $RUN_HALMOS (0 skips them, for a fast unit-only pass)"
+echo "halmos --solver yices theorems included: $RUN_HALMOS (0 skips them, for a fast unit-only pass)"
 echo
 } > "$OUT"
 
@@ -95,7 +95,7 @@ mutate() {
   # false report of vacuity.
   if [ "$RUN_HALMOS" = "1" ]; then
     for TH in $ALL_THEOREMS; do
-      timeout 400 halmos --contract VaultFormalTest --function "$TH" \
+      timeout 400 halmos --solver yices --contract VaultFormalTest --function "$TH" \
         --solver-timeout-assertion 120000 2>&1 | sed -r 's/\x1B\[[0-9;]*[mK]//g' > /tmp/vhal.log
       if ! grep -q "^\[PASS\] $TH" /tmp/vhal.log; then
         BROKEN_THEOREMS="$BROKEN_THEOREMS $TH"

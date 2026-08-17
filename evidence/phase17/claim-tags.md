@@ -9,7 +9,7 @@ Chain holds **126** claim ids.
 | `docs/limitations.md` | 7 distinct tags | 0 | 0 |
 | `docs/COORDINATION-PROTOCOL.md` | 0 distinct tags | 0 | 1 |
 | `docs/invariants.md` | 0 distinct tags | 0 | 8 |
-| `docs/mainnet-path.md` | 0 distinct tags | 0 | 0 |
+| `docs/mainnet-path.md` | 1 distinct tags | 0 | 1 |
 
 ## Why both directions
 
