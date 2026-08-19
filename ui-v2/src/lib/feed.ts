@@ -289,6 +289,7 @@ export const POLL = {
   intel: 30000,
   detail: 60000,
   rwastate: 45000,
+  contracts: 30000,
   activity: 8000,
 } as const;
 
@@ -482,3 +483,22 @@ export interface RwaState {
 }
 
 export const loadRwaState = () => get<RwaState>("rwa-state.json", "rwastate");
+
+/** One deployed contract, with its live state in a person's words. */
+export interface ContractCard {
+  name: string;
+  contract: string;
+  address: string | null;
+  plain: string;
+  facts: { label: string; value: string | null }[];
+  status: { tone: "approved" | "shielded" | "critical"; text: string } | null;
+}
+
+export interface Contracts {
+  chain_id: number;
+  explorer: string;
+  fetched_at_utc: string;
+  contracts: ContractCard[];
+}
+
+export const loadContracts = () => get<Contracts>("contracts.json", "contracts");

@@ -1,0 +1,487 @@
+{
+  "source": "OKX Onchain OS token search plus market and security APIs, signed",
+  "chain_id": 196,
+  "chain_name": "X Layer",
+  "fetched_at_utc": "2026-08-19T08:03:40Z",
+  "issuer": "Backed Finance",
+  "backing": "Each xStock is issued 1:1 against the real share, held with a regulated custodian under Swiss DLT law. The token is a claim on the share, not a token named after it.",
+  "total_found": 18,
+  "tradable_count": 10,
+  "instruments": [
+    {
+      "symbol": "AAPLx",
+      "name": "Apple xStock",
+      "address": "0x9d275685dc284c8eb1c79f6aba7a63dc75ec890a",
+      "price": "310.2734366609473800862473380754388",
+      "index_price": "310.2734366609473800862473380754388",
+      "divergence_bps": "0.00",
+      "liquidity": "303380.1832498872220280033515177766832332190154101043832",
+      "market_cap": "5996248.652069584510255533",
+      "holders": "1031",
+      "change_24h": "1.57",
+      "pools": [
+        {
+          "protocol": "Uniswap",
+          "usd": "302458.96872244827274988423915077618964275568673626"
+        },
+        {
+          "protocol": "Uniswap",
+          "usd": "920.7458725642432991916637322458721344800774184992"
+        },
+        {
+          "protocol": "Uniswap",
+          "usd": "0.207065906284588036043882012101714689290298265934"
+        }
+      ],
+      "honeypot": false,
+      "risk_level": "LOW",
+      "has_price": true,
+      "has_liquidity": true,
+      "liquidity_usd": 303380.1832498872,
+      "tradable": true
+    },
+    {
+      "symbol": "AMZNx",
+      "name": "Amazon.com xStock",
+      "address": "0x3557ba345b01efa20a1bddc61f573bfd87195081",
+      "price": "259.7453675",
+      "index_price": "259.745367500000000000",
+      "divergence_bps": "0.00",
+      "liquidity": "18.959879293872596509230034124406498246922267389643",
+      "market_cap": "6176937.456649690023632122",
+      "holders": "24",
+      "change_24h": "-0.2",
+      "pools": [
+        {
+          "protocol": "Uniswap",
+          "usd": "18.959879293872596509230034124406498246922267389643"
+        }
+      ],
+      "honeypot": false,
+      "risk_level": "LOW",
+      "has_price": true,
+      "has_liquidity": false,
+      "liquidity_usd": 18.959879293872596,
+      "tradable": false
+    },
+    {
+      "symbol": "ELSx",
+      "name": "Equity Lifestyle Properties xStock",
+      "address": "0x164514953adda392e2fa84f2b6dd38060b4e2d23",
+      "price": "80.756805",
+      "index_price": "80.756805000000000000",
+      "divergence_bps": "0.00",
+      "liquidity": "",
+      "market_cap": "7563269.0236478578786629",
+      "holders": "1",
+      "change_24h": "-0.38",
+      "pools": [],
+      "honeypot": false,
+      "risk_level": "MEDIUM",
+      "has_price": true,
+      "has_liquidity": false,
+      "liquidity_usd": 0.0,
+      "tradable": false
+    },
+    {
+      "symbol": "EQRx",
+      "name": "Equity Residential xStock",
+      "address": "0x130032f4475e95b68958994c696992ddaaab65c4",
+      "price": "65.8461325",
+      "index_price": "65.846132500000000000",
+      "divergence_bps": "0.00",
+      "liquidity": "",
+      "market_cap": "5693569.606571552098836675",
+      "holders": "1",
+      "change_24h": "0",
+      "pools": [],
+      "honeypot": false,
+      "risk_level": "MEDIUM",
+      "has_price": true,
+      "has_liquidity": false,
+      "liquidity_usd": 0.0,
+      "tradable": false
+    },
+    {
+      "symbol": "GLDx",
+      "name": "Gold xStock",
+      "address": "0x2380f2673c640fb67e2d6b55b44c62f0e0e69da9",
+      "price": "399.2251725",
+      "index_price": "399.225172500000000000",
+      "divergence_bps": "0.00",
+      "liquidity": "947.001359551633089157109634686488",
+      "market_cap": "5810714.97707590385226885",
+      "holders": "16",
+      "change_24h": "-0.96",
+      "pools": [
+        {
+          "protocol": "Uniswap",
+          "usd": "894.28552926310496931716757719904"
+        },
+        {
+          "protocol": "Uniswap",
+          "usd": "39.885251188108736877109634686488"
+        },
+        {
+          "protocol": "Uniswap",
+          "usd": "12.643985919544307372503254539004"
+        }
+      ],
+      "honeypot": false,
+      "risk_level": "LOW",
+      "has_price": true,
+      "has_liquidity": false,
+      "liquidity_usd": 947.0013595516331,
+      "tradable": false
+    },
+    {
+      "symbol": "GOOGLx",
+      "name": "Alphabet xStock",
+      "address": "0xe92f673ca36c5e2efd2de7628f815f84807e803f",
+      "price": "342.3851425",
+      "index_price": "342.385142500000000000",
+      "divergence_bps": "0.00",
+      "liquidity": "479289.9207430196683237147559380237214189149177299756624",
+      "market_cap": "5568825.843253784120643879",
+      "holders": "680",
+      "change_24h": "0.07",
+      "pools": [
+        {
+          "protocol": "Uniswap",
+          "usd": "397841.9495622171940065635866203578855522638289605"
+        },
+        {
+          "protocol": "Uniswap",
+          "usd": "80936.74201784984206019480707723668183232477216985"
+        },
+        {
+          "protocol": "Caliber",
+          "usd": "548.63487226192358716545813581427152906370780260856"
+        }
+      ],
+      "honeypot": false,
+      "risk_level": "LOW",
+      "has_price": true,
+      "has_liquidity": true,
+      "liquidity_usd": 479289.92074301967,
+      "tradable": true
+    },
+    {
+      "symbol": "GSx",
+      "name": "Goldman Sachs xStock",
+      "address": "0x3ee7e9b3a992fd23cd1c363b0e296856b04ab149",
+      "price": "1040.2506125",
+      "index_price": "1040.250612500000000000",
+      "divergence_bps": "0.00",
+      "liquidity": "",
+      "market_cap": "6034350.939202588110997351",
+      "holders": "12",
+      "change_24h": "-0.45",
+      "pools": [],
+      "honeypot": false,
+      "risk_level": "LOW",
+      "has_price": true,
+      "has_liquidity": false,
+      "liquidity_usd": 0.0,
+      "tradable": false
+    },
+    {
+      "symbol": "IJRx",
+      "name": "S&P Small Cap xStock",
+      "address": "0xaa28cb97d7f7e172f54dee950743886d2d65447d",
+      "price": "147.7957125",
+      "index_price": "147.795712500000000000",
+      "divergence_bps": "0.00",
+      "liquidity": "",
+      "market_cap": "6398226.692300620409608227",
+      "holders": "5",
+      "change_24h": "-0.96",
+      "pools": [],
+      "honeypot": false,
+      "risk_level": "LOW",
+      "has_price": true,
+      "has_liquidity": false,
+      "liquidity_usd": 0.0,
+      "tradable": false
+    },
+    {
+      "symbol": "METAx",
+      "name": "Meta xStock",
+      "address": "0x96702be57cd9777f835117a809c7124fe4ec989a",
+      "price": "543.000585",
+      "index_price": "543.000585000000000000",
+      "divergence_bps": "0.00",
+      "liquidity": "285028.6347930934693013555211030022021935493697021856",
+      "market_cap": "5250982.852450618729499506",
+      "holders": "137",
+      "change_24h": "-3.85",
+      "pools": [
+        {
+          "protocol": "Uniswap",
+          "usd": "266211.96878421055568646778270261979530123263414168"
+        },
+        {
+          "protocol": "Caliber",
+          "usd": "18816.6240290620373747877384003824068923167355605056"
+        },
+        {
+          "protocol": "Uniswap",
+          "usd": "0.0419798208762401044953803039153122844907524060494"
+        }
+      ],
+      "honeypot": false,
+      "risk_level": "LOW",
+      "has_price": true,
+      "has_liquidity": true,
+      "liquidity_usd": 285028.6347930935,
+      "tradable": true
+    },
+    {
+      "symbol": "MSFTx",
+      "name": "Microsoft xStock",
+      "address": "0x5621737f42dae558b81269fcb9e9e70c19aa6b35",
+      "price": "479.2238018359501924016045719795282",
+      "index_price": "479.2238018359501924016045719795282",
+      "divergence_bps": "0.00",
+      "liquidity": "274200.4971157627945107459325771361713968647212824602140",
+      "market_cap": "6759534.059560454862297818",
+      "holders": "160",
+      "change_24h": "0.06",
+      "pools": [
+        {
+          "protocol": "Uniswap",
+          "usd": "273280.283757373132804475838227688001601361356679135"
+        },
+        {
+          "protocol": "Uniswap",
+          "usd": "772.1963524238581490116139463646997839560655323972"
+        },
+        {
+          "protocol": "Caliber",
+          "usd": "39.171721359653051220003851461068267456561242179065"
+        }
+      ],
+      "honeypot": false,
+      "risk_level": "LOW",
+      "has_price": true,
+      "has_liquidity": true,
+      "liquidity_usd": 274200.4971157628,
+      "tradable": true
+    },
+    {
+      "symbol": "NDAQx",
+      "name": "Nasdaq Inc. xStock",
+      "address": "0x378958e63e196e29047db1f9899b1c3b52375cfb",
+      "price": "96.986235",
+      "index_price": "96.986235000000000000",
+      "divergence_bps": "0.00",
+      "liquidity": "",
+      "market_cap": "6569770.36409822244127875",
+      "holders": "1",
+      "change_24h": "0.51",
+      "pools": [],
+      "honeypot": false,
+      "risk_level": "MEDIUM",
+      "has_price": true,
+      "has_liquidity": false,
+      "liquidity_usd": 0.0,
+      "tradable": false
+    },
+    {
+      "symbol": "NVDAx",
+      "name": "NVIDIA xStock",
+      "address": "0xc845b2894dbddd03858fd2d643b4ef725fe0849d",
+      "price": "220.0025891459542634370055652439095",
+      "index_price": "220.0039074760829306947301025344129",
+      "divergence_bps": "-0.06",
+      "liquidity": "518092.506896317961353847251854359957917796326581868910400000",
+      "market_cap": "6122134.864982394617339631",
+      "holders": "2144",
+      "change_24h": "-0.71",
+      "pools": [
+        {
+          "protocol": "Uniswap",
+          "usd": "286883.629185071338611781741448640034350949510184"
+        },
+        {
+          "protocol": "DYOR Swap",
+          "usd": "64425.58134570015901727292727858501130507404419714"
+        },
+        {
+          "protocol": "Caliber",
+          "usd": "33885.578921144446000172839602876907339938496834596"
+        }
+      ],
+      "honeypot": false,
+      "risk_level": "LOW",
+      "has_price": true,
+      "has_liquidity": true,
+      "liquidity_usd": 518092.50689631794,
+      "tradable": true
+    },
+    {
+      "symbol": "Ox",
+      "name": "Realty Income xStock",
+      "address": "0x96306a74f357aa25aa89bb2e6cf90bd860481ada",
+      "price": "62.35013",
+      "index_price": "62.350130000000000000",
+      "divergence_bps": "0.00",
+      "liquidity": "",
+      "market_cap": "6070742.458937146565040646",
+      "holders": "4",
+      "change_24h": "-0.41",
+      "pools": [],
+      "honeypot": false,
+      "risk_level": "LOW",
+      "has_price": true,
+      "has_liquidity": false,
+      "liquidity_usd": 0.0,
+      "tradable": false
+    },
+    {
+      "symbol": "QQQx",
+      "name": "Nasdaq xStock",
+      "address": "0xa753a7395cae905cd615da0b82a53e0560f250af",
+      "price": "718.3650525",
+      "index_price": "718.365052500000000000",
+      "divergence_bps": "0.00",
+      "liquidity": "393966.83212098325095624857175114573120000000000000000000",
+      "market_cap": "5883785.166580128143852986",
+      "holders": "213",
+      "change_24h": "-0.55",
+      "pools": [
+        {
+          "protocol": "Uniswap",
+          "usd": "393706.56229273804505018474874855"
+        },
+        {
+          "protocol": "Uniswap",
+          "usd": "162.920987783210645183224567400544"
+        },
+        {
+          "protocol": "Uniswap",
+          "usd": "67.243843972207358752026681017498"
+        }
+      ],
+      "honeypot": false,
+      "risk_level": "LOW",
+      "has_price": true,
+      "has_liquidity": true,
+      "liquidity_usd": 393966.8321209833,
+      "tradable": true
+    },
+    {
+      "symbol": "TSLAx",
+      "name": "Tesla xStock",
+      "address": "0x8ad3c73f833d3f9a523ab01476625f269aeb7cf0",
+      "price": "336.7240339040537451727505247986235",
+      "index_price": "336.7231853510981089587535990721287",
+      "divergence_bps": "0.03",
+      "liquidity": "720269.901536654806900236699721360674953650247419577028600000",
+      "market_cap": "4799421.026955219921079408",
+      "holders": "417",
+      "change_24h": "-0.03",
+      "pools": [
+        {
+          "protocol": "Uniswap",
+          "usd": "518877.3399744718108928391348608845888733854193795"
+        },
+        {
+          "protocol": "Uniswap",
+          "usd": "201360.83611120902194283676502681065678183749808709"
+        },
+        {
+          "protocol": "Uniswap",
+          "usd": "18.0745721882740303293900183836965510236367543259262"
+        }
+      ],
+      "honeypot": false,
+      "risk_level": "LOW",
+      "has_price": true,
+      "has_liquidity": true,
+      "liquidity_usd": 720269.9015366548,
+      "tradable": true
+    },
+    {
+      "symbol": "wMSFTx",
+      "name": "Wrapped Microsoft xStock",
+      "address": "0x166fbe68274b6a47e025f4ba17388c539f1fa1d0",
+      "price": "481.3100334866330898386472851528709",
+      "index_price": "481.3100334866330898386472851528709",
+      "divergence_bps": "0.00",
+      "liquidity": "274086.5063052678692691775284222843952071685070201450394",
+      "market_cap": "150517.148803369177702328",
+      "holders": "18",
+      "change_24h": "-0.03",
+      "pools": [
+        {
+          "protocol": "Uniswap",
+          "usd": "273259.81092737050002371262271372491335416453992704"
+        },
+        {
+          "protocol": "Uniswap",
+          "usd": "772.1963524238581490116139463646997839560655323972"
+        },
+        {
+          "protocol": "Uniswap",
+          "usd": "34.791129689873021161759502344793255811887423110658"
+        }
+      ],
+      "honeypot": false,
+      "risk_level": "LOW",
+      "has_price": true,
+      "has_liquidity": true,
+      "liquidity_usd": 274086.50630526786,
+      "tradable": true
+    },
+    {
+      "symbol": "xStocks",
+      "name": "xStocks",
+      "address": "0xdec2975ff2f100a6c89132a7a86fbda922af2024",
+      "price": "0.00001191026783940153312460838898072162",
+      "index_price": "0.00001191026783940153312460838898072162",
+      "divergence_bps": "0.00",
+      "liquidity": "9655.135272819384444110210599664756134718928659718",
+      "market_cap": "11216.380747915737674177",
+      "holders": "112",
+      "change_24h": "-2.5",
+      "pools": [
+        {
+          "protocol": "Uniswap",
+          "usd": "9655.135272819384444110210599664756134718928659718"
+        }
+      ],
+      "honeypot": false,
+      "risk_level": "MEDIUM",
+      "has_price": true,
+      "has_liquidity": true,
+      "liquidity_usd": 9655.135272819385,
+      "tradable": true
+    },
+    {
+      "symbol": "xStocks",
+      "name": "xStocks",
+      "address": "0x3d315e59292d6fcdefdf000d7d1a3ce325317777",
+      "price": "0.000003422089042163800646236555546765288",
+      "index_price": "0.000003422089042163800646236555546765288",
+      "divergence_bps": "0.00",
+      "liquidity": "2879.6925834578562633711802465703717542636950690882",
+      "market_cap": "3422.089042163800646236",
+      "holders": "7",
+      "change_24h": "-8.79",
+      "pools": [
+        {
+          "protocol": "Flap",
+          "usd": "2879.6925834578562633711802465703717542636950690882"
+        }
+      ],
+      "honeypot": false,
+      "risk_level": "LOW",
+      "has_price": true,
+      "has_liquidity": true,
+      "liquidity_usd": 2879.6925834578565,
+      "tradable": true
+    }
+  ],
+  "caveat": "Liquidity for tokenized equities on this chain is thin. The agent's size limit comes from measured depth, so a thin market means small trades or none at all."
+}

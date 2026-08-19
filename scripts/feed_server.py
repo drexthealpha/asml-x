@@ -47,6 +47,7 @@ INTERVALS = {
     "intel": 45,
     "detail": 90,
     "rwastate": 60,
+    "contracts": 40,
     "activity": 8,
 }
 
@@ -77,6 +78,7 @@ FEEDS = {
     "intel": ("oos_intel", "intel.json"),
     "detail": ("oos_detail", "detail.json"),
     "rwastate": ("rwa_state", "rwa-state.json"),
+    "contracts": ("contract_state", "contracts.json"),
     "activity": ("agent_activity", "activity.json"),
 }
 

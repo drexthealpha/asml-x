@@ -20,9 +20,10 @@ import { Assets } from "./components/assets";
 import { IntelView } from "./components/intel";
 import { AgentView } from "./components/agent";
 import { Limits } from "./components/limits";
+import { Machine } from "./components/machine";
 import { cn } from "./components/ui";
 
-type Tab = "limits" | "trade" | "agent" | "assets" | "markets" | "intel";
+type Tab = "limits" | "trade" | "agent" | "assets" | "markets" | "intel" | "machine";
 
 /** The reticle from the brand spec: crosshair, ring, core, live pulse. Drawn, not an image. */
 function Emblem({ live }: { live: boolean }) {
@@ -86,6 +87,7 @@ export default function App() {
                 ["assets", "Assets"],
                 ["markets", "Markets"],
                 ["intel", "Insights"],
+                ["machine", "Contracts"],
               ] as const
             ).map(([id, label]) => (
               <button
@@ -128,6 +130,8 @@ export default function App() {
           <AgentView />
         ) : tab === "assets" ? (
           <Assets />
+        ) : tab === "machine" ? (
+          <Machine />
         ) : tab === "intel" ? (
           <IntelView />
         ) : (

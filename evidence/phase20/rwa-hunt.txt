@@ -1,0 +1,80 @@
+=== 1. the aggregator's full token list for chain 196 ===
+  22 tokens listed by the aggregator
+    DAI              Dai Stablecoin              
+    DMCX             Datamall Coin               
+    ETH              Ethereum                    
+    FB               FBPAY                       
+    OKB              X Layer                     
+    PYUSD            PayPal USD                    <-- RWA-sounding
+    QUICK            QuickSwap                   
+    SOL              Solana                      
+    STONE            StakeStone Ether            
+    USDC             USDC                          <-- RWA-sounding
+    USDC_Bridged     USD Coin                      <-- RWA-sounding
+    USDG             Global Dollar                 <-- RWA-sounding
+    USDT             USD₮0                         <-- RWA-sounding
+    USDT_Bridged     Tether USD                    <-- RWA-sounding
+    USDe             USDe                          <-- RWA-sounding
+    WBTC             Wrapped BTC                 
+    WOKB             Wrapped OKB                 
+    crvUSD           Curve.Fi USD Stablecoin       <-- RWA-sounding
+    sUSDe            Staked USDe                   <-- RWA-sounding
+    xBETH            OKX Wrapped Staked ETH      
+    xBTC             OKX Wrapped BTC             
+    xOKSOL           OKX Wrapped Staked SOL      
+
+=== 2. token SEARCH, the surface never checked ===
+  gold           2 on chain 196
+      GLDx           Gold xStock                    0x2380f2673c640fb67e2d6b55b44c62f0e0e69da9
+      GSx            Goldman Sachs xStock           0x3ee7e9b3a992fd23cd1c363b0e296856b04ab149
+  XAU            no results
+  PAXG           no results
+  XAUT           no results
+  silver         no results
+  XAG            no results
+  oil            no results
+  treasury       no results
+  bond           no results
+  stock          2 on chain 196
+      xStocks        xStocks                        0xdec2975ff2f100a6c89132a7a86fbda922af2024
+      xStocks        xStocks                        0x3d315e59292d6fcdefdf000d7d1a3ce325317777
+  equity         2 on chain 196
+      EQRx           Equity Residential xStock      0x130032f4475e95b68958994c696992ddaaab65c4
+      ELSx           Equity Lifestyle Properties xStock 0x164514953adda392e2fa84f2b6dd38060b4e2d23
+  nasdaq         2 on chain 196
+      QQQx           Nasdaq xStock                  0xa753a7395cae905cd615da0b82a53e0560f250af
+      NDAQx          Nasdaq Inc. xStock             0x378958e63e196e29047db1f9899b1c3b52375cfb
+  SPX            3 on chain 196
+      BSPx           Bending Spoons xStock          0x7796f4e23a62ef3653829c21032a9e24beaf4cf5
+      USPXx          Franklin U.S. Equity Index xStock 0x368192fec58e3150600a1409c631c77f45745bec
+      CRESPx         China Resources Power xStock   0x5c697e3cfd5a97a194a9a32f73ffc850cc86c02f
+  tesla          1 on chain 196
+      TSLAx          Tesla xStock                   0x8ad3c73f833d3f9a523ab01476625f269aeb7cf0
+  apple          1 on chain 196
+      AAPLx          Apple xStock                   0x9d275685dc284c8eb1c79f6aba7a63dc75ec890a
+  RWA            no results
+  real           1 on chain 196
+      Ox             Realty Income xStock           0x96306a74f357aa25aa89bb2e6cf90bd860481ada
+  estate         no results
+
+=== 3. hot tokens on this chain, in case an RWA is trending but unlisted ===
+    XIAOx                                        
+    XDOG                                         
+    牛来                                           
+    RTX                                          
+    DOGSHIT                                      
+    XFist                                        
+    OKOX                                         
+    牛来                                           
+    OEOE                                         
+    NIUMA                                        
+    XLIFE                                        
+    PANGJU                                       
+    GPU                                          
+    欧易人生                                         
+    SEED                                         
+    TCENTx                                       
+    欧易牛来                                         
+    banmao                                       
+    STARMAN                                      
+    MAS                                          

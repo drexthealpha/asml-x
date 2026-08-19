@@ -1,0 +1,122 @@
+{
+  "source": "eth_call against the deployed contracts on X Layer mainnet",
+  "chain_id": 196,
+  "explorer": "https://www.oklink.com/x-layer/evm/address/",
+  "fetched_at_utc": "2026-08-19T07:46:47Z",
+  "contracts": [
+    {
+      "name": "Safety limits",
+      "contract": "RiskGuard",
+      "address": "0x9D22e538a72a5d2c9A28D08c27999216A78343C9",
+      "plain": "The ceiling every trade is checked against, held on chain rather than in the app.",
+      "facts": [
+        {
+          "label": "Most it may hold at once",
+          "value": "1000"
+        },
+        {
+          "label": "Holding right now",
+          "value": "14.9625"
+        },
+        {
+          "label": "Share of the ceiling in use",
+          "value": "1.49%"
+        }
+      ],
+      "status": {
+        "tone": "approved",
+        "text": "running normally"
+      }
+    },
+    {
+      "name": "Your deposits",
+      "contract": "AgentVault",
+      "address": "0xE64b6e937Fd0d855161A5F6F0Aa1A3E01CB54c24",
+      "plain": "Where your money sits. Withdrawal works even when the agent is paused.",
+      "facts": [
+        {
+          "label": "Total deposited",
+          "value": "0"
+        },
+        {
+          "label": "Committed to open trades",
+          "value": "0"
+        }
+      ],
+      "status": {
+        "tone": "approved",
+        "text": "fully backed"
+      }
+    },
+    {
+      "name": "Where orders execute",
+      "contract": "OrderBookVenue",
+      "address": "0x7065781018E015779d42bcC3eEA7429F8e479a3F",
+      "plain": "Settlement for the agent's own book. Real trades route through OKX pools instead.",
+      "facts": [
+        {
+          "label": "Orders ever placed",
+          "value": "12"
+        },
+        {
+          "label": "Operated by",
+          "value": "0x\u2026a5de46"
+        }
+      ],
+      "status": null
+    },
+    {
+      "name": "What it costs you",
+      "contract": "FeeCollector",
+      "address": "0x7ff884C412a1A2c416e931C59889e5335C5EFa0D",
+      "plain": "Charged only on a trade that executes. Never on a deposit, never on a withdrawal.",
+      "facts": [
+        {
+          "label": "Fee per trade",
+          "value": "0.5%"
+        },
+        {
+          "label": "Times charged",
+          "value": "9"
+        },
+        {
+          "label": "Paid to",
+          "value": "0x\u2026ee0196"
+        }
+      ],
+      "status": {
+        "tone": "approved",
+        "text": "capped at 1% by the contract"
+      }
+    },
+    {
+      "name": "Submits approved trades",
+      "contract": "BatchExecutor",
+      "address": "0x7092050F3C4e72A2df8610ae2CC8c39DcA3B7f52",
+      "plain": "The only path from a decision to the chain, and it accepts approved actions only.",
+      "facts": [
+        {
+          "label": "Operated by",
+          "value": "0x\u2026a5de46"
+        }
+      ],
+      "status": null
+    },
+    {
+      "name": "Real-world asset rules",
+      "contract": "RwaRiskGuard",
+      "address": "0x5311C01f6BcFFd78F0C42EC88cce4eba658CD4Ed",
+      "plain": "A second set of refusals that only mean anything for an asset backed by something real.",
+      "facts": [
+        {
+          "label": "Paired vault",
+          "value": "0x\u2026Eede2b"
+        }
+      ],
+      "status": {
+        "tone": "approved",
+        "text": "see Your limits for the live values"
+      }
+    }
+  ]
+}

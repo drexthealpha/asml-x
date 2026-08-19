@@ -1,0 +1,25 @@
+=== RiskGuard  0x9D22e538a72a5d2c9A28D08c27999216A78343C9
+  maxGross()(uint256)    0xfb89278c   1000000000000000000000 [1e21]
+  gross()(uint256)       0x850f8017   14962500000000000000 [1.496e19]
+  killed()(bool)         0x1f3a0e41   false
+  owner()(address)       0x8da5cb5b   0x7BdD2d0D1728Df5bEF8FAae8de85c3dD21a5dE46
+  agent()(address)       0xf5ff5c76   revert
+
+=== OrderBookVenue  0x7065781018E015779d42bcC3eEA7429F8e479a3F
+  orderCount()(uint256)  0x2453ffa8   12
+  venueOwner()(address)  0x71ecd9f3   0x7BdD2d0D1728Df5bEF8FAae8de85c3dD21a5dE46
+
+=== BatchExecutor  0x7092050F3C4e72A2df8610ae2CC8c39DcA3B7f52
+  owner()(address)       0x8da5cb5b   0x7BdD2d0D1728Df5bEF8FAae8de85c3dD21a5dE46
+  agent()(address)       0xf5ff5c76   revert
+
+=== FeeCollector  0x7ff884C412a1A2c416e931C59889e5335C5EFa0D
+  feeBps()(uint16)       0x24a9d853   50
+  chargeCount()(uint256) 0x134e0cdd   9
+  treasury()(address)    0x61d027b3   0x000000000000000000000000000000000fee0196
+
+=== AgentVault  0xE64b6e937Fd0d855161A5F6F0Aa1A3E01CB54c24
+  totalDeposits()(uint256) 0x7d882097   0
+  totalCommitted()(uint256) 0x1d3231d4   0
+  isSolvent()(bool)      0x5ce23950   true
+  paused()(bool)         0x5c975abb   revert
