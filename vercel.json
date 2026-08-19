@@ -1,22 +1,16 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-
-  "//": "Repo root is the Vercel project root, so GitHub integration needs no settings change. The Vite app lives in ui-v2 and the serverless functions in /api, which is where Vercel looks for them by default.",
-
   "buildCommand": "cd ui-v2 && pnpm install --frozen-lockfile && pnpm build",
   "outputDirectory": "ui-v2/dist",
   "installCommand": "npm install -g pnpm@10.34.5",
   "framework": null,
   "github": { "silent": true },
-
   "rewrites": [
     {
-      "//": "EXCLUDE /api. A bare /(.*) catch-all routes every request to index.html, including the signed feed functions, so each one would return the HTML shell and the app would show no prices and no error. The negative lookahead keeps SPA routing while leaving /api alone.",
       "source": "/((?!api/).*)",
       "destination": "/index.html"
     }
   ],
-
   "headers": [
     {
       "source": "/(.*)",
@@ -27,7 +21,6 @@
       ]
     },
     {
-      "//": "Never cache a price or a limit. A cached feed is a stale number presented as current.",
       "source": "/api/(.*)",
       "headers": [{ "key": "Cache-Control", "value": "no-store, max-age=0" }]
     },
