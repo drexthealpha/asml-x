@@ -103,6 +103,58 @@ fn load_deployments(repo_root: &str) -> Result<Deployments, Box<dyn std::error::
 /// Deliberately sourced from the chain rather than from local bookkeeping. Local
 /// state that drifts from the chain is how an agent convinces itself it is flat
 /// while holding a position.
+/// The spendable quote balance, read from the token contract that actually holds it.
+///
+/// WHICH ADDRESS AND WHICH TOKEN both come from configuration rather than from literals:
+/// `ASML_SPEND_TOKEN` and `ASML_SPEND_HOLDER`. Under router execution these are the real USDT
+/// contract and the RouterExecutor; under the original venue path they are unset and the caller's
+/// own accounting still applies.
+///
+/// DECIMALS ARE READ, NOT ASSUMED. USDT is 6 decimals on X Layer, WOKB is 18, WBTC is 8. Dividing
+/// by a fixed 1e12 to reach micro units would have understated a USDT balance by a factor of a
+/// million and made the agent believe it was broke.
+/// The market label for this run, from the pair actually being traded.
+///
+/// `tBASE/tQUOTE` was written as a literal in eleven places, which was accurate while the agent
+/// traded two ERC20s this project minted. Under router execution it is the pair from the measured
+/// depth ladder, so the journal, the decision surface and the coordination API all name the market
+/// the trades really landed in rather than one that no longer exists on this path.
+fn market_label(depth: Option<&market_intel::external::RealDepth>, use_real: bool) -> String {
+    match (use_real, depth) {
+        (true, Some(d)) if !d.pair.is_empty() => d.pair.clone(),
+        _ => "tBASE/tQUOTE".to_string(),
+    }
+}
+
+fn read_free_margin(
+    client: &chain_client::ChainClient,
+    _chain_time_ms: u64,
+) -> Result<i128, Box<dyn std::error::Error>> {
+    let (Ok(token), Ok(holder)) = (
+        std::env::var("ASML_SPEND_TOKEN"),
+        std::env::var("ASML_SPEND_HOLDER"),
+    ) else {
+        // Not configured: the venue path, whose quote token is one this project minted. Unchanged
+        // so every Phase 7 to 10 artifact keeps reproducing.
+        return Ok(1_000 * MICRO);
+    };
+
+    let token = chain_client::parse_address(&token)?;
+    let holder = chain_client::parse_address(&holder)?;
+
+    let raw = client.call_u128(token, "balanceOf(address)", &[chain_client::word_from_address(holder)])?;
+    let decimals = u32::try_from(client.call_u128(token, "decimals()", &[])?)?;
+
+    // Integer conversion to micro units, in whichever direction the token's scale requires.
+    let raw = i128::try_from(raw)?;
+    let micro = if decimals >= 6 {
+        raw / 10_i128.pow(decimals - 6)
+    } else {
+        raw * 10_i128.pow(6 - decimals)
+    };
+    Ok(micro)
+}
+
 fn read_portfolio(
     client: &chain_client::ChainClient,
     d: &Deployments,
@@ -132,11 +184,22 @@ fn read_portfolio(
         vec![]
     };
 
+    // FREE MARGIN IS READ FROM THE CHAIN. This was the literal `1_000 * MICRO` with a comment
+    // promising a later pass, and the promise was never kept. It was harmless while execution went
+    // to a venue this project had seeded with its own tokens, because the balance was whatever we
+    // had minted. Real execution made it a defect immediately: the agent believed it had 1,000
+    // spendable units, sized its orders against that, and every swap reverted because the executor
+    // actually held 0.198978 USDT. An agent that cannot see its own balance is not risk-managed,
+    // it is lucky.
+    //
+    // A FAILED READ IS NOT ZERO AND IS NOT A THOUSAND. If the balance cannot be read the function
+    // returns an error rather than a default: sizing against an invented balance is exactly the
+    // failure this replaced.
+    let free_margin_micro = read_free_margin(client, chain_time_ms)?;
+
     Ok(Portfolio {
         positions,
-        // Free margin is the executor's spendable quote. Read as a token balance in
-        // a later pass; for now the conservative testnet limits bind first.
-        free_margin_micro: 1_000 * MICRO,
+        free_margin_micro,
         realized_pnl_today_micro: 0,
         consecutive_losses: 0,
     })
@@ -217,7 +280,7 @@ fn settle_accepted(
     }
 
     let mut jrnl = Journal::open(format!("{repo_root}/evidence/journal.jsonl"))?;
-    let risk = RiskEngine::new(Limits::conservative_testnet());
+    let risk = RiskEngine::new(Limits::conservative());
     let mut intel = MarketIntel::new(32);
     let snap = read_snapshot(client, d.venue)?;
     let now_ms = snap.chain_time_ms;
@@ -381,6 +444,50 @@ fn settle_accepted(
 ///
 /// The guard leg comes first because the contract enforces it, so a cap breach or a
 /// halt reverts the whole batch before any token moves.
+/// Submit an approved decision as a REAL swap across X Layer pools.
+///
+/// The sibling of `submit_take`. Same contract: shell out to a shim, `cast` signs (ADR-008), parse
+/// `TX=` off stdout. The difference is where the trade lands: `submit_take` hits the order book
+/// this project deployed, this hits the pools the rest of the chain trades in.
+///
+/// SYMBOLS, NOT ADDRESSES, and not a raw amount either. The shim resolves both from the chain's
+/// own token list and sizes the amount with the decimals the token contract declares. Passing an
+/// address or a pre-scaled integer from here would reintroduce exactly the hardcoding that made
+/// the old feeds wrong: USDT is 6 decimals on this chain, WBTC is 8, SOL is 9.
+fn submit_swap(
+    repo_root: &str,
+    from_symbol: &str,
+    to_symbol: &str,
+    amount_micro: i128,
+    decision_id: u64,
+) -> Result<String, String> {
+    // Micro units to a decimal STRING, by integer arithmetic. No float ever touches an amount of
+    // money in this codebase, and the workspace denies floating point in the risk path anyway.
+    let whole = amount_micro / MICRO;
+    let frac = (amount_micro % MICRO).abs();
+    let amount = format!("{whole}.{frac:06}");
+
+    let out = Command::new("bash")
+        .arg(format!("{repo_root}/scripts/submit-swap.sh"))
+        .arg(from_symbol)
+        .arg(to_symbol)
+        .arg(&amount)
+        .arg(decision_id.to_string())
+        .output()
+        .map_err(|e| format!("cannot run submit-swap.sh: {e}"))?;
+
+    let stdout = String::from_utf8_lossy(&out.stdout).to_string();
+    let stderr = String::from_utf8_lossy(&out.stderr).to_string();
+    if !out.status.success() {
+        return Err(format!("swap failed: {stdout} {stderr}"));
+    }
+    stdout
+        .lines()
+        .find_map(|l| l.strip_prefix("TX="))
+        .map(str::to_string)
+        .ok_or_else(|| format!("no TX= in swap output: {stdout} {stderr}"))
+}
+
 fn submit_take(
     repo_root: &str,
     order_id: u64,
@@ -789,15 +896,30 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let d = load_deployments(&repo_root)?;
     let mut jrnl = Journal::open(format!("{repo_root}/evidence/journal.jsonl"))?;
-    let risk = RiskEngine::new(Limits::conservative_testnet());
+    let risk = RiskEngine::new(Limits::conservative());
+
+    // THE MARKET IS NAMED ONCE, FROM WHAT IS ACTUALLY TRADED. Resolved here, before the engine is
+    // constructed, because the engine carries the market id for its whole life. Under router
+    // execution this reads WOKB/USDT off the measured ladder; otherwise it stays tBASE/tQUOTE, so
+    // every existing artifact keeps reproducing.
+    let use_real_market = std::env::var("ASML_EXECUTION")
+        .map(|v| v == "router")
+        .unwrap_or(false);
+    let market_name = market_label(
+        market_intel::external::load_depth(&market_intel::external::default_depth_path(&repo_root))
+            .as_ref(),
+        use_real_market,
+    );
+    println!("market: {market_name}");
+
     let engine = DecisionEngine::new(
-        MarketId::new("tBASE/tQUOTE"),
+        MarketId::new(&market_name),
         InstrumentKind::Spot,
         Params::default(),
     );
     let baseline = NaiveBaseline {
         fixed_base_amount: 2 * MICRO,
-        market: MarketId::new("tBASE/tQUOTE"),
+        market: MarketId::new(&market_name),
         kind: InstrumentKind::Spot,
     };
     let mut intel = MarketIntel::new(64);
@@ -869,8 +991,91 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
         let mut sp_sig = tracer.span("perceive.signals", Some(&root));
         let now_ms = snap.chain_time_ms;
-        let signals = intel.observe(&snap, now_ms);
+        // REAL MARKET VOLATILITY, from the live OKX OKB-USDT candle series, replaces volatility
+        // measured on our own seeded book. The venue is ours and is labelled a stand-in, so its
+        // price moves are our own posts; calibrating the variance penalty on that is measuring
+        // ourselves. Execution is unchanged. If the feed is missing the venue measurement stands,
+        // because a volatility of zero would make every candidate look safe.
+        let external =
+            market_intel::external::load(&market_intel::external::default_path(&repo_root));
+
+        // REAL DEPTH, measured on real X Layer pools, replaces the seeded book's idea of what size
+        // costs. `scripts/okx_depth.py` quotes WOKB/USDT through the OKX Onchain OS aggregator at
+        // a ladder of sizes; the price differences between rungs ARE the depth curve, because a
+        // larger order walks further into real liquidity. That measurement found the pair is thin
+        // above roughly 100 WOKB, which is a property of the chain and not of anything this
+        // project posted.
+        //
+        // ORDER MATTERS. Depth is applied first because it sets mid and spread from the real
+        // ladder; volatility is applied second because it is measured on a different real series
+        // (the OKB-USDT candles) and must not be overwritten by the ladder's sample count.
+        let depth = market_intel::external::load_depth(
+            &market_intel::external::default_depth_path(&repo_root),
+        );
+        // ONE SWITCH, READ ONCE. Perception and execution must agree about which market this is:
+        // deciding against a seeded book and executing on real pools is the incoherence this
+        // whole change removes, so both read the same flag rather than two that could drift.
+        let use_real_book = std::env::var("ASML_EXECUTION")
+            .map(|v| v == "router")
+            .unwrap_or(false);
+
+        // THE BOOK THE AGENT REASONS OVER. Under router execution the seeded venue book is
+        // replaced entirely by one derived from the measured depth ladder. Keeping the seeded book
+        // while executing on real pools was the last incoherence in the system: the agent looked
+        // at a crossed book nobody trades, correctly refused everything, and held every cycle.
+        //
+        // Falls back to the venue book when there is no ladder, rather than trading on nothing.
+        let book: Vec<market_intel::OrderView> = if use_real_book {
+            match depth.as_ref().map(market_intel::external::depth_as_book) {
+                Some(b) if !b.is_empty() => b,
+                _ => snap.orders.clone(),
+            }
+        } else {
+            snap.orders.clone()
+        };
+
+        // SIGNALS ARE MEASURED ON THE BOOK THE AGENT ACTUALLY USES. The first version derived the
+        // book but still called `observe` on the raw venue snapshot, so candidates came from real
+        // depth while the THESIS still announced "BOOK IS CROSSED: best bid 1.90 is at or above
+        // best ask 1.70". Spread, imbalance and depth were all describing a market the agent was
+        // no longer trading, which is a subtler version of exactly the bug being fixed.
+        let observed = market_intel::VenueSnapshot {
+            orders: book.clone(),
+            ..snap.clone()
+        };
+        let signals = market_intel::external::with_real_volatility(
+            market_intel::external::with_real_depth(intel.observe(&observed, now_ms), depth.as_ref()),
+            external.as_ref(),
+        );
+        sp_sig.attr("book_source", if use_real_book { "okx_depth_ladder" } else { "venue" });
+        sp_sig.attr("book_orders", book.len() as i64);
         sp_sig.attr("mid_present", signals.mid.is_some());
+        sp_sig.attr(
+            "vol_source",
+            if external.as_ref().is_some_and(|e| e.vol_samples >= 3) {
+                "okx_live"
+            } else {
+                "venue_local"
+            },
+        );
+        // Recorded per decision so the journal says, for every single one, whether the size limit
+        // it reasoned about came from measured pools or from our own book. A claim about real data
+        // that is not attributable per decision is not a claim, it is a slogan.
+        sp_sig.attr(
+            "depth_source",
+            if depth.is_some() {
+                "okx_onchain_os_aggregator"
+            } else {
+                "venue_local"
+            },
+        );
+        if let Some(d) = depth.as_ref() {
+            sp_sig.attr("depth_pair", d.pair.clone());
+            sp_sig.attr("depth_venues", d.venues().join(", "));
+            if let Some(m) = d.max_safe_size() {
+                sp_sig.attr("max_safe_size_base", m);
+            }
+        }
         tracer.end(sp_sig);
 
         let mut sp_thesis = tracer.span("decide.thesis", Some(&root));
@@ -910,7 +1115,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 decision_id,
                 observed_at_ms: now_ms,
                 block_number: snap.block_number,
-                market: "tBASE/tQUOTE".into(),
+                market: market_name.clone(),
                 thesis: "naive baseline, no signals consulted".into(),
                 thesis_confidence_bps: 0,
                 signals: signal_records(&signals),
@@ -933,7 +1138,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             continue;
         }
 
-        let decision = engine.decide(&signals, &snap.orders, &portfolio, &risk, &ctx, decision_id);
+        let decision = engine.decide(&signals, &book, &portfolio, &risk, &ctx, decision_id);
 
         // Hard guard: a cycle that evaluated one candidate is a defect, not a
         // decision. Refuse to journal it as if it were reasoning.
@@ -963,21 +1168,65 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     order_id,
                     base_amount,
                     price_quote,
+
+                    side,
                     ..
                 } = &chosen.action
                 {
                     // Back to 18 decimals at the boundary. The whole runtime works in
                     // micro-units; only this call site speaks the chain's scale.
                     let notional_micro = (base_amount * price_quote) / MICRO;
-                    match submit_take(
-                        &repo_root,
-                        *order_id,
-                        market_intel::micro_to_wei(*base_amount),
-                        market_intel::micro_to_wei(notional_micro),
-                        decision_id,
-                    ) {
+
+                    // TWO EXECUTION VENUES, and which one is used is a deployment fact rather than
+                    // a code branch anyone can flip by accident.
+                    //
+                    // `ASML_EXECUTION=router` sends the approved decision through
+                    // RouterExecutor, which swaps across REAL X Layer pools via the OKX Onchain OS
+                    // aggregator. Anything else keeps the original path: this project's own
+                    // order book, which is what every Phase 7 to 10 evidence artifact was measured
+                    // against and which must keep reproducing.
+                    //
+                    // THE RISK GATE IS UPSTREAM OF BOTH. Control only reaches here inside
+                    // `if let Some(approved) = &decision.approved`, so neither venue can be
+                    // reached by an action the engine did not approve. Adding a venue does not add
+                    // a way around the gate, which is the property that made this split safe.
+                    let use_router = use_real_book;
+
+                    let submitted = if use_router {
+                        // DIRECTION FOLLOWS THE DECISION'S OWN SIDE. Hardcoding USDT -> WOKB
+                        // would have made every sell execute as a buy: a swap has no sign, so the
+                        // side has to become the ORDER of the two tokens or it is silently lost.
+                        // The vault accounts in USDT, so a buy spends USDT and a sell returns it.
+                        //
+                        // Symbols, not addresses. The shim resolves both from the chain's own
+                        // token list and sizes the amount from declared decimals, so no address
+                        // and no exponent is typed anywhere on this path.
+                        //
+                        // NOTE the amount asymmetry, which is not a slip: `base_amount` is
+                        // denominated in the BASE asset, so it is the correct input amount when
+                        // selling base and the wrong one when buying. A buy therefore spends the
+                        // quote notional instead.
+                        let (from_sym, to_sym, amount_micro) = match side {
+                            core_types::Side::Buy => ("USDT", "WOKB", notional_micro),
+                            core_types::Side::Sell => ("WOKB", "USDT", *base_amount),
+                        };
+                        submit_swap(&repo_root, from_sym, to_sym, amount_micro, decision_id)
+                    } else {
+                        submit_take(
+                            &repo_root,
+                            *order_id,
+                            market_intel::micro_to_wei(*base_amount),
+                            market_intel::micro_to_wei(notional_micro),
+                            decision_id,
+                        )
+                    };
+
+                    match submitted {
                         Ok(tx) => {
-                            println!("  submitted: {tx}");
+                            println!(
+                                "  submitted via {}: {tx}",
+                                if use_router { "real pools" } else { "own venue" }
+                            );
                             tx_hash = Some(tx);
                             actions_this_run += 1;
                         }
@@ -991,7 +1240,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             decision_id,
             observed_at_ms: now_ms,
             block_number: snap.block_number,
-            market: "tBASE/tQUOTE".into(),
+            market: market_name.clone(),
             thesis,
             thesis_confidence_bps: confidence,
             signals: signal_records(&signals),

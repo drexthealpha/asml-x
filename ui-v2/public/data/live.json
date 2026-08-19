@@ -1,0 +1,11 @@
+{
+  "source": "OKX Onchain OS DEX WebSocket",
+  "endpoint": "wss://wsdex.okx.com/ws/v6/dex",
+  "chain_id": 196,
+  "token": "WOKB",
+  "latest_price": null,
+  "trades": [],
+  "candles": [],
+  "subscribed": [],
+  "fetched_at_utc": "2026-08-18T22:27:19Z"
+}

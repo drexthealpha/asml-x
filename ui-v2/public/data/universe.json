@@ -1,0 +1,277 @@
+{
+  "source": "OKX Onchain OS, signed",
+  "chain_id": 196,
+  "chain_name": "X Layer",
+  "quote_symbol": "USDT",
+  "fetched_at_utc": "2026-08-19T05:20:18Z",
+  "token_count": 22,
+  "tradable_count": 16,
+  "tokens": [
+    {
+      "symbol": "DAI",
+      "name": "Dai Stablecoin",
+      "address": "0xc5015b9d9161dca7e18e32f6f25c4ad850731fd4",
+      "decimals": 18,
+      "price": "1.000077403654402455155245482439531",
+      "routable": true,
+      "venues": [
+        "DackieSwap V2",
+        "OkieStableSwap",
+        "LFGSwap",
+        "Uniswap V3"
+      ],
+      "note": null
+    },
+    {
+      "symbol": "DMCX",
+      "name": "Datamall Coin",
+      "address": "0x848e56ad13b728a668af89459851efd8a89c9f58",
+      "decimals": 18,
+      "price": "0.002576743683591279",
+      "routable": true,
+      "venues": [
+        "PotatoSwap",
+        "LFGSwap",
+        "Revoswap V2",
+        "OkieStableSwap"
+      ],
+      "note": null
+    },
+    {
+      "symbol": "ETH",
+      "name": "Ethereum",
+      "address": "0xe7b000003a45145decf8a28fc755ad5ec5ea025a",
+      "decimals": 18,
+      "price": "1912.405400419852057432736216926765",
+      "routable": true,
+      "venues": [
+        "ElfomoFi"
+      ],
+      "note": null
+    },
+    {
+      "symbol": "FB",
+      "name": "FBPAY",
+      "address": "0x770f030fdbf63ebf1c939de8bcff8943c2c2d454",
+      "decimals": 18,
+      "price": "0.385306758503768912",
+      "routable": true,
+      "venues": [
+        "iZUMi",
+        "PotatoSwap",
+        "Uniswap V4"
+      ],
+      "note": null
+    },
+    {
+      "symbol": "OKB",
+      "name": "X Layer",
+      "address": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+      "decimals": 18,
+      "price": "101.5630982378036388410688396710096",
+      "routable": true,
+      "venues": [
+        "Uniswap V3"
+      ],
+      "note": null
+    },
+    {
+      "symbol": "PYUSD",
+      "name": "PayPal USD",
+      "address": "0x87b4a8176b3df6b71e26cc095edcaf4db07506b4",
+      "decimals": 6,
+      "price": null,
+      "routable": false,
+      "venues": [],
+      "note": "Insufficient liquidity"
+    },
+    {
+      "symbol": "QUICK",
+      "name": "QuickSwap",
+      "address": "0x68286607a1d43602d880d349187c3c48c0fd05e6",
+      "decimals": 18,
+      "price": "0.01652064963865398016833394965246043",
+      "routable": true,
+      "venues": [
+        "QuickSwap V3",
+        "Revoswap V2",
+        "OkieStableSwap"
+      ],
+      "note": null
+    },
+    {
+      "symbol": "SOL",
+      "name": "Solana",
+      "address": "0x505000008de8748dbd4422ff4687a4fc9beba15b",
+      "decimals": 9,
+      "price": "76.95791514464693541293482894344371",
+      "routable": true,
+      "venues": [
+        "Uniswap V3"
+      ],
+      "note": null
+    },
+    {
+      "symbol": "STONE",
+      "name": "StakeStone Ether",
+      "address": "0x80137510979822322193fc997d400d5a6c747bf7",
+      "decimals": 18,
+      "price": null,
+      "routable": false,
+      "venues": [],
+      "note": "Insufficient liquidity"
+    },
+    {
+      "symbol": "USDC",
+      "name": "USDC",
+      "address": "0xb6ceceab302e2e4948951ee7843fc24e92933061",
+      "decimals": 6,
+      "price": "0.9999965694143773448049014375341714",
+      "routable": true,
+      "venues": [
+        "Uniswap V3",
+        "Uniswap V4"
+      ],
+      "note": null
+    },
+    {
+      "symbol": "USDC_Bridged",
+      "name": "USD Coin",
+      "address": "0x74b7f16337b8972027f6196a17a631ac6de26d22",
+      "decimals": 6,
+      "price": "0.9955311870737451814772570174052011",
+      "routable": true,
+      "venues": [
+        "OkieStableSwap"
+      ],
+      "note": null
+    },
+    {
+      "symbol": "USDG",
+      "name": "Global Dollar",
+      "address": "0x4ae46a509f6b1d9056937ba4500cb143933d2dc8",
+      "decimals": 6,
+      "price": "1.000002464800384508339187894673915",
+      "routable": true,
+      "venues": [
+        "Uniswap V4"
+      ],
+      "note": null
+    },
+    {
+      "symbol": "USDT",
+      "name": "USD\u20ae0",
+      "address": "0x779ded0c9e1022225f8e0630b35a9b54be713736",
+      "decimals": 6,
+      "price": "0.9993533394779030089498110733868785",
+      "routable": true,
+      "venues": [],
+      "note": "this is the quote asset"
+    },
+    {
+      "symbol": "USDT_Bridged",
+      "name": "Tether USD",
+      "address": "0x1e4a5963abfd975d8c9021ce480b42188849d41d",
+      "decimals": 6,
+      "price": "0.9949049578679208308837938467568097",
+      "routable": true,
+      "venues": [
+        "OkieStableSwap"
+      ],
+      "note": null
+    },
+    {
+      "symbol": "USDe",
+      "name": "USDe",
+      "address": "0x5d3a1ff2b6bab83b63cd9ad0787074081a52ef34",
+      "decimals": 18,
+      "price": "26.56770110709199157195337456194515",
+      "routable": false,
+      "venues": [],
+      "note": "The value difference from this transaction`s quote route is higher than 90%, which may lead to a risk of loss to user assets."
+    },
+    {
+      "symbol": "WBTC",
+      "name": "Wrapped BTC",
+      "address": "0xea034fb02eb1808c2cc3adbc15f447b93cbe08e1",
+      "decimals": 8,
+      "price": "64579.67386363636363636363636363636",
+      "routable": false,
+      "venues": [],
+      "note": "The value difference from this transaction`s quote route is higher than 90%, which may lead to a risk of loss to user assets."
+    },
+    {
+      "symbol": "WOKB",
+      "name": "Wrapped OKB",
+      "address": "0xe538905cf8410324e03a5a23c1c177a474d59b2b",
+      "decimals": 18,
+      "price": "101.9805101604444444444444444444444",
+      "routable": true,
+      "venues": [
+        "Uniswap V3"
+      ],
+      "note": null
+    },
+    {
+      "symbol": "crvUSD",
+      "name": "Curve.Fi USD Stablecoin",
+      "address": "0xda8f4eb4503acf5dec5420523637bb5b33a846f6",
+      "decimals": 18,
+      "price": null,
+      "routable": false,
+      "venues": [],
+      "note": "Input value is too low. Please check the token decimals or token value."
+    },
+    {
+      "symbol": "sUSDe",
+      "name": "Staked USDe",
+      "address": "0x211cc4dd073734da055fbf44a2b4667d5e5fe5d2",
+      "decimals": 18,
+      "price": null,
+      "routable": false,
+      "venues": [],
+      "note": "Insufficient liquidity"
+    },
+    {
+      "symbol": "xBETH",
+      "name": "OKX Wrapped Staked ETH",
+      "address": "0xafeab3b85b6a56cf5f02317f0f7a23340eb983d7",
+      "decimals": 18,
+      "price": "1938.336326958394248182561852700323",
+      "routable": true,
+      "venues": [
+        "Uniswap V3",
+        "ElfomoFi"
+      ],
+      "note": null
+    },
+    {
+      "symbol": "xBTC",
+      "name": "OKX Wrapped BTC",
+      "address": "0xb7c00000bcdeef966b20b3d884b98e64d2b06b4f",
+      "decimals": 8,
+      "price": "64342.33967109518548834866428927138",
+      "routable": true,
+      "venues": [
+        "Caliber propAMM",
+        "Uniswap V3",
+        "BinaryFiEvm",
+        "CurveNG",
+        "Uniswap V4"
+      ],
+      "note": null
+    },
+    {
+      "symbol": "xOKSOL",
+      "name": "OKX Wrapped Staked SOL",
+      "address": "0x14a686103854dab7b8801e31979caa595835b25d",
+      "decimals": 9,
+      "price": "77.4506249204817806447372436344345",
+      "routable": true,
+      "venues": [
+        "Uniswap V3"
+      ],
+      "note": null
+    }
+  ]
+}

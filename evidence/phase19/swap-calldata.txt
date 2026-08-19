@@ -1,0 +1,14 @@
+Executable swap calldata from OKX Onchain OS, chain 196
+
+{
+  "to": "0x722db4f285F8bD91ef7AF6DA397e83f7fA4E80a7",
+  "data": "0x0d5f0e3b00000000000000003bc142de7bdd2d0d1728df5bef8faae8de85c3dd21a5de46... truncated, regenerated per trade",
+  "value": "0",
+  "gas": "162000",
+  "min_receive": "10144090017171276",
+  "expected_out": "10145104527624039",
+  "price_impact_pct": "-0.1",
+  "venues": [
+    "Uniswap V3"
+  ]
+}

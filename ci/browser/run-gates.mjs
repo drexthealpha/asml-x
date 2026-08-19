@@ -191,6 +191,40 @@ for (const c of paths.cases.filter((x) => !x.pass)) {
 check("no dead ends", Array.isArray(paths.deadEnds) && paths.deadEnds.length === 0, JSON.stringify(paths.deadEnds));
 check("every failure case recovers", paths.pass === true, `${paths.passed}/${paths.total}`);
 
+// --- 3b. ACCESSIBILITY. axe-core is injected from the installed package rather than a CDN, because
+// the page under test must not depend on the network to be audited. Only SERIOUS and CRITICAL
+// violations gate: axe's minor and moderate findings include advisory rules that would make this a
+// noisy gate nobody reads, and a noisy gate is one that gets disabled.
+console.log("\n=== accessibility (axe-core) ===");
+await page.reload({ waitUntil: "networkidle" });
+let axeViolations = [];
+try {
+  const axePath = resolve(HERE, "node_modules", "axe-core", "axe.min.js");
+  await page.addScriptTag({ path: axePath });
+  const axe = await page.evaluate(async () => {
+    // @ts-expect-error injected global
+    const r = await window.axe.run(document, {
+      resultTypes: ["violations"],
+      runOnly: { type: "tag", values: ["wcag2a", "wcag2aa"] },
+    });
+    return r.violations.map((v) => ({
+      id: v.id,
+      impact: v.impact,
+      nodes: v.nodes.length,
+      help: v.help,
+    }));
+  });
+  axeViolations = axe.filter((v) => v.impact === "serious" || v.impact === "critical");
+  for (const v of axe) console.log(`    ${v.impact}: ${v.id} (${v.nodes} nodes) ${v.help}`);
+  check(
+    "no serious or critical accessibility violations",
+    axeViolations.length === 0,
+    JSON.stringify(axeViolations.map((v) => v.id)),
+  );
+} catch (e) {
+  check("axe-core ran", false, String(e).slice(0, 140));
+}
+
 // --- 4. No console errors anywhere in the above.
 // SCOPED TO EVERYTHING BEFORE FAILURE INDUCTION, and the distinction is the whole point of the
 // gate. The failure-path audit deliberately breaks fetch, sends a transaction it expects to revert,

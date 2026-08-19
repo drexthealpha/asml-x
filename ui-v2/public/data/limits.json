@@ -1,6 +1,6 @@
 {
   "generatedBy": "cargo test -p risk-engine export_conservative_defaults_for_the_ui",
-  "source": "crates/risk-engine/src/lib.rs Limits::conservative_testnet",
+  "source": "crates/risk-engine/src/lib.rs Limits::conservative",
   "microPerUnit": 1000000,
   "limits": [
     {

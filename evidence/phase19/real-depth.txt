@@ -1,0 +1,92 @@
+Real depth curve for WOKB/USDT on X Layer mainnet (chain 196)
+Built from signed OKX Onchain OS aggregator quotes, one per size.
+
+{
+  "source": "OKX Onchain OS DEX aggregator v6, signed",
+  "endpoint": "/api/v6/dex/aggregator/quote",
+  "chain_id": 196,
+  "chain_name": "X Layer mainnet",
+  "pair": "WOKB/USDT",
+  "fetched_at_utc": "2026-08-19T05:21:29Z",
+  "method": "One signed aggregator quote per rung. Slippage is the difference between each rung's unit price and the smallest rung's, which is the real cost of size in these pools. Nothing is modelled or interpolated.",
+  "rungs": [
+    {
+      "size": "1",
+      "unit_price": "101.663583",
+      "venues": [
+        "Caliber propAMM"
+      ],
+      "router_price_impact_pct": "0.02",
+      "estimated_gas": "332400",
+      "is_honeypot": false,
+      "tax_rate": "0",
+      "slippage_bps": "0.0",
+      "within_tolerance": true
+    },
+    {
+      "size": "10",
+      "unit_price": "101.585436",
+      "venues": [
+        "Uniswap V3",
+        "PotatoSwap",
+        "OkieSwap V3"
+      ],
+      "router_price_impact_pct": "-0.07",
+      "estimated_gas": "554400",
+      "is_honeypot": false,
+      "tax_rate": "0",
+      "slippage_bps": "7.69",
+      "within_tolerance": true
+    },
+    {
+      "size": "100",
+      "unit_price": "101.522270",
+      "venues": [
+        "Uniswap V3",
+        "Caliber propAMM",
+        "PotatoSwap",
+        "OkieSwap V3",
+        "OkieStableSwap",
+        "Uniswap V4"
+      ],
+      "router_price_impact_pct": "-0.13",
+      "estimated_gas": "1100400",
+      "is_honeypot": false,
+      "tax_rate": "0",
+      "slippage_bps": "13.9",
+      "within_tolerance": true
+    },
+    {
+      "size": "1000",
+      "unit_price": "98.698377",
+      "venues": [
+        "Uniswap V3",
+        "PotatoSwap",
+        "Caliber propAMM",
+        "Revoswap V2",
+        "PotatoSwap V3",
+        "OkieSwap V3",
+        "Uniswap V4",
+        "OkieStableSwap"
+      ],
+      "router_price_impact_pct": "-2.91",
+      "estimated_gas": "1532400",
+      "is_honeypot": false,
+      "tax_rate": "0",
+      "slippage_bps": "291.67",
+      "within_tolerance": false
+    }
+  ],
+  "venues": [
+    "Caliber propAMM",
+    "Uniswap V3",
+    "PotatoSwap",
+    "OkieSwap V3",
+    "OkieStableSwap",
+    "Uniswap V4",
+    "Revoswap V2",
+    "PotatoSwap V3"
+  ],
+  "slippage_tolerance_bps": "100",
+  "max_safe_size": "100"
+}

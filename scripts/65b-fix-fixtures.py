@@ -36,7 +36,7 @@ GROSS_NEW = r'''#[test]
 fn the_gross_projection_adds_to_current_gross_and_its_boundary_is_inclusive() {
     let e = engine();
     let ctx = RiskContext::healthy_at(0);
-    let l = Limits::conservative_testnet();
+    let l = Limits::conservative();
 
     // FOUR markets, none above the 50 per-market cap, alternating sign so net skew stays tiny
     // while gross accumulates to 175. Building this out of one large position instead is what
@@ -153,7 +153,7 @@ RWA_NEW = r'''#[test]
 fn the_rwa_share_cap_is_a_real_fraction_of_projected_gross() {
     let e = engine();
     let ctx = RiskContext::healthy_at(0).with_rwa(healthy_rwa());
-    let l = Limits::conservative_testnet();
+    let l = Limits::conservative();
     assert_eq!(l.max_rwa_share_bps, 4_000);
 
     let rwa_market = MarketId::new("RWA/tQUOTE");

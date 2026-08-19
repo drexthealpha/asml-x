@@ -1,0 +1,20 @@
+=== chain ===
+chain id                 196
+
+=== USDT, resolved from the chain's own token list ===
+address                  0x779ded0c9e1022225f8e0630b35a9b54be713736
+symbol, from contract    "USD₮0"
+decimals, from contract  6
+total supply             113207943918448 [1.132e14]
+
+=== deployer ===
+address                  0x7BdD2d0D1728Df5bEF8FAae8de85c3dD21a5dE46
+OKB for gas, wei         4723585546179278
+OKB for gas              0.004723585546179278
+USDT held, raw           0
+USDT held                0.0
+
+=== what this means ===
+The vault credits the MEASURED balance delta, so it needs no decimals constant itself.
+The UI does: formatWei divides by 1e18 everywhere and must be made decimals-aware before
+any real deposit is displayed, or a real balance will render as a rounding error.

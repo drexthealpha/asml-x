@@ -1,0 +1,846 @@
+{
+  "config": {
+    "argv": [
+      "/usr/bin/node",
+      "/mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/node_modules/.bin/playwright",
+      "test"
+    ],
+    "configFile": "/mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/playwright.config.ts",
+    "rootDir": "/mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "desktop",
+        "name": "desktop",
+        "testDir": "/mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 45000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "../evidence/phase20/e2e-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.62.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "a11y.spec.ts",
+      "file": "a11y.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Trade has no serious accessibility violations",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 20131,
+                  "error": {
+                    "message": "Error: serious or critical accessibility violations\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 3\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   \"color-contrast: Elements must meet minimum color contrast ratio thresholds\",\u001b[39m\n\u001b[31m+ ]\u001b[39m",
+                    "stack": "Error: serious or critical accessibility violations\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 3\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   \"color-contrast: Elements must meet minimum color contrast ratio thresholds\",\u001b[39m\n\u001b[31m+ ]\u001b[39m\n    at /mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/e2e/a11y.spec.ts:42:7",
+                    "location": {
+                      "file": "/mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/e2e/a11y.spec.ts",
+                      "column": 7,
+                      "line": 42
+                    },
+                    "snippet": "  40 |       blocking.map((v) => `${v.id}: ${v.help}`),\n  41 |       \"serious or critical accessibility violations\",\n> 42 |     ).toEqual([]);\n     |       ^\n  43 |   });\n  44 | }\n  45 |"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/e2e/a11y.spec.ts",
+                        "column": 7,
+                        "line": 42
+                      },
+                      "message": "Error: serious or critical accessibility violations\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 3\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   \"color-contrast: Elements must meet minimum color contrast ratio thresholds\",\u001b[39m\n\u001b[31m+ ]\u001b[39m\n\n  40 |       blocking.map((v) => `${v.id}: ${v.help}`),\n  41 |       \"serious or critical accessibility violations\",\n> 42 |     ).toEqual([]);\n     |       ^\n  43 |   });\n  44 | }\n  45 |\n    at /mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/e2e/a11y.spec.ts:42:7"
+                    }
+                  ],
+                  "stdout": [
+                    {
+                      "text": "  [serious] color-contrast: Elements must meet minimum color contrast ratio thresholds (42 nodes)\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-08-19T01:57:47.362Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/test-results/a11y-Trade-has-no-serious-accessibility-violations-desktop/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/test-results/a11y-Trade-has-no-serious-accessibility-violations-desktop/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/test-results/a11y-Trade-has-no-serious-accessibility-violations-desktop/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/e2e/a11y.spec.ts",
+                    "column": 7,
+                    "line": 42
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "aa3ad05f8c0e05077efb-9f12a1a1f2a96d7366e4",
+          "file": "a11y.spec.ts",
+          "line": 20,
+          "column": 3
+        },
+        {
+          "title": "Your agent has no serious accessibility violations",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 17712,
+                  "error": {
+                    "message": "Error: serious or critical accessibility violations\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 3\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   \"color-contrast: Elements must meet minimum color contrast ratio thresholds\",\u001b[39m\n\u001b[31m+ ]\u001b[39m",
+                    "stack": "Error: serious or critical accessibility violations\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 3\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   \"color-contrast: Elements must meet minimum color contrast ratio thresholds\",\u001b[39m\n\u001b[31m+ ]\u001b[39m\n    at /mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/e2e/a11y.spec.ts:42:7",
+                    "location": {
+                      "file": "/mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/e2e/a11y.spec.ts",
+                      "column": 7,
+                      "line": 42
+                    },
+                    "snippet": "  40 |       blocking.map((v) => `${v.id}: ${v.help}`),\n  41 |       \"serious or critical accessibility violations\",\n> 42 |     ).toEqual([]);\n     |       ^\n  43 |   });\n  44 | }\n  45 |"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/e2e/a11y.spec.ts",
+                        "column": 7,
+                        "line": 42
+                      },
+                      "message": "Error: serious or critical accessibility violations\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 3\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   \"color-contrast: Elements must meet minimum color contrast ratio thresholds\",\u001b[39m\n\u001b[31m+ ]\u001b[39m\n\n  40 |       blocking.map((v) => `${v.id}: ${v.help}`),\n  41 |       \"serious or critical accessibility violations\",\n> 42 |     ).toEqual([]);\n     |       ^\n  43 |   });\n  44 | }\n  45 |\n    at /mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/e2e/a11y.spec.ts:42:7"
+                    }
+                  ],
+                  "stdout": [
+                    {
+                      "text": "  [serious] color-contrast: Elements must meet minimum color contrast ratio thresholds (102 nodes)\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-08-19T01:58:28.285Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/test-results/a11y-Your-agent-has-no-serious-accessibility-violations-desktop/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/test-results/a11y-Your-agent-has-no-serious-accessibility-violations-desktop/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/test-results/a11y-Your-agent-has-no-serious-accessibility-violations-desktop/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/e2e/a11y.spec.ts",
+                    "column": 7,
+                    "line": 42
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "aa3ad05f8c0e05077efb-99661e7a49dbe6c236ba",
+          "file": "a11y.spec.ts",
+          "line": 20,
+          "column": 3
+        },
+        {
+          "title": "Assets has no serious accessibility violations",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 16548,
+                  "error": {
+                    "message": "Error: serious or critical accessibility violations\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 3\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   \"color-contrast: Elements must meet minimum color contrast ratio thresholds\",\u001b[39m\n\u001b[31m+ ]\u001b[39m",
+                    "stack": "Error: serious or critical accessibility violations\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 3\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   \"color-contrast: Elements must meet minimum color contrast ratio thresholds\",\u001b[39m\n\u001b[31m+ ]\u001b[39m\n    at /mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/e2e/a11y.spec.ts:42:7",
+                    "location": {
+                      "file": "/mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/e2e/a11y.spec.ts",
+                      "column": 7,
+                      "line": 42
+                    },
+                    "snippet": "  40 |       blocking.map((v) => `${v.id}: ${v.help}`),\n  41 |       \"serious or critical accessibility violations\",\n> 42 |     ).toEqual([]);\n     |       ^\n  43 |   });\n  44 | }\n  45 |"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/e2e/a11y.spec.ts",
+                        "column": 7,
+                        "line": 42
+                      },
+                      "message": "Error: serious or critical accessibility violations\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 3\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   \"color-contrast: Elements must meet minimum color contrast ratio thresholds\",\u001b[39m\n\u001b[31m+ ]\u001b[39m\n\n  40 |       blocking.map((v) => `${v.id}: ${v.help}`),\n  41 |       \"serious or critical accessibility violations\",\n> 42 |     ).toEqual([]);\n     |       ^\n  43 |   });\n  44 | }\n  45 |\n    at /mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/e2e/a11y.spec.ts:42:7"
+                    }
+                  ],
+                  "stdout": [
+                    {
+                      "text": "  [serious] color-contrast: Elements must meet minimum color contrast ratio thresholds (44 nodes)\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-08-19T01:58:57.238Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/test-results/a11y-Assets-has-no-serious-accessibility-violations-desktop/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/test-results/a11y-Assets-has-no-serious-accessibility-violations-desktop/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/test-results/a11y-Assets-has-no-serious-accessibility-violations-desktop/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/e2e/a11y.spec.ts",
+                    "column": 7,
+                    "line": 42
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "aa3ad05f8c0e05077efb-485cc9a64ed5ab574b3f",
+          "file": "a11y.spec.ts",
+          "line": 20,
+          "column": 3
+        },
+        {
+          "title": "Markets has no serious accessibility violations",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 15882,
+                  "error": {
+                    "message": "Error: serious or critical accessibility violations\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 3\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   \"color-contrast: Elements must meet minimum color contrast ratio thresholds\",\u001b[39m\n\u001b[31m+ ]\u001b[39m",
+                    "stack": "Error: serious or critical accessibility violations\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 3\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   \"color-contrast: Elements must meet minimum color contrast ratio thresholds\",\u001b[39m\n\u001b[31m+ ]\u001b[39m\n    at /mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/e2e/a11y.spec.ts:42:7",
+                    "location": {
+                      "file": "/mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/e2e/a11y.spec.ts",
+                      "column": 7,
+                      "line": 42
+                    },
+                    "snippet": "  40 |       blocking.map((v) => `${v.id}: ${v.help}`),\n  41 |       \"serious or critical accessibility violations\",\n> 42 |     ).toEqual([]);\n     |       ^\n  43 |   });\n  44 | }\n  45 |"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/e2e/a11y.spec.ts",
+                        "column": 7,
+                        "line": 42
+                      },
+                      "message": "Error: serious or critical accessibility violations\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 3\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   \"color-contrast: Elements must meet minimum color contrast ratio thresholds\",\u001b[39m\n\u001b[31m+ ]\u001b[39m\n\n  40 |       blocking.map((v) => `${v.id}: ${v.help}`),\n  41 |       \"serious or critical accessibility violations\",\n> 42 |     ).toEqual([]);\n     |       ^\n  43 |   });\n  44 | }\n  45 |\n    at /mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/e2e/a11y.spec.ts:42:7"
+                    }
+                  ],
+                  "stdout": [
+                    {
+                      "text": "  [serious] color-contrast: Elements must meet minimum color contrast ratio thresholds (36 nodes)\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-08-19T01:59:23.567Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/test-results/a11y-Markets-has-no-serious-accessibility-violations-desktop/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/test-results/a11y-Markets-has-no-serious-accessibility-violations-desktop/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/test-results/a11y-Markets-has-no-serious-accessibility-violations-desktop/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/e2e/a11y.spec.ts",
+                    "column": 7,
+                    "line": 42
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "aa3ad05f8c0e05077efb-93e4d8bbbd1bb3184769",
+          "file": "a11y.spec.ts",
+          "line": 20,
+          "column": 3
+        },
+        {
+          "title": "Insights has no serious accessibility violations",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 19572,
+                  "error": {
+                    "message": "Error: serious or critical accessibility violations\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 3\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   \"color-contrast: Elements must meet minimum color contrast ratio thresholds\",\u001b[39m\n\u001b[31m+ ]\u001b[39m",
+                    "stack": "Error: serious or critical accessibility violations\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 3\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   \"color-contrast: Elements must meet minimum color contrast ratio thresholds\",\u001b[39m\n\u001b[31m+ ]\u001b[39m\n    at /mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/e2e/a11y.spec.ts:42:7",
+                    "location": {
+                      "file": "/mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/e2e/a11y.spec.ts",
+                      "column": 7,
+                      "line": 42
+                    },
+                    "snippet": "  40 |       blocking.map((v) => `${v.id}: ${v.help}`),\n  41 |       \"serious or critical accessibility violations\",\n> 42 |     ).toEqual([]);\n     |       ^\n  43 |   });\n  44 | }\n  45 |"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/e2e/a11y.spec.ts",
+                        "column": 7,
+                        "line": 42
+                      },
+                      "message": "Error: serious or critical accessibility violations\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 3\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   \"color-contrast: Elements must meet minimum color contrast ratio thresholds\",\u001b[39m\n\u001b[31m+ ]\u001b[39m\n\n  40 |       blocking.map((v) => `${v.id}: ${v.help}`),\n  41 |       \"serious or critical accessibility violations\",\n> 42 |     ).toEqual([]);\n     |       ^\n  43 |   });\n  44 | }\n  45 |\n    at /mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/e2e/a11y.spec.ts:42:7"
+                    }
+                  ],
+                  "stdout": [
+                    {
+                      "text": "  [serious] color-contrast: Elements must meet minimum color contrast ratio thresholds (70 nodes)\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-08-19T01:59:47.554Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/test-results/a11y-Insights-has-no-serious-accessibility-violations-desktop/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/test-results/a11y-Insights-has-no-serious-accessibility-violations-desktop/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/test-results/a11y-Insights-has-no-serious-accessibility-violations-desktop/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/e2e/a11y.spec.ts",
+                    "column": 7,
+                    "line": 42
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "aa3ad05f8c0e05077efb-f5c45abfe2be74551986",
+          "file": "a11y.spec.ts",
+          "line": 20,
+          "column": 3
+        },
+        {
+          "title": "the detail panel is reachable and dismissable by keyboard",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 5,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8052,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-08-19T02:00:18.547Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "aa3ad05f8c0e05077efb-632bcf83f6597e83b710",
+          "file": "a11y.spec.ts",
+          "line": 46,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "product.spec.ts",
+      "file": "product.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "the product a stranger meets",
+          "file": "product.spec.ts",
+          "line": 26,
+          "column": 6,
+          "specs": [
+            {
+              "title": "every surface is reachable and names itself",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "desktop",
+                  "projectName": "desktop",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 14256,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-08-19T02:00:30.135Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "2fa8ab87beca8e7f39ce-63cb4aafebc5126c0374",
+              "file": "product.spec.ts",
+              "line": 32,
+              "column": 3
+            },
+            {
+              "title": "the network is named from the manifest, never as testnet",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "desktop",
+                  "projectName": "desktop",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 5494,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('header')\nExpected substring: \u001b[32m\"X Layer\"\u001b[39m\nError: strict mode violation: locator('header') resolved to 6 elements:\n    1) <header class=\"border-b hair bg-surface sticky top-0 z-10\">…</header> aka getByRole('banner')\n    2) <header class=\"flex items-baseline justify-between gap-3 px-4 py-3 border-b hair\">…</header> aka getByText('Tokens you can trade16 of')\n    3) <header class=\"flex items-baseline justify-between gap-3 px-4 py-3 border-b hair\">…</header> aka getByText('What it costs to trade biggerWOKB/USDT')\n    4) <header class=\"flex items-baseline justify-between gap-3 px-4 py-3 border-b hair\">…</header> aka locator('header').filter({ hasText: 'Your money' })\n    5) <header class=\"flex items-baseline justify-between gap-3 px-4 py-3 border-b hair\">…</header> aka locator('header').filter({ hasText: 'Your trade' })\n    6) <header class=\"flex items-baseline justify-between gap-3 px-4 py-3 border-b hair\">…</header> aka locator('header').filter({ hasText: 'What protects you' })\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for locator('header')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('header')\nExpected substring: \u001b[32m\"X Layer\"\u001b[39m\nError: strict mode violation: locator('header') resolved to 6 elements:\n    1) <header class=\"border-b hair bg-surface sticky top-0 z-10\">…</header> aka getByRole('banner')\n    2) <header class=\"flex items-baseline justify-between gap-3 px-4 py-3 border-b hair\">…</header> aka getByText('Tokens you can trade16 of')\n    3) <header class=\"flex items-baseline justify-between gap-3 px-4 py-3 border-b hair\">…</header> aka getByText('What it costs to trade biggerWOKB/USDT')\n    4) <header class=\"flex items-baseline justify-between gap-3 px-4 py-3 border-b hair\">…</header> aka locator('header').filter({ hasText: 'Your money' })\n    5) <header class=\"flex items-baseline justify-between gap-3 px-4 py-3 border-b hair\">…</header> aka locator('header').filter({ hasText: 'Your trade' })\n    6) <header class=\"flex items-baseline justify-between gap-3 px-4 py-3 border-b hair\">…</header> aka locator('header').filter({ hasText: 'What protects you' })\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for locator('header')\u001b[22m\n\n    at /mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/e2e/product.spec.ts:43:26",
+                        "location": {
+                          "file": "/mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/e2e/product.spec.ts",
+                          "column": 26,
+                          "line": 43
+                        },
+                        "snippet": "  41 |     // expected one, and kept saying it over mainnet blocks and mainnet contracts.\n  42 |     const header = page.locator(\"header\");\n> 43 |     await expect(header).toContainText(\"X Layer\");\n     |                          ^\n  44 |     await expect(header).not.toContainText(/testnet/i);\n  45 |   });\n  46 |"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/e2e/product.spec.ts",
+                            "column": 26,
+                            "line": 43
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('header')\nExpected substring: \u001b[32m\"X Layer\"\u001b[39m\nError: strict mode violation: locator('header') resolved to 6 elements:\n    1) <header class=\"border-b hair bg-surface sticky top-0 z-10\">…</header> aka getByRole('banner')\n    2) <header class=\"flex items-baseline justify-between gap-3 px-4 py-3 border-b hair\">…</header> aka getByText('Tokens you can trade16 of')\n    3) <header class=\"flex items-baseline justify-between gap-3 px-4 py-3 border-b hair\">…</header> aka getByText('What it costs to trade biggerWOKB/USDT')\n    4) <header class=\"flex items-baseline justify-between gap-3 px-4 py-3 border-b hair\">…</header> aka locator('header').filter({ hasText: 'Your money' })\n    5) <header class=\"flex items-baseline justify-between gap-3 px-4 py-3 border-b hair\">…</header> aka locator('header').filter({ hasText: 'Your trade' })\n    6) <header class=\"flex items-baseline justify-between gap-3 px-4 py-3 border-b hair\">…</header> aka locator('header').filter({ hasText: 'What protects you' })\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for locator('header')\u001b[22m\n\n\n  41 |     // expected one, and kept saying it over mainnet blocks and mainnet contracts.\n  42 |     const header = page.locator(\"header\");\n> 43 |     await expect(header).toContainText(\"X Layer\");\n     |                          ^\n  44 |     await expect(header).not.toContainText(/testnet/i);\n  45 |   });\n  46 |\n    at /mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/e2e/product.spec.ts:43:26"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-08-19T02:00:44.505Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/test-results/product-the-product-a-stra-6506e-e-manifest-never-as-testnet-desktop/test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/test-results/product-the-product-a-stra-6506e-e-manifest-never-as-testnet-desktop/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/test-results/product-the-product-a-stra-6506e-e-manifest-never-as-testnet-desktop/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/e2e/product.spec.ts",
+                        "column": 26,
+                        "line": 43
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "2fa8ab87beca8e7f39ce-2ef9ed3336d9b2516afb",
+              "file": "product.spec.ts",
+              "line": 39,
+              "column": 3
+            },
+            {
+              "title": "no engineering vocabulary reaches the screen",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "desktop",
+                  "projectName": "desktop",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 21641,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-08-19T02:00:55.887Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "2fa8ab87beca8e7f39ce-08164775b5ae86d33956",
+              "file": "product.spec.ts",
+              "line": 47,
+              "column": 3
+            },
+            {
+              "title": "token rows open a detail panel on every surface",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "desktop",
+                  "projectName": "desktop",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 18511,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-08-19T02:01:20.976Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "2fa8ab87beca8e7f39ce-d36fbeea6dd785dd282a",
+              "file": "product.spec.ts",
+              "line": 69,
+              "column": 3
+            },
+            {
+              "title": "the money controls exist and refuse an empty amount",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "desktop",
+                  "projectName": "desktop",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4456,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-08-19T02:01:42.588Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "2fa8ab87beca8e7f39ce-ef330b8929577eda5266",
+              "file": "product.spec.ts",
+              "line": 92,
+              "column": 3
+            },
+            {
+              "title": "prices refresh rather than sitting still",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "desktop",
+                  "projectName": "desktop",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 6168,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-08-19T02:01:47.092Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "2fa8ab87beca8e7f39ce-3318dc1d2eb0c8123f4d",
+              "file": "product.spec.ts",
+              "line": 98,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "mobile, at 375px",
+          "file": "product.spec.ts",
+          "line": 106,
+          "column": 6,
+          "specs": [
+            {
+              "title": "nothing overflows horizontally",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "desktop",
+                  "projectName": "desktop",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 21519,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-08-19T02:01:53.341Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "2fa8ab87beca8e7f39ce-b1a4311bfb69dd49628f",
+              "file": "product.spec.ts",
+              "line": 109,
+              "column": 3
+            },
+            {
+              "title": "the action is above the token list",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "desktop",
+                  "projectName": "desktop",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 7443,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-08-19T02:02:17.777Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "2fa8ab87beca8e7f39ce-4f3a347b0c708e46d567",
+              "file": "product.spec.ts",
+              "line": 122,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-08-19T01:57:41.804Z",
+    "duration": 263959.166,
+    "expected": 8,
+    "skipped": 0,
+    "unexpected": 6,
+    "flaky": 0
+  }
+}

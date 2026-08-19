@@ -1,0 +1,314 @@
+{
+  "source": "the agent's own decision journal, reworded for a reader. Counts are read from evidence/journal.jsonl, never recomputed.",
+  "fetched_at_utc": "2026-08-19T05:22:28Z",
+  "chain_id": 196,
+  "status": "watching",
+  "last_seen_block": 68316610,
+  "market": "WOKB/USDT",
+  "decisions_shown": 32,
+  "trades_made": 16,
+  "options_considered": 720,
+  "options_declined": 688,
+  "why_declined": [
+    {
+      "reason": "A safer option scored better",
+      "count": 376
+    },
+    {
+      "reason": "Not enough money left to cover it safely",
+      "count": 249
+    },
+    {
+      "reason": "Bigger than your limit allows",
+      "count": 63
+    }
+  ],
+  "decisions": [
+    {
+      "id": 270,
+      "block": 68316610,
+      "market": "WOKB/USDT",
+      "did": "Waited",
+      "acted": false,
+      "considered": 17,
+      "refused": 16,
+      "saw": "spread 8 bps is comparable to realized volatility 5 bps",
+      "confidence_pct": 50
+    },
+    {
+      "id": 269,
+      "block": 68316584,
+      "market": "WOKB/USDT",
+      "did": "Waited",
+      "acted": false,
+      "considered": 17,
+      "refused": 16,
+      "saw": "spread 8 bps is comparable to realized volatility 5 bps",
+      "confidence_pct": 50
+    },
+    {
+      "id": 268,
+      "block": 68316558,
+      "market": "WOKB/USDT",
+      "did": "Waited",
+      "acted": false,
+      "considered": 17,
+      "refused": 16,
+      "saw": "spread 8 bps is comparable to realized volatility 5 bps",
+      "confidence_pct": 50
+    },
+    {
+      "id": 267,
+      "block": 68315517,
+      "market": "tBASE/tQUOTE",
+      "did": "Waited",
+      "acted": false,
+      "considered": 17,
+      "refused": 16,
+      "saw": "spread 8 bps is comparable to realized volatility 5 bps",
+      "confidence_pct": 50
+    },
+    {
+      "id": 266,
+      "block": 68315491,
+      "market": "tBASE/tQUOTE",
+      "did": "Waited",
+      "acted": false,
+      "considered": 17,
+      "refused": 16,
+      "saw": "spread 8 bps is comparable to realized volatility 5 bps",
+      "confidence_pct": 50
+    },
+    {
+      "id": 265,
+      "block": 68315467,
+      "market": "tBASE/tQUOTE",
+      "did": "Waited",
+      "acted": false,
+      "considered": 17,
+      "refused": 16,
+      "saw": "spread 8 bps is comparable to realized volatility 5 bps",
+      "confidence_pct": 50
+    },
+    {
+      "id": 264,
+      "block": 68315295,
+      "market": "tBASE/tQUOTE",
+      "did": "Waited",
+      "acted": false,
+      "considered": 17,
+      "refused": 16,
+      "saw": "BOOK IS CROSSED: best bid 1.900000 is at or above best ask 1.700000, so spread-based inference is unreliable",
+      "confidence_pct": 0
+    },
+    {
+      "id": 263,
+      "block": 68315278,
+      "market": "tBASE/tQUOTE",
+      "did": "Waited",
+      "acted": false,
+      "considered": 17,
+      "refused": 16,
+      "saw": "BOOK IS CROSSED: best bid 1.900000 is at or above best ask 1.700000, so spread-based inference is unreliable",
+      "confidence_pct": 0
+    },
+    {
+      "id": 262,
+      "block": 68315262,
+      "market": "tBASE/tQUOTE",
+      "did": "Waited",
+      "acted": false,
+      "considered": 17,
+      "refused": 16,
+      "saw": "BOOK IS CROSSED: best bid 1.900000 is at or above best ask 1.700000, so spread-based inference is unreliable",
+      "confidence_pct": 0
+    },
+    {
+      "id": 261,
+      "block": 68314798,
+      "market": "tBASE/tQUOTE",
+      "did": "Waited",
+      "acted": false,
+      "considered": 25,
+      "refused": 24,
+      "saw": "BOOK IS CROSSED: best bid 1.900000 is at or above best ask 1.700000, so spread-based inference is unreliable",
+      "confidence_pct": 0
+    },
+    {
+      "id": 260,
+      "block": 68314784,
+      "market": "tBASE/tQUOTE",
+      "did": "Waited",
+      "acted": false,
+      "considered": 25,
+      "refused": 24,
+      "saw": "BOOK IS CROSSED: best bid 1.900000 is at or above best ask 1.700000, so spread-based inference is unreliable",
+      "confidence_pct": 0
+    },
+    {
+      "id": 259,
+      "block": 68314762,
+      "market": "tBASE/tQUOTE",
+      "did": "Waited",
+      "acted": false,
+      "considered": 25,
+      "refused": 24,
+      "saw": "BOOK IS CROSSED: best bid 1.900000 is at or above best ask 1.700000, so spread-based inference is unreliable",
+      "confidence_pct": 0
+    },
+    {
+      "id": 258,
+      "block": 68313835,
+      "market": "tBASE/tQUOTE",
+      "did": "Waited",
+      "acted": false,
+      "considered": 25,
+      "refused": 24,
+      "saw": "BOOK IS CROSSED: best bid 1.900000 is at or above best ask 1.700000, so spread-based inference is unreliable",
+      "confidence_pct": 0
+    },
+    {
+      "id": 257,
+      "block": 68313821,
+      "market": "tBASE/tQUOTE",
+      "did": "Waited",
+      "acted": false,
+      "considered": 25,
+      "refused": 24,
+      "saw": "BOOK IS CROSSED: best bid 1.900000 is at or above best ask 1.700000, so spread-based inference is unreliable",
+      "confidence_pct": 0
+    },
+    {
+      "id": 256,
+      "block": 68313803,
+      "market": "tBASE/tQUOTE",
+      "did": "Waited",
+      "acted": false,
+      "considered": 25,
+      "refused": 24,
+      "saw": "BOOK IS CROSSED: best bid 1.900000 is at or above best ask 1.700000, so spread-based inference is unreliable",
+      "confidence_pct": 0
+    },
+    {
+      "id": 255,
+      "block": 68313789,
+      "market": "tBASE/tQUOTE",
+      "did": "Waited",
+      "acted": false,
+      "considered": 25,
+      "refused": 24,
+      "saw": "BOOK IS CROSSED: best bid 1.900000 is at or above best ask 1.700000, so spread-based inference is unreliable",
+      "confidence_pct": 0
+    },
+    {
+      "id": 254,
+      "block": 68313476,
+      "market": "tBASE/tQUOTE",
+      "did": "Sold 0.1875 at $1.9",
+      "acted": true,
+      "considered": 25,
+      "refused": 24,
+      "saw": "BOOK IS CROSSED: best bid 1.900000 is at or above best ask 1.700000, so spread-based inference is unreliable",
+      "confidence_pct": 0
+    },
+    {
+      "id": 253,
+      "block": 68313452,
+      "market": "tBASE/tQUOTE",
+      "did": "Sold 0.1875 at $1.9",
+      "acted": true,
+      "considered": 25,
+      "refused": 24,
+      "saw": "BOOK IS CROSSED: best bid 1.900000 is at or above best ask 1.700000, so spread-based inference is unreliable",
+      "confidence_pct": 0
+    },
+    {
+      "id": 252,
+      "block": 68313425,
+      "market": "tBASE/tQUOTE",
+      "did": "Sold 0.1875 at $1.9",
+      "acted": true,
+      "considered": 25,
+      "refused": 24,
+      "saw": "BOOK IS CROSSED: best bid 1.900000 is at or above best ask 1.700000, so spread-based inference is unreliable",
+      "confidence_pct": 0
+    },
+    {
+      "id": 251,
+      "block": 68313398,
+      "market": "tBASE/tQUOTE",
+      "did": "Sold 0.1875 at $1.9",
+      "acted": true,
+      "considered": 25,
+      "refused": 24,
+      "saw": "BOOK IS CROSSED: best bid 1.900000 is at or above best ask 1.700000, so spread-based inference is unreliable",
+      "confidence_pct": 0
+    },
+    {
+      "id": 250,
+      "block": 68313371,
+      "market": "tBASE/tQUOTE",
+      "did": "Sold 0.1875 at $1.9",
+      "acted": true,
+      "considered": 25,
+      "refused": 24,
+      "saw": "BOOK IS CROSSED: best bid 1.900000 is at or above best ask 1.700000, so spread-based inference is unreliable",
+      "confidence_pct": 0
+    },
+    {
+      "id": 249,
+      "block": 68313340,
+      "market": "tBASE/tQUOTE",
+      "did": "Sold 0.1875 at $1.9",
+      "acted": true,
+      "considered": 25,
+      "refused": 24,
+      "saw": "BOOK IS CROSSED: best bid 1.900000 is at or above best ask 1.700000, so spread-based inference is unreliable",
+      "confidence_pct": 0
+    },
+    {
+      "id": 248,
+      "block": 68268441,
+      "market": "tBASE/tQUOTE",
+      "did": "Sold 0.375 at $1.9",
+      "acted": true,
+      "considered": 25,
+      "refused": 24,
+      "saw": "BOOK IS CROSSED: best bid 1.900000 is at or above best ask 1.700000, so spread-based inference is unreliable",
+      "confidence_pct": 0
+    },
+    {
+      "id": 247,
+      "block": 68268422,
+      "market": "tBASE/tQUOTE",
+      "did": "Sold 0.375 at $1.9",
+      "acted": true,
+      "considered": 25,
+      "refused": 24,
+      "saw": "BOOK IS CROSSED: best bid 1.900000 is at or above best ask 1.700000, so spread-based inference is unreliable",
+      "confidence_pct": 0
+    },
+    {
+      "id": 246,
+      "block": 68268401,
+      "market": "tBASE/tQUOTE",
+      "did": "Sold 0.375 at $1.9",
+      "acted": true,
+      "considered": 25,
+      "refused": 24,
+      "saw": "BOOK IS CROSSED: best bid 1.900000 is at or above best ask 1.700000, so spread-based inference is unreliable",
+      "confidence_pct": 0
+    }
+  ],
+  "real_swaps": [
+    {
+      "from": "WOKB",
+      "to": "USDT",
+      "venues": "Uniswap V3",
+      "tx": "0xd705bb95b2284b0253a18fb91418bb110ba27a6e1d3c28a9d6ddf1446b3885b5",
+      "explorer": "https://www.oklink.com/x-layer/evm/tx/0xd705bb95b2284b0253a18fb91418bb110ba27a6e1d3c28a9d6ddf1446b3885b5",
+      "at": "2026-08-18T19:42:38Z"
+    }
+  ],
+  "plain_summary": "The agent looked at 720 possible trades and made 16. It turned down 688 because they did not meet the rules you set."
+}

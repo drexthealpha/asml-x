@@ -1,0 +1,141 @@
+{
+  "source": "OKX Onchain OS DEX aggregator v6, authenticated",
+  "chain": "196",
+  "chain_name": "X Layer mainnet",
+  "verified_by": "python3 scripts/okx_dex_feed.py",
+  "context_slot": 68317002,
+  "token_count": 22,
+  "tokens": [
+    {
+      "symbol": "USDG",
+      "address": "0x4ae46a509f6b1d9056937ba4500cb143933d2dc8",
+      "decimals": "6"
+    },
+    {
+      "symbol": "USDT",
+      "address": "0x779ded0c9e1022225f8e0630b35a9b54be713736",
+      "decimals": "6"
+    },
+    {
+      "symbol": "USDC",
+      "address": "0xb6ceceab302e2e4948951ee7843fc24e92933061",
+      "decimals": "6"
+    },
+    {
+      "symbol": "ETH",
+      "address": "0xe7b000003a45145decf8a28fc755ad5ec5ea025a",
+      "decimals": "18"
+    },
+    {
+      "symbol": "SOL",
+      "address": "0x505000008de8748dbd4422ff4687a4fc9beba15b",
+      "decimals": "9"
+    },
+    {
+      "symbol": "OKB",
+      "address": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+      "decimals": "18"
+    },
+    {
+      "symbol": "crvUSD",
+      "address": "0xda8f4eb4503acf5dec5420523637bb5b33a846f6",
+      "decimals": "18"
+    },
+    {
+      "symbol": "DAI",
+      "address": "0xc5015b9d9161dca7e18e32f6f25c4ad850731fd4",
+      "decimals": "18"
+    },
+    {
+      "symbol": "DMCX",
+      "address": "0x848e56ad13b728a668af89459851efd8a89c9f58",
+      "decimals": "18"
+    },
+    {
+      "symbol": "FB",
+      "address": "0x770f030fdbf63ebf1c939de8bcff8943c2c2d454",
+      "decimals": "18"
+    },
+    {
+      "symbol": "PYUSD",
+      "address": "0x87b4a8176b3df6b71e26cc095edcaf4db07506b4",
+      "decimals": "6"
+    },
+    {
+      "symbol": "QUICK",
+      "address": "0x68286607a1d43602d880d349187c3c48c0fd05e6",
+      "decimals": "18"
+    },
+    {
+      "symbol": "sUSDe",
+      "address": "0x211cc4dd073734da055fbf44a2b4667d5e5fe5d2",
+      "decimals": "18"
+    },
+    {
+      "symbol": "STONE",
+      "address": "0x80137510979822322193fc997d400d5a6c747bf7",
+      "decimals": "18"
+    },
+    {
+      "symbol": "USDT_Bridged",
+      "address": "0x1e4a5963abfd975d8c9021ce480b42188849d41d",
+      "decimals": "6"
+    },
+    {
+      "symbol": "USDC_Bridged",
+      "address": "0x74b7f16337b8972027f6196a17a631ac6de26d22",
+      "decimals": "6"
+    },
+    {
+      "symbol": "USDe",
+      "address": "0x5d3a1ff2b6bab83b63cd9ad0787074081a52ef34",
+      "decimals": "18"
+    },
+    {
+      "symbol": "WBTC",
+      "address": "0xea034fb02eb1808c2cc3adbc15f447b93cbe08e1",
+      "decimals": "8"
+    },
+    {
+      "symbol": "WOKB",
+      "address": "0xe538905cf8410324e03a5a23c1c177a474d59b2b",
+      "decimals": "18"
+    },
+    {
+      "symbol": "xBTC",
+      "address": "0xb7c00000bcdeef966b20b3d884b98e64d2b06b4f",
+      "decimals": "8"
+    },
+    {
+      "symbol": "xBETH",
+      "address": "0xafeab3b85b6a56cf5f02317f0f7a23340eb983d7",
+      "decimals": "18"
+    },
+    {
+      "symbol": "xOKSOL",
+      "address": "0x14a686103854dab7b8801e31979caa595835b25d",
+      "decimals": "9"
+    }
+  ],
+  "reference_pair": "WOKB/USDT",
+  "venues": [
+    {
+      "venue": "Uniswap V3",
+      "percent": "100"
+    }
+  ],
+  "token_risk": [
+    {
+      "symbol": "WOKB",
+      "unit_price_usd": "99.44",
+      "is_honeypot": false,
+      "tax_rate": "0"
+    },
+    {
+      "symbol": "USDT",
+      "unit_price_usd": "0.99923",
+      "is_honeypot": false,
+      "tax_rate": "0"
+    }
+  ]
+}

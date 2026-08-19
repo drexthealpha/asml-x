@@ -142,7 +142,7 @@ fn the_risk_gate_still_governs_a_crossed_book() {
         order(1, false, 400, 2_100_000),
     ];
     let s = signals(&crossed);
-    let risk = RiskEngine::new(Limits::conservative_testnet());
+    let risk = RiskEngine::new(Limits::conservative());
     let pf = Portfolio {
         free_margin_micro: 1_000 * MICRO,
         ..Default::default()

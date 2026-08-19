@@ -6,7 +6,7 @@ limit check, which is the most useful thing Phase 1 has produced.
 
 The 37 fall into five groups, and the grouping is the finding, not the count:
 
-A. Limits::conservative_testnet constants (4). The SHIPPED defaults were asserted nowhere;
+A. Limits::conservative constants (4). The SHIPPED defaults were asserted nowhere;
    every test built its own limits. `5 * MICRO` -> `5 + MICRO` changes the live configuration
    and nothing noticed.
 
@@ -80,13 +80,13 @@ fn book_with_exposure() -> Portfolio {
 // GROUP A: the shipped defaults. Kills lib.rs:69, 70, 76 (* -> +, * -> /).
 // ---------------------------------------------------------------------------
 
-/// Kills: `replace * with +` and `replace * with /` in `Limits::conservative_testnet`.
+/// Kills: `replace * with +` and `replace * with /` in `Limits::conservative`.
 ///
 /// Why this test did not exist and should have: every other test constructs its own limits, so
 /// the defaults the DEMO ACTUALLY RUNS WITH were asserted nowhere.
 #[test]
 fn the_shipped_testnet_defaults_are_exactly_what_they_claim_to_be() {
-    let l = Limits::conservative_testnet();
+    let l = Limits::conservative();
     assert_eq!(l.max_market_notional_micro, 50 * MICRO);
     assert_eq!(l.max_gross_notional_micro, 200 * MICRO);
     assert_eq!(l.max_net_skew_micro, 75 * MICRO);
@@ -105,7 +105,7 @@ fn the_shipped_testnet_defaults_are_exactly_what_they_claim_to_be() {
 /// of the numbers, which the exact-value test above does not.
 #[test]
 fn the_testnet_defaults_are_internally_coherent() {
-    let l = Limits::conservative_testnet();
+    let l = Limits::conservative();
 
     // A single order cannot exceed one market's cap; no market's cap can exceed gross.
     // If either inverted, one of the limits would be unreachable and therefore dead code.
@@ -148,7 +148,7 @@ fn the_testnet_defaults_are_internally_coherent() {
 #[test]
 fn the_order_notional_boundary_and_the_approval_threshold_are_both_inclusive() {
     let e = engine();
-    let l = Limits::conservative_testnet();
+    let l = Limits::conservative();
     let pf = empty_book(1_000 * MICRO);
     let ctx = RiskContext::healthy_at(0);
 
@@ -188,7 +188,7 @@ fn the_order_notional_boundary_and_the_approval_threshold_are_both_inclusive() {
 #[test]
 fn the_mark_age_boundary_is_inclusive_of_the_maximum() {
     let e = engine();
-    let l = Limits::conservative_testnet();
+    let l = Limits::conservative();
     let i = mk_intent(InstrumentKind::Spot, Side::Buy, 1 * MICRO, 1 * MICRO);
 
     let mut pf = book_with_exposure();
@@ -257,7 +257,7 @@ fn the_market_notional_projection_adds_to_existing_exposure_and_its_boundary_is_
 fn the_gross_projection_adds_to_current_gross_and_its_boundary_is_inclusive() {
     let e = engine();
     let ctx = RiskContext::healthy_at(0);
-    let l = Limits::conservative_testnet();
+    let l = Limits::conservative();
     let order = mk_intent(InstrumentKind::Spot, Side::Buy, 25 * MICRO, 1 * MICRO);
 
     // Gross exactly at the cap after the order: 175 + 25 = 200.
@@ -333,7 +333,7 @@ fn the_net_skew_projection_is_signed_and_its_boundary_is_inclusive() {
 fn the_free_margin_floor_is_inclusive_and_spending_reduces_margin() {
     let e = engine();
     let ctx = RiskContext::healthy_at(0);
-    let l = Limits::conservative_testnet();
+    let l = Limits::conservative();
     let order = mk_intent(InstrumentKind::Spot, Side::Buy, 20 * MICRO, 1 * MICRO);
 
     // Leaves exactly the minimum: 25 - 20 = 5, and the minimum is 5.
@@ -376,7 +376,7 @@ fn the_free_margin_floor_is_inclusive_and_spending_reduces_margin() {
 fn the_rwa_share_cap_is_a_real_fraction_of_projected_gross() {
     let e = engine();
     let ctx = RiskContext::healthy_at(0).with_rwa(healthy_rwa());
-    let l = Limits::conservative_testnet();
+    let l = Limits::conservative();
 
     // A book with 100 units of non-RWA gross, split to keep net skew inside its cap.
     let mut pf = Portfolio {

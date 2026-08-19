@@ -1,0 +1,27 @@
+=== 1. token contract addresses as literals ===
+  none
+
+=== 2. market values assigned as literals ===
+  none
+
+=== 3. explorer URLs with an address baked in ===
+  none
+
+=== 4. every constant in the frontend, for the record ===
+ui-v2/src/components/markets.tsx:31:const TELEMETRY = "#3b82f6";
+ui-v2/src/lib/feed.ts:32:const SERVER =
+ui-v2/src/lib/wallet.ts:12:const X_LAYER = {
+ui-v2/src/lib/wallet.ts:145:const SELECTORS = {
+ui-v2/src/lib/walletconnect.ts:25:const PROJECT_ID =
+
+=== 5. the data files the UI reads are generated, not committed by hand ===
+  universe     OKX Onchain OS, signed
+  market       OKX public v5 market API, no key
+  rwa          OKX Onchain OS DEX market price, signed
+  depth        OKX Onchain OS DEX aggregator v6, signed
+  onchainos    OKX Onchain OS, official onchainos CLI v4.4.10, authenticated
+  intel        OKX Onchain OS: social sentiment, news, smart-money signals
+  detail       OKX Onchain OS, per-token detail
+  activity     the agent's own decision journal, reworded for a reader. Counts are read from evidence/journal.jsonl, never recomputed.
+
+GATE: PASS — no hardcoded market data in the frontend

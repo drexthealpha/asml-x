@@ -1,0 +1,91 @@
+Real-world assets on X Layer mainnet, priced by OKX Onchain OS
+Run 2026-08-19T05:22:22Z
+
+{
+  "source": "OKX Onchain OS DEX market price, signed",
+  "endpoint": "POST /api/v6/dex/market/price",
+  "chain_id": 196,
+  "chain_name": "X Layer mainnet",
+  "fetched_at_utc": "2026-08-19T05:22:22Z",
+  "divergence_limit_bps": "300",
+  "divergence_limit_verified_on_chain": true,
+  "instruments": [
+    {
+      "symbol": "PYUSD",
+      "address": "0x87b4a8176b3df6b71e26cc095edcaf4db07506b4",
+      "plain": "PayPal's dollar. Backed by US government debt and cash.",
+      "price": null,
+      "status": "no_quote"
+    },
+    {
+      "symbol": "USDG",
+      "address": "0x4ae46a509f6b1d9056937ba4500cb143933d2dc8",
+      "plain": "Global Dollar. Backed by cash reserves.",
+      "price": "0.999667",
+      "quoted_at_ms": "1787116940363",
+      "reference": "1.00",
+      "divergence_bps": "-3.33",
+      "status": "within_band"
+    },
+    {
+      "symbol": "USDC",
+      "address": "0xb6ceceab302e2e4948951ee7843fc24e92933061",
+      "plain": "Backed by cash and short-dated US Treasuries.",
+      "price": "0.998987",
+      "quoted_at_ms": "1787116940363",
+      "reference": "1.00",
+      "divergence_bps": "-10.13",
+      "status": "within_band"
+    },
+    {
+      "symbol": "USDT",
+      "address": "0x779ded0c9e1022225f8e0630b35a9b54be713736",
+      "plain": "The largest dollar token. Reserve-backed, including Treasuries.",
+      "price": "0.999453",
+      "quoted_at_ms": "1787116940363",
+      "reference": "1.00",
+      "divergence_bps": "-5.47",
+      "status": "within_band"
+    },
+    {
+      "symbol": "DAI",
+      "address": "0xc5015b9d9161dca7e18e32f6f25c4ad850731fd4",
+      "plain": "Backed by a basket of collateral held in contracts.",
+      "price": "1.000077",
+      "quoted_at_ms": "1787116940363",
+      "reference": "1.00",
+      "divergence_bps": "0.77",
+      "status": "within_band"
+    },
+    {
+      "symbol": "crvUSD",
+      "address": "0xda8f4eb4503acf5dec5420523637bb5b33a846f6",
+      "plain": "Backed by crypto collateral, redeemable against it.",
+      "price": null,
+      "status": "no_quote"
+    },
+    {
+      "symbol": "USDe",
+      "address": "0x5d3a1ff2b6bab83b63cd9ad0787074081a52ef34",
+      "plain": "A synthetic dollar. Held steady by hedging, not by reserves, so it can move.",
+      "price": "26.567701",
+      "quoted_at_ms": "1787116940363",
+      "reference": "1.00",
+      "status": "untradeable",
+      "router_says": "The value difference from this transaction`s quote route is higher than 90%, which may lead to a risk of loss to user assets."
+    },
+    {
+      "symbol": "sUSDe",
+      "address": "0x211cc4dd073734da055fbf44a2b4667d5e5fe5d2",
+      "plain": "USDe that earns yield. Worth more than a dollar on purpose, so it is not peg-checked.",
+      "price": null,
+      "status": "no_quote"
+    }
+  ],
+  "quoted": 5,
+  "breached": 0,
+  "addresses_discovered_from": "GET /api/v6/dex/aggregator/all-tokens?chainIndex=196",
+  "delisted": [],
+  "absent_asset_classes": "There is no tokenized gold, silver or stock index you can safely trade here. Tokens with names like stocks do appear on this chain, but none is listed by the exchange aggregator and nothing verifies they are backed by the shares they are named after. They are not shown as real-world assets, because a name is not a backing.",
+  "naming_note": "Checked and excluded: RTX / 'NVDA RTX STOCKS' on chain 196. Scans as low risk, but is not aggregator-listed and has no verifiable share backing."
+}

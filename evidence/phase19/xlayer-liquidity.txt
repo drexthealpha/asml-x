@@ -1,0 +1,26 @@
+Real X Layer mainnet liquidity, via OKX Onchain OS DEX aggregator v6
+chain 196, block context 68317002
+
+tokens available: 22
+  USDG       0x4ae46a509f6b1d9056937ba4500cb143933d2dc8
+  USDT       0x779ded0c9e1022225f8e0630b35a9b54be713736
+  USDC       0xb6ceceab302e2e4948951ee7843fc24e92933061
+  ETH        0xe7b000003a45145decf8a28fc755ad5ec5ea025a
+  SOL        0x505000008de8748dbd4422ff4687a4fc9beba15b
+  OKB        0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE
+  crvUSD     0xda8f4eb4503acf5dec5420523637bb5b33a846f6
+  DAI        0xc5015b9d9161dca7e18e32f6f25c4ad850731fd4
+  DMCX       0x848e56ad13b728a668af89459851efd8a89c9f58
+  FB         0x770f030fdbf63ebf1c939de8bcff8943c2c2d454
+  PYUSD      0x87b4a8176b3df6b71e26cc095edcaf4db07506b4
+  QUICK      0x68286607a1d43602d880d349187c3c48c0fd05e6
+
+venues an order actually crosses:
+  Uniswap V3  100%
+
+per-token risk flags:
+  WOKB     $     99.44  honeypot=False  tax=0
+  USDT     $   0.99923  honeypot=False  tax=0
+
+This is real mainnet liquidity. Execution of the agent's own trades still
+settles on this project's venue contract, labelled a stand-in everywhere.

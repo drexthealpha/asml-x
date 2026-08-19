@@ -1,0 +1,38 @@
+{
+  "source": "eth_call against the deployed RWA contracts on X Layer mainnet",
+  "chain_id": 196,
+  "explorer": "https://www.oklink.com/x-layer/evm/address/",
+  "fetched_at_utc": "2026-08-19T06:46:35Z",
+  "guard_address": "0x5311C01f6BcFFd78F0C42EC88cce4eba658CD4Ed",
+  "vault_address": "0x9B3fd14D7f5f843edd8977196026EFBE98Eede2b",
+  "guard_owner": "0x7bdd2d0d1728df5bef8faae8de85c3dd21a5de46",
+  "vault_asset": null,
+  "vault_paused": false,
+  "rules": [
+    {
+      "name": "Price must track its reference",
+      "plain": "If the market price drifts further than this from the reference price, the agent stops trading it.",
+      "value_bps": 300,
+      "display": "3.00%"
+    },
+    {
+      "name": "The price must be recent",
+      "plain": "A price older than this is refused. Stale data on a real-world asset is how an agent trades yesterday's market.",
+      "value_seconds": 3600,
+      "display": "60 minutes"
+    },
+    {
+      "name": "No trading near a redemption window",
+      "plain": "Real-world assets have windows where they can be redeemed. Trading close to one is refused, because the price moves for reasons the agent cannot see.",
+      "value_seconds": 43200,
+      "display": "720 minutes"
+    },
+    {
+      "name": "The issuer must not be paused",
+      "plain": "If whoever issues the asset halts it, the agent stops too, rather than trading something nobody is standing behind.",
+      "value_bool": false,
+      "display": "active"
+    }
+  ],
+  "unreadable": []
+}

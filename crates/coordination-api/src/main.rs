@@ -170,6 +170,71 @@ impl State {
 
 /// Build a JSON response. The status is a number now rather than a "200 OK" string, because
 /// tiny_http owns the reason phrase and two sources for it is one too many.
+/// The x402 payment challenge this API answers an unpaid quote request with.
+///
+/// WHY A PAID QUOTE AT ALL. A quote is not free to give: it reveals the book view, reserves
+/// capacity against the risk limits, and hands the caller a short-lived option they can accept or
+/// abandon. Until now that cost was absorbed and defended with a rate limit, which is a blunt
+/// instrument: it cannot distinguish a serious counterparty from a scraper, only a fast one from a
+/// slow one. x402 lets the caller pay for what they are consuming.
+///
+/// WHY x402 SPECIFICALLY. It is the protocol OKX's own agent stack speaks
+/// (`onchainos payment quote` / `pay`), so an agent built on Onchain OS can pay this endpoint with
+/// no bespoke integration: it receives the 402, signs, and retries. That is the whole point of
+/// agent-to-agent payments, and inventing a private scheme here would defeat it.
+///
+/// PAYMENT DOES NOT BUY A BETTER QUOTE. It buys the quote AT ALL. The risk gate runs identically
+/// either way, and a paying caller is refused exactly as an internal decision would be. Money must
+/// never move a limit, which is the same rule the agent's own learning obeys.
+struct PaymentChallenge {
+    /// Price per quote, in the asset's smallest unit.
+    amount: String,
+    asset_symbol: String,
+    asset_address: String,
+    chain_id: u64,
+    /// Where payment settles. The vault's fee collector, from the deployment manifest.
+    pay_to: String,
+}
+
+impl PaymentChallenge {
+    /// Read the challenge from configuration, or `None` when payment is not enabled.
+    ///
+    /// OFF BY DEFAULT, deliberately. Every existing consumer, every evidence script and the Phase 6
+    /// artifacts call this API unpaid; switching that on silently would break all of them. The
+    /// operator turns it on with `ASML_X402_PRICE`.
+    fn from_env() -> Option<Self> {
+        let amount = std::env::var("ASML_X402_PRICE").ok().filter(|s| !s.is_empty())?;
+        Some(Self {
+            amount,
+            asset_symbol: std::env::var("ASML_X402_ASSET").unwrap_or_else(|_| "USDT".into()),
+            asset_address: std::env::var("ASML_X402_ASSET_ADDRESS").unwrap_or_default(),
+            chain_id: std::env::var("ASML_X402_CHAIN")
+                .ok()
+                .and_then(|s| s.parse().ok())
+                .unwrap_or(196),
+            pay_to: std::env::var("ASML_X402_PAY_TO").unwrap_or_default(),
+        })
+    }
+
+    /// The 402 body, in the shape an x402 client expects.
+    fn body(&self, resource: &str) -> Value {
+        json!({
+            "x402Version": 2,
+            "error": "payment required",
+            "accepts": [{
+                "scheme": "exact",
+                "network": format!("eip155:{}", self.chain_id),
+                "maxAmountRequired": self.amount,
+                "resource": resource,
+                "description": "One risk-gated quote from the ASML-X agent",
+                "payTo": self.pay_to,
+                "asset": self.asset_address,
+                "extra": { "name": self.asset_symbol },
+            }],
+        })
+    }
+}
+
 fn json_response(status: u16, body: &Value) -> Response<std::io::Cursor<Vec<u8>>> {
     let text = body.to_string();
     Response::from_string(text)
@@ -385,10 +450,30 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let guard = chain_client::parse_address(dep["riskGuard"].as_str().ok_or("no guard")?)?;
     let market_word = chain_client::parse_word(dep["marketId"].as_str().ok_or("no marketId")?)?;
 
-    let client = chain_client::ChainClient::new(RPC, Some(FALLBACK.to_string()));
+    // THE CHAIN IS CONFIGURABLE, AND THE CHECK IS KEPT.
+    //
+    // This was pinned to 1952 with compile-time RPC constants, so the coordination API could only
+    // ever run against testnet — while the product, the vault and the agent had all moved to
+    // mainnet 196. An external agent calling this was being quoted against a different chain than
+    // the one its money is on, which is worse than the endpoint being unavailable.
+    //
+    // The chain check is NOT removed to make mainnet work. It reads its expectation from the
+    // environment instead of a literal, so the runtime still refuses to serve quotes for a chain it
+    // was not told to expect. Deleting the guard would discard exactly the protection that catches
+    // this class of mistake, which is the mistake it just caught.
+    let rpc = std::env::var("ASML_RPC").unwrap_or_else(|_| RPC.to_string());
+    let expected: u64 = std::env::var("ASML_CHAIN_ID")
+        .ok()
+        .and_then(|s| s.parse().ok())
+        .unwrap_or(1952);
+    // Only fall back to the testnet secondary when the primary is the testnet default. A mainnet
+    // run must never silently fail over to a testnet endpoint.
+    let fallback = if rpc == RPC { Some(FALLBACK.to_string()) } else { None };
+
+    let client = chain_client::ChainClient::new(&rpc, fallback);
     let chain_id = client.chain_id()?;
-    if chain_id != 1952 {
-        return Err(format!("wrong chain {chain_id}, expected 1952").into());
+    if chain_id != expected {
+        return Err(format!("wrong chain {chain_id}, expected {expected}").into());
     }
 
     let state = Arc::new(Mutex::new(State::new()));
@@ -439,7 +524,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         let state = Arc::clone(&state);
         // Each worker owns its own market-intel buffer. No chain client: workers do not read the
         // chain at all, which is the whole point of the refresher below.
-        let risk = RiskEngine::new(Limits::conservative_testnet());
+        let risk = RiskEngine::new(Limits::conservative());
 
         handles.push(std::thread::spawn(move || {
             let mut intel = MarketIntel::new(32);
@@ -707,6 +792,27 @@ fn handle(
         }
 
         ("POST", "/quote") => {
+            // THE PAYMENT GATE, BEFORE ANY WORK IS DONE.
+            //
+            // Checked first so an unpaid request costs this service nothing: no book read, no risk
+            // evaluation, no capacity reserved. A gate placed after the work would still hand the
+            // expensive part away for free and only withhold the answer.
+            //
+            // The header is the caller's signed authorization from `onchainos payment pay`. Its
+            // PRESENCE is what is checked here; verification of the signature and settlement are
+            // the payment facilitator's job, and pretending to verify it in this file would be
+            // security theatre. That boundary is stated rather than blurred.
+            if let Some(challenge) = PaymentChallenge::from_env() {
+                // Both spellings: `PAYMENT-SIGNATURE` is what the CLI emits, `X-PAYMENT` appears in
+                // the x402 spec. Accepting only one would reject a conforming client.
+                let paid = headers.contains_key("payment-signature")
+                    || headers.contains_key("x-payment");
+                if !paid {
+                    state.lock().expect("state mutex").refused += 1;
+                    return (402, challenge.body("/quote"));
+                }
+            }
+
             let size_micro = body
                 .get("size_micro")
                 .and_then(Value::as_str)

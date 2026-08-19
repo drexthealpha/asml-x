@@ -11,7 +11,7 @@ use core_types::{MarketId, Position, Side, Stamped};
 use proptest::prelude::*;
 
 fn engine() -> RiskEngine {
-    RiskEngine::new(Limits::conservative_testnet())
+    RiskEngine::new(Limits::conservative())
 }
 
 fn mk_intent(kind: InstrumentKind, side: Side, size: Micro, price: Micro) -> OrderIntent {
@@ -691,13 +691,13 @@ fn book_with_exposure() -> Portfolio {
 // GROUP A: the shipped defaults. Kills lib.rs:69, 70, 76 (* -> +, * -> /).
 // ---------------------------------------------------------------------------
 
-/// Kills: `replace * with +` and `replace * with /` in `Limits::conservative_testnet`.
+/// Kills: `replace * with +` and `replace * with /` in `Limits::conservative`.
 ///
 /// Why this test did not exist and should have: every other test constructs its own limits, so
 /// the defaults the DEMO ACTUALLY RUNS WITH were asserted nowhere.
 #[test]
 fn the_shipped_testnet_defaults_are_exactly_what_they_claim_to_be() {
-    let l = Limits::conservative_testnet();
+    let l = Limits::conservative();
     assert_eq!(l.max_market_notional_micro, 50 * MICRO);
     assert_eq!(l.max_gross_notional_micro, 200 * MICRO);
     assert_eq!(l.max_net_skew_micro, 75 * MICRO);
@@ -716,7 +716,7 @@ fn the_shipped_testnet_defaults_are_exactly_what_they_claim_to_be() {
 /// of the numbers, which the exact-value test above does not.
 #[test]
 fn the_testnet_defaults_are_internally_coherent() {
-    let l = Limits::conservative_testnet();
+    let l = Limits::conservative();
 
     // A single order cannot exceed one market's cap; no market's cap can exceed gross.
     // If either inverted, one of the limits would be unreachable and therefore dead code.
@@ -762,7 +762,7 @@ fn the_testnet_defaults_are_internally_coherent() {
 #[test]
 fn the_order_notional_boundary_and_the_approval_threshold_are_both_inclusive() {
     let e = engine();
-    let l = Limits::conservative_testnet();
+    let l = Limits::conservative();
     let pf = empty_book(1_000 * MICRO);
     let ctx = RiskContext::healthy_at(0);
 
@@ -815,7 +815,7 @@ fn the_order_notional_boundary_and_the_approval_threshold_are_both_inclusive() {
 #[test]
 fn the_mark_age_boundary_is_inclusive_of_the_maximum() {
     let e = engine();
-    let l = Limits::conservative_testnet();
+    let l = Limits::conservative();
     let i = mk_intent(InstrumentKind::Spot, Side::Buy, MICRO, MICRO);
 
     let mut pf = book_with_exposure();
@@ -893,7 +893,7 @@ fn the_market_notional_projection_adds_to_existing_exposure_and_its_boundary_is_
 fn the_gross_projection_adds_to_current_gross_and_its_boundary_is_inclusive() {
     let e = engine();
     let ctx = RiskContext::healthy_at(0);
-    let l = Limits::conservative_testnet();
+    let l = Limits::conservative();
 
     // FOUR markets, none above the 50 per-market cap, alternating sign so net skew stays tiny
     // while gross accumulates to 175. Building this out of one large position instead is what
@@ -1034,7 +1034,7 @@ fn the_net_skew_projection_is_signed_and_its_boundary_is_inclusive() {
 fn the_free_margin_floor_is_inclusive_and_spending_reduces_margin() {
     let e = engine();
     let ctx = RiskContext::healthy_at(0);
-    let l = Limits::conservative_testnet();
+    let l = Limits::conservative();
     let order = mk_intent(InstrumentKind::Spot, Side::Buy, 20 * MICRO, MICRO);
 
     // Leaves exactly the minimum: 25 - 20 = 5, and the minimum is 5.
@@ -1083,7 +1083,7 @@ fn the_free_margin_floor_is_inclusive_and_spending_reduces_margin() {
 fn the_rwa_share_cap_is_a_real_fraction_of_projected_gross() {
     let e = engine();
     let ctx = RiskContext::healthy_at(0).with_rwa(healthy_rwa());
-    let l = Limits::conservative_testnet();
+    let l = Limits::conservative();
     assert_eq!(l.max_rwa_share_bps, 4_000);
 
     let rwa_market = MarketId::new("RWA/tQUOTE");
@@ -1497,7 +1497,7 @@ fn a_user_limit_looser_than_the_system_changes_nothing() {
 /// reverses an operand is caught at the source rather than through a behavioural test.
 #[test]
 fn tightened_by_never_raises_a_bound() {
-    let base = Limits::conservative_testnet();
+    let base = Limits::conservative();
     let huge = UserLimits {
         max_order_notional_micro: Micro::MAX,
         max_market_notional_micro: Micro::MAX,
@@ -1578,7 +1578,7 @@ proptest! {
 fn export_conservative_defaults_for_the_ui() {
     use std::io::Write;
 
-    let l = Limits::conservative_testnet();
+    let l = Limits::conservative();
 
     // The values the UI will display. Asserted so a change is deliberate rather than incidental.
     assert_eq!(l.max_order_notional_micro, 25 * MICRO);
@@ -1594,7 +1594,7 @@ fn export_conservative_defaults_for_the_ui() {
     let json = format!(
         r#"{{
   "generatedBy": "cargo test -p risk-engine export_conservative_defaults_for_the_ui",
-  "source": "crates/risk-engine/src/lib.rs Limits::conservative_testnet",
+  "source": "crates/risk-engine/src/lib.rs Limits::conservative",
   "microPerUnit": {micro},
   "limits": [
     {{

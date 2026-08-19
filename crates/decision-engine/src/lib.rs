@@ -214,6 +214,35 @@ impl DecisionEngine {
     /// menu, and it is why the candidate count varies between cycles.
     #[must_use]
     pub fn generate(&self, signals: &Signals, book: &[market_intel::OrderView]) -> Vec<Candidate> {
+        // No budget: every existing caller and every Phase 4 to 10 artifact behaves exactly as
+        // before. Affordability is opt-in so nothing that already reproduces stops reproducing.
+        self.generate_within(signals, book, None)
+    }
+
+    /// Generate candidates the portfolio can actually PAY FOR.
+    ///
+    /// WHY THIS EXISTS. Sizes came from `order.remaining_base()`, which is the resting size on the
+    /// venue. That is a fine basis for "what could be taken" and a useless one for "what can be
+    /// afforded": with a real balance of 0.198978 USDT the engine kept proposing orders worth one
+    /// to two whole quote units, the risk gate refused all twenty-four of them, and the agent
+    /// looked broken while behaving correctly. The size a candidate proposes has to be bounded by
+    /// the money that exists, or every cycle is spent generating options and rejecting them.
+    ///
+    /// This is also the difference between a fixed menu and live generation: with a budget the
+    /// same book yields different candidates as the balance moves, which is what makes the agent
+    /// tradable with one dollar rather than needing a hundred.
+    ///
+    /// SHRINK ONLY, NEVER GROW. The budget can reduce a size and can drop a candidate entirely.
+    /// It can never raise one above what the book offers, so it cannot manufacture an opportunity
+    /// that the market is not showing. That direction matters: a bound that could widen would be a
+    /// second way to authorise a trade, and the risk gate is supposed to be the only one.
+    #[must_use]
+    pub fn generate_within(
+        &self,
+        signals: &Signals,
+        book: &[market_intel::OrderView],
+        budget_quote_micro: Option<i128>,
+    ) -> Vec<Candidate> {
         let mut out = vec![self.score_hold(signals)];
 
         let confidence = signals
@@ -243,6 +272,26 @@ impl DecisionEngine {
                 } else {
                     Side::Buy
                 };
+
+                // AFFORDABILITY, applied to buys only. A buy spends the quote asset, so it is
+                // bounded by the quote balance. A sell spends BASE, which this budget says nothing
+                // about, and clamping it against a quote figure would silently forbid selling an
+                // inventory the agent already holds.
+                if let (Some(budget), Side::Buy) = (budget_quote_micro, side) {
+                    if order.price_quote <= 0 {
+                        continue;
+                    }
+                    // Integer throughout. `max_affordable` is the base size whose notional fits
+                    // inside the budget; truncation rounds DOWN, so it can never round into an
+                    // order that cannot be paid for.
+                    let max_affordable = (budget * MICRO) / order.price_quote;
+                    amount = amount.min(max_affordable);
+                    if amount <= 0 {
+                        // Not a failure and not silence: the budget genuinely cannot buy the
+                        // smallest unit at this price, so there is no candidate to score.
+                        continue;
+                    }
+                }
                 out.push(self.score_take(
                     signals,
                     order.id,
@@ -375,7 +424,13 @@ impl DecisionEngine {
         ctx: &RiskContext,
         decision_id: u64,
     ) -> Decision {
-        let mut candidates = self.generate(signals, book);
+        // BOUNDED BY THE MONEY THAT EXISTS. `free_margin_micro` is read from the token contract
+        // under router execution, so this is the real spendable balance rather than an assumption.
+        // Generating options the portfolio cannot pay for produced twenty-four refusals per cycle
+        // and no trades: correct behaviour reached expensively, and indistinguishable from a
+        // broken agent on screen.
+        let mut candidates =
+            self.generate_within(signals, book, Some(portfolio.free_margin_micro));
 
         // Put EVERY action candidate through the risk gate, not only the ones ranked
         // above the winner.
@@ -525,7 +580,7 @@ pub fn assert_real_search(d: &Decision) -> Result<(), String> {
 
 #[must_use]
 pub fn default_limits() -> Limits {
-    Limits::conservative_testnet()
+    Limits::conservative()
 }
 
 #[cfg(test)]

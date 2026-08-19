@@ -11,6 +11,8 @@
 //! 3. A signal that cannot be computed is `None`, never a default. A zero spread
 //!    and an unknown spread must never be the same value.
 
+pub mod external;
+
 use chain_client::{word_from_u128, Address, ChainClient, ChainError};
 use core_types::{Micro, Stamped, TimestampMs, MICRO};
 

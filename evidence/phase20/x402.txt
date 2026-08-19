@@ -1,0 +1,33 @@
+building
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 4.09s
+
+=== 1. payment DISABLED (default) ===
+  POST /quote unpaid → 200
+{"block":68328337,"expires_at_ms":1787097413310,"market":"tBASE/tQUOTE","price_micro":"1700000","quote_id":1,"requires_human_approval":false,"side":"Buy","size_micro":"1000000","ttl_ms":15000}
+
+=== 2. payment ENABLED ===
+  POST /quote unpaid → 402  (402 expected)
+{
+    "accepts": [
+        {
+            "asset": "0x779ded0c9e1022225f8e0630b35a9b54be713736",
+            "description": "One risk-gated quote from the ASML-X agent",
+            "extra": {
+                "name": "USDT"
+            },
+            "maxAmountRequired": "10000",
+            "network": "eip155:196",
+            "payTo": "0x7ff884C412a1A2c416e931C59889e5335C5EFa0D",
+            "resource": "/quote",
+            "scheme": "exact"
+        }
+    ],
+    "error": "payment required",
+    "x402Version": 2
+}
+
+  POST /quote WITH a payment header → 200  (not 402)
+{"block":68328366,"expires_at_ms":1787097442888,"market":"tBASE/tQUOTE","price_micro":"1700000","quote_id":1,"requires_human_approval":false,"side":"Buy","size_micro":"1000000","ttl_ms":15000}
+
+The paid request is not 402, which is the property being proved: the gate is the header,
+and the risk engine still decides the answer.

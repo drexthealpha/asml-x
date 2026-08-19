@@ -1,0 +1,35 @@
+=== MARKET ===
+market price                       OK  1 rows
+market index                       OK  1 rows
+market kline                       UNPARSEABLE
+portfolio-overview                 NO JSON
+portfolio-dex-history              NO JSON
+
+=== TOKEN ===
+token info                         OK  1 rows
+token price-info                   OK  1 rows
+token liquidity                    OK  5 rows
+token holders                      UNPARSEABLE
+token advanced-info                OK  bundleHoldingPercent, chainIndex, createTime, creatorAddress, devCreateTokenCount, devHoldingPercent
+token hot-tokens                   UNPARSEABLE
+
+=== SECURITY ===
+security token-scan                OK  1 rows
+security approvals                 OK  1 rows
+
+=== SIGNAL / SOCIAL ===
+signal chains                      OK  6 rows
+signal list                        NO JSON
+social news                        NO JSON
+
+=== DEFI ===
+defi support-chains                OK  16 rows
+defi search earn                   OK  list, total
+defi search lending                OK  list, total
+
+=== SWAP ===
+swap quote                         NO JSON
+
+=== WALLET (needs login) ===
+wallet status                      OK  accountCount, currentAccountId, currentAccountName, email, loggedIn
+wallet chains                      UNPARSEABLE

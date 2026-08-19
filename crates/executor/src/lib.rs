@@ -67,7 +67,7 @@ mod tests {
     use risk_engine::{Limits, RiskContext, RiskEngine};
 
     fn approved_small() -> RiskApproved<OrderIntent> {
-        let e = RiskEngine::new(Limits::conservative_testnet());
+        let e = RiskEngine::new(Limits::conservative());
         let intent = OrderIntent {
             market: MarketId::new("M1"),
             kind: InstrumentKind::Spot,
@@ -94,7 +94,7 @@ mod tests {
 
     #[test]
     fn a_leg_needing_human_approval_is_blocked_until_released() {
-        let e = RiskEngine::new(Limits::conservative_testnet());
+        let e = RiskEngine::new(Limits::conservative());
         let intent = OrderIntent {
             market: MarketId::new("M1"),
             kind: InstrumentKind::Spot,

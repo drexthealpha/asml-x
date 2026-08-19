@@ -60,7 +60,7 @@ impl Limits {
     /// Deliberately small defaults. The demo runs real money on a real chain, so
     /// the safe direction is tiny.
     #[must_use]
-    pub const fn conservative_testnet() -> Self {
+    pub const fn conservative() -> Self {
         Self {
             max_market_notional_micro: 50 * MICRO,
             max_gross_notional_micro: 200 * MICRO,

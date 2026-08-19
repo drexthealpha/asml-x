@@ -42,7 +42,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         // sharing them would put a lock around every chain read, which is the serialisation this
         // whole change exists to remove.
         let client = ChainClient::new(RPC, Some(FALLBACK.to_string()));
-        let risk = RiskEngine::new(Limits::conservative_testnet());
+        let risk = RiskEngine::new(Limits::conservative());
         let venue = d.venue;
         let guard = d.guard;
         let market_word = d.market_word;

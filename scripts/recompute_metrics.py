@@ -15,8 +15,10 @@ import sys
 REPO = "/mnt/c/Users/zulab/OneDrive/Desktop/ASML-X"
 J = f"{REPO}/ui-v2/public/data/journal.jsonl"
 OUT = f"{REPO}/ui-v2/public/data/metrics.json"
-EXPLORER_TX = "https://www.oklink.com/x-layer-testnet/tx/"
-EXPLORER_ADDR = "https://www.oklink.com/x-layer-testnet/address/"
+# MAINNET explorer. These pointed at x-layer-testnet while the panel rendered mainnet addresses,
+# so every "okx" link on the Chain page opened a testnet page for a contract that is not there.
+EXPLORER_TX = "https://www.oklink.com/x-layer/evm/tx/"
+EXPLORER_ADDR = "https://www.oklink.com/x-layer/evm/address/"
 WEI_PER_MICRO = 10**12
 
 
@@ -30,9 +32,27 @@ def env_int(name):
 
 
 def _deployment(key):
-    """One source of truth for deployed addresses: the file the deploy script writes."""
-    with open(f"{REPO}/deployments.json", encoding="utf-8") as fh:
-        return json.load(fh)[key]
+    """One source of truth for deployed addresses: the MAINNET manifest.
+
+    THIS READ THE TESTNET FILE. `{REPO}/deployments.json` is the chain-1952 address book, and it
+    stays that way because every Phase 7 to 10 evidence artifact cites it. But the product now
+    ships mainnet: `mainnet_ui.py` writes chain 196 into the UI manifest, so the Chain panel was
+    showing mainnet blocks and a mainnet header directly above TESTNET guard and venue addresses,
+    with explorer links that opened the wrong chain. Two truths on one screen, neither labelled,
+    which is the exact defect the comment below this one was written to prevent.
+
+    Falls back to the testnet file only if the mainnet manifest is absent, so a clean clone that
+    has not run the mainnet step still produces a coherent file rather than crashing.
+    """
+    for path in (f"{REPO}/deployments-mainnet.json", f"{REPO}/deployments.json"):
+        try:
+            with open(path, encoding="utf-8") as fh:
+                d = json.load(fh)
+            if key in d:
+                return d[key]
+        except OSError:
+            continue
+    raise KeyError(f"no deployment address for {key} in either manifest")
 
 
 def _fee_metrics():
@@ -420,7 +440,7 @@ def main():
             "venue_order_count": env_int("ORDERS"),
             "agent_key_nonce": env_int("NONCE"),
             # TWO LIMITS EXIST AND THEY DISAGREE ON PURPOSE. The onchain per-market cap is 500
-            # quote units; the offchain risk engine's conservative_testnet cap is 50. The offchain
+            # quote units; the offchain risk engine's conservative cap is 50. The offchain
             # limit binds first by design, which is why the risk panel can show 100% utilisation
             # while this onchain figure reads about 10%. Both numbers are correct and they measure
             # different limits, so the panel labels which is which rather than showing one and
@@ -428,7 +448,7 @@ def main():
             "note_two_limits": (
                 "onchain cap 500 quote units, offchain engine cap 50. The offchain limit binds "
                 "first by design, so onchain utilisation reads roughly a tenth of the offchain "
-                "figure. See crates/risk-engine Limits::conservative_testnet."
+                "figure. See crates/risk-engine Limits::conservative."
             ),
         },
         "journal": {

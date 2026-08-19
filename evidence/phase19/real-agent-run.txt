@@ -1,0 +1,39 @@
+=== 3 cycles, chain 196, execution through real pools ===
+spending  USDT 0x779ded0c9e1022225f8e0630b35a9b54be713736
+held by   0x1A04dE3eeb68C32d04214B264e19c34A5ed5245B
+	TraceFlags   : TraceFlags(1)
+	ParentSpanId : 98e29c893936ca25
+	Kind         : Internal
+	Start time   : 2026-08-18 20:41:16.409359
+	End time     : 2026-08-18 20:41:20.910743
+	Status       : Unset
+cycle 2 block 68316610 | 8 live orders | 17 candidates | chose: hold
+  thesis (5000 bps): spread 8 bps is comparable to realized volatility 5 bps
+  risk:   hold outscored every permitted action, 16 candidate(s) refused by risk
+Spans
+Span #0
+	Instrumentation Scope
+		Name         : "asml-x.runtime"
+
+	Name         : decision_cycle
+	TraceId      : abd5caf8f7355ce5170c0a5564c6412b
+	SpanId       : 98e29c893936ca25
+	TraceFlags   : TraceFlags(1)
+	ParentSpanId : None (root span)
+	Kind         : Internal
+	Start time   : 2026-08-18 20:40:43.912431
+	End time     : 2026-08-18 20:41:23.338065
+	Status       : Unset
+	Attributes:
+		 ->  cycle: String(Owned("2"))
+		 ->  block: String(Owned("68316610"))
+		 ->  decision_id: String(Owned("270"))
+  trace spans written: 15
+
+journal entries total: 184
+
+journal 181 -> 184
+
+=== real swaps recorded ===
+  #9999  WOKB -> USDT  via Uniswap V3
+         https://www.oklink.com/x-layer/evm/tx/0xd705bb95b2284b0253a18fb91418bb110ba27a6e1d3c28a9d6ddf1446b3885b5

@@ -1,0 +1,31 @@
+=== preconditions ===
+chain                196
+approver, from API  0x8b773D83bc66Be128c60e07E17C8901f7a64F000
+router, from quote   0x722db4f285F8bD91ef7AF6DA397e83f7fA4E80a7
+router has code      yes
+deployer             0x7BdD2d0D1728Df5bEF8FAae8de85c3dD21a5dE46
+gas, OKB             0.001708654025432702
+
+=== tests must be green before anything is spent ===
+Suite result: ok. 10 passed; 0 failed; 0 skipped; finished in 2.43ms (3.64ms CPU time)
+
+Ran 1 test suite in 21.72ms (2.43ms CPU time): 10 tests passed, 0 failed, 0 skipped (10 total tests)
+
+=== deploy ===
+No files changed, compilation skipped
+Deployer: 0x7BdD2d0D1728Df5bEF8FAae8de85c3dD21a5dE46
+Deployed to: 0x1A04dE3eeb68C32d04214B264e19c34A5ed5245B
+Transaction hash: 0xbceba2478cbc581608b98cfbb373d31efcf7970f1691f5fd402f1c25b7368a30
+
+=== verify from chain, not from the deploy output ===
+address              0x1A04dE3eeb68C32d04214B264e19c34A5ed5245B
+tx                   0xbceba2478cbc581608b98cfbb373d31efcf7970f1691f5fd402f1c25b7368a30
+explorer             https://www.oklink.com/x-layer/evm/address/0x1A04dE3eeb68C32d04214B264e19c34A5ed5245B
+router,   read back  0x722db4f285F8bD91ef7AF6DA397e83f7fA4E80a7
+approver, read back  0x8b773D83bc66Be128c60e07E17C8901f7a64F000
+owner,  read back    0x7BdD2d0D1728Df5bEF8FAae8de85c3dD21a5dE46
+
+=== authorise the agent ===
+  setAgent status 0x1
+agent,  read back    0x7BdD2d0D1728Df5bEF8FAae8de85c3dD21a5dE46
+recorded routerExecutor and okxRouter in /mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/deployments-mainnet.json

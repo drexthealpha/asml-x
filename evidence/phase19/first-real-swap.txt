@@ -1,0 +1,18 @@
+old executor  0x02cA5dA7c7C7d9b9BbbD6C08F26f8C5281C39127
+new executor  0x1A04dE3eeb68C32d04214B264e19c34A5ed5245B
+router        0x722db4f285F8bD91ef7AF6DA397e83f7fA4E80a7
+approver      0x8b773D83bc66Be128c60e07E17C8901f7a64F000
+
+=== 1. rescue 3000000000000000 wei WOKB from the old executor ===
+  status 0x1 tx 0x733398dd175c84216fe854fea1c75980d66055da800f3adb88a092821f07e5e8
+  new executor WOKB 3000000000000000
+
+=== 2. the real swap, WOKB -> USDT across real X Layer pools ===
+  executor USDT before 0
+  TX=0xd705bb95b2284b0253a18fb91418bb110ba27a6e1d3c28a9d6ddf1446b3885b5
+  executor USDT after  198978
+  executor WOKB after  1000000000000000
+  USDT gained          0.198978
+
+That gain is a balance delta read from the USDT contract, not a figure the router reported.
+RouterExecutor.route enforces the same measurement on chain and reverts on a shortfall.

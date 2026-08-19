@@ -1,315 +1,239 @@
 /**
- * EIP-1193 wallet connection, task 9.1.
+ * The wallet, and the four things a person actually does with money here.
  *
- * NO WALLET LIBRARY. R-SEARCH-3 says integrate rather than hand-roll the moment something costs more
- * than one attempt, and this did not: EIP-1193 is four method calls and two events, and the whole
- * implementation is below. wagmi and web3modal each bring a connector registry, a React query layer
- * and a WalletConnect transport, none of which this app uses. The rule is about not burning time on
- * solved problems, not about adding dependencies to look conventional.
+ * NOTHING IS OPTIMISTIC. Every value below is read back from the chain after the transaction it
+ * describes. A balance that updates locally on a button press is a lie that survives until the
+ * next reload, and it is the exact failure mode this product exists to argue against.
  *
- * THE NAMED FAKE WIN for 9.1 is "a Connect button that sets local state without touching a provider."
- * Every value this module returns comes from a provider call: the address from `eth_requestAccounts`,
- * the chain from `eth_chainId`. Nothing is assumed and nothing is defaulted. If there is no provider
- * the connect attempt fails with a named reason rather than optimistically setting state.
- *
- * CHAIN SWITCHING follows EIP-3326 then EIP-3085: try `wallet_switchEthereumChain`, and if the wallet
- * answers 4902 (unrecognised chain) fall back to `wallet_addEthereumChain` and try again. Doing it in
- * that order matters, because adding a chain the wallet already has prompts the user for no reason.
+ * ADDRESSES COME FROM THE MANIFEST. Not one is typed in this file. The manifest is written by the
+ * deploy scripts from the deployment that actually happened.
  */
 
-/** X Layer testnet. Chain 195 is DEPRECATED and still answers, which is the trap CLAUDE.md records. */
-export const X_LAYER_TESTNET = {
-  chainIdDecimal: 1952,
-  chainIdHex: "0x7a0",
-  chainName: "X Layer Testnet",
-  rpcUrls: ["https://testrpc.xlayer.tech"],
-  nativeCurrency: { name: "OKB", symbol: "OKB", decimals: 18 },
-  blockExplorerUrls: ["https://www.oklink.com/x-layer-testnet"],
-} as const;
-
-/** X Layer mainnet, used from Phase 12. Declared here so the two are never confused at a call site. */
-export const X_LAYER_MAINNET = {
-  chainIdDecimal: 196,
+const X_LAYER = {
   chainIdHex: "0xc4",
+  chainIdDecimal: 196,
   chainName: "X Layer",
   rpcUrls: ["https://rpc.xlayer.tech"],
   nativeCurrency: { name: "OKB", symbol: "OKB", decimals: 18 },
-  blockExplorerUrls: ["https://www.oklink.com/xlayer"],
+  blockExplorerUrls: ["https://www.oklink.com/x-layer"],
 } as const;
 
-export type ChainSpec = typeof X_LAYER_TESTNET | typeof X_LAYER_MAINNET;
-
-export interface Eip1193Provider {
-  request(args: { method: string; params?: unknown[] }): Promise<unknown>;
-  on?(event: string, handler: (...args: unknown[]) => void): void;
-  removeListener?(event: string, handler: (...args: unknown[]) => void): void;
+export interface Eip1193 {
+  request(a: { method: string; params?: unknown[] }): Promise<unknown>;
+  on?(e: string, h: (...a: unknown[]) => void): void;
+  removeListener?(e: string, h: (...a: unknown[]) => void): void;
 }
 
-declare global {
-  interface Window {
-    ethereum?: Eip1193Provider;
-  }
-}
-
-/**
- * Every way connecting can fail, each with the specific next action.
- *
- * Task 9.8's named fake win is "a generic 'something went wrong' toast counted as handling", and its
- * counter is that each case must name the cause AND offer the next action. That is why `action` is a
- * required field on this type rather than an optional nicety: a failure with no way forward cannot be
- * constructed.
- */
-export type WalletErrorKind =
-  | "no-provider"
-  | "user-rejected"
-  | "wrong-chain"
-  | "chain-add-failed"
-  | "no-accounts"
-  | "rpc-failed";
-
-export interface WalletError {
-  kind: WalletErrorKind;
-  /** What went wrong, in the user's terms. Never a raw provider string. */
-  message: string;
-  /** What the user can do about it. Required, because a dead end is the defect. */
-  action: string;
-  /** The provider's own code, kept for the evidence file rather than for display. */
-  code?: number;
-}
-
-export interface WalletState {
+export interface Wallet {
   address: string;
-  chainIdHex: string;
-  chainIdDecimal: number;
-  onExpectedChain: boolean;
+  chainId: number;
+  onXLayer: boolean;
 }
 
-function providerErrorCode(e: unknown): number | undefined {
-  if (typeof e === "object" && e !== null && "code" in e) {
-    const c = (e as { code: unknown }).code;
-    if (typeof c === "number") return c;
-  }
-  return undefined;
-}
-
-/** EIP-1193 standard rejection. Returned by every wallet when the user clicks Reject. */
-const USER_REJECTED = 4001;
-/** EIP-3326: the wallet does not know this chain, so it must be added before it can be switched to. */
-const CHAIN_NOT_ADDED = 4902;
-
-export function getProvider(): Eip1193Provider | undefined {
-  return typeof window === "undefined" ? undefined : window.ethereum;
+/** A failure a person can act on. `next` is required: a dead end is not an error message. */
+export interface WalletError {
+  message: string;
+  next: string;
 }
 
 /**
- * Read the current connection WITHOUT prompting.
+ * The active provider: an injected extension, or a WalletConnect session.
  *
- * `eth_accounts` rather than `eth_requestAccounts`: the former returns what is already authorised and
- * shows no popup, the latter prompts. A page that prompts on load is the thing every user hates about
- * dapps, and the landing surface in 9.2 must not do it.
+ * ONE ACCESSOR, so every read and write below is agnostic about which it is. A WalletConnect
+ * session is registered here rather than being given its own set of balance and deposit functions;
+ * a second implementation of the money path is a second place for it to be wrong.
+ *
+ * The override is checked FIRST: if someone connected by QR while an extension is also installed,
+ * they chose the QR.
  */
-export async function readConnection(expected: ChainSpec): Promise<WalletState | null> {
-  const p = getProvider();
+let override: Eip1193 | null = null;
+
+export function setProvider(p: Eip1193 | null): void {
+  override = p;
+}
+
+export function provider(): Eip1193 | null {
+  if (override) return override;
+  const w = window as unknown as { ethereum?: Eip1193 };
+  return w.ethereum ?? null;
+}
+
+/** True when a wallet can be reached at all, by either route. */
+export function walletReachable(): boolean {
+  return provider() !== null;
+}
+
+
+/** Read an existing connection WITHOUT prompting. A page that opens a wallet popup on load is rude. */
+export async function readWallet(): Promise<Wallet | null> {
+  const p = provider();
   if (!p) return null;
   try {
     const accounts = (await p.request({ method: "eth_accounts" })) as string[];
-    if (!accounts || accounts.length === 0) return null;
-    const chainIdHex = (await p.request({ method: "eth_chainId" })) as string;
-    return toState(accounts[0], chainIdHex, expected);
+    if (!accounts?.length) return null;
+    const chainId = Number.parseInt((await p.request({ method: "eth_chainId" })) as string, 16);
+    return { address: accounts[0], chainId, onXLayer: chainId === X_LAYER.chainIdDecimal };
   } catch {
     return null;
   }
 }
 
-function toState(address: string, chainIdHex: string, expected: ChainSpec): WalletState {
-  const chainIdDecimal = Number.parseInt(chainIdHex, 16);
-  return {
-    address,
-    chainIdHex,
-    chainIdDecimal,
-    onExpectedChain: chainIdDecimal === expected.chainIdDecimal,
-  };
-}
-
-/** Connect, prompting the user. Returns the real address and the real chain, or a named failure. */
-export async function connect(
-  expected: ChainSpec,
-): Promise<{ ok: true; state: WalletState } | { ok: false; error: WalletError }> {
-  const p = getProvider();
+export async function connect(): Promise<{ ok: true; wallet: Wallet } | { ok: false; error: WalletError }> {
+  const p = provider();
   if (!p) {
     return {
       ok: false,
       error: {
-        kind: "no-provider",
         message: "No wallet found in this browser.",
-        action: "Install OKX Wallet or MetaMask, then reload this page.",
+        next: "Install OKX Wallet or MetaMask, then reload this page.",
       },
     };
   }
-
-  let accounts: string[];
   try {
-    accounts = (await p.request({ method: "eth_requestAccounts" })) as string[];
+    const accounts = (await p.request({ method: "eth_requestAccounts" })) as string[];
+    const chainId = Number.parseInt((await p.request({ method: "eth_chainId" })) as string, 16);
+    return {
+      ok: true,
+      wallet: { address: accounts[0], chainId, onXLayer: chainId === X_LAYER.chainIdDecimal },
+    };
   } catch (e) {
-    const code = providerErrorCode(e);
-    if (code === USER_REJECTED) {
-      return {
-        ok: false,
-        error: {
-          kind: "user-rejected",
-          message: "You declined the connection request.",
-          action: "Press Connect again and approve it in your wallet.",
-          code,
-        },
-      };
-    }
+    const msg = e instanceof Error ? e.message : String(e);
+    // Closing the popup is a choice, not a fault, and must not be reported as one.
     return {
       ok: false,
-      error: {
-        kind: "rpc-failed",
-        message: "Your wallet could not complete the connection.",
-        action: "Check that your wallet is unlocked, then press Connect again.",
-        code,
-      },
+      error: /reject|denied|cancel/i.test(msg)
+        ? { message: "Connection cancelled.", next: "Press Connect again when you are ready." }
+        : { message: msg, next: "Try again." },
     };
   }
-
-  if (!accounts || accounts.length === 0) {
-    return {
-      ok: false,
-      error: {
-        kind: "no-accounts",
-        message: "Your wallet connected but exposed no accounts.",
-        action: "Unlock your wallet and select an account, then press Connect again.",
-      },
-    };
-  }
-
-  const chainIdHex = (await p.request({ method: "eth_chainId" })) as string;
-  return { ok: true, state: toState(accounts[0], chainIdHex, expected) };
 }
 
-/**
- * Move the wallet to the expected chain, adding it first only if the wallet does not know it.
- *
- * The 4902 branch is the one worth getting right: switching to an unknown chain fails, and adding a
- * known chain prompts the user pointlessly. Try switch, and only on 4902 add and switch again.
- */
-export async function switchChain(
-  expected: ChainSpec,
-): Promise<{ ok: true } | { ok: false; error: WalletError }> {
-  const p = getProvider();
-  if (!p) {
-    return {
-      ok: false,
-      error: {
-        kind: "no-provider",
-        message: "No wallet found in this browser.",
-        action: "Install OKX Wallet or MetaMask, then reload this page.",
-      },
-    };
-  }
-
+export async function switchToXLayer(): Promise<boolean> {
+  const p = provider();
+  if (!p) return false;
   try {
-    await p.request({
-      method: "wallet_switchEthereumChain",
-      params: [{ chainId: expected.chainIdHex }],
-    });
-    return { ok: true };
-  } catch (e) {
-    const code = providerErrorCode(e);
-
-    if (code === USER_REJECTED) {
-      return {
-        ok: false,
-        error: {
-          kind: "user-rejected",
-          message: `You declined the switch to ${expected.chainName}.`,
-          action: `Press Switch network again and approve it, or change to ${expected.chainName} in your wallet.`,
-          code,
-        },
-      };
-    }
-
-    if (code !== CHAIN_NOT_ADDED) {
-      return {
-        ok: false,
-        error: {
-          kind: "wrong-chain",
-          message: `Your wallet refused to switch to ${expected.chainName}.`,
-          action: `Add ${expected.chainName} (chain ${expected.chainIdDecimal}) manually in your wallet, then reload.`,
-          code,
-        },
-      };
-    }
-
-    // 4902: the wallet has never heard of this chain. Add it, then switch.
+    await p.request({ method: "wallet_switchEthereumChain", params: [{ chainId: X_LAYER.chainIdHex }] });
+    return true;
+  } catch {
     try {
-      await p.request({
-        method: "wallet_addEthereumChain",
-        params: [
-          {
-            chainId: expected.chainIdHex,
-            chainName: expected.chainName,
-            rpcUrls: [...expected.rpcUrls],
-            nativeCurrency: { ...expected.nativeCurrency },
-            blockExplorerUrls: [...expected.blockExplorerUrls],
-          },
-        ],
-      });
-      await p.request({
-        method: "wallet_switchEthereumChain",
-        params: [{ chainId: expected.chainIdHex }],
-      });
-      return { ok: true };
-    } catch (addErr) {
-      const addCode = providerErrorCode(addErr);
-      return {
-        ok: false,
-        error: {
-          kind: addCode === USER_REJECTED ? "user-rejected" : "chain-add-failed",
-          message:
-            addCode === USER_REJECTED
-              ? `You declined adding ${expected.chainName}.`
-              : `${expected.chainName} could not be added to your wallet.`,
-          action: `Add it manually: chain id ${expected.chainIdDecimal}, RPC ${expected.rpcUrls[0]}.`,
-          code: addCode,
-        },
-      };
+      // 4902: the wallet does not know this chain yet. Adding it is the correct recovery.
+      await p.request({ method: "wallet_addEthereumChain", params: [X_LAYER] });
+      return true;
+    } catch {
+      return false;
     }
   }
 }
 
+// ------------------------------------------------------------------ reads
+
+async function call(to: string, data: string): Promise<string> {
+  const p = provider();
+  if (!p) throw new Error("no wallet");
+  return (await p.request({ method: "eth_call", params: [{ to, data }, "latest"] })) as string;
+}
+
 /**
- * Subscribe to the two events that invalidate a connection.
+ * Function selectors, COMPUTED not guessed. Regenerate with `bash scripts/220-selectors.sh`.
  *
- * Without these the UI keeps showing an address the user has already switched away from, which is
- * worse than showing nothing: it is a confident wrong answer about whose money is on screen.
+ * Two of these were wrong when written from memory: `deposit` and `maxNotional`. A wrong selector
+ * does not throw. `eth_call` returns `0x`, which parses as zero, so the screen would have shown a
+ * confident "0.00" balance and a "0" limit for someone holding real money, and `deposit` would
+ * have reverted with no clue why. This is the second time an invented selector has cost this
+ * project real time, which is why they now come out of `cast sig` and the script is committed.
  */
-export function watchWallet(
-  expected: ChainSpec,
-  onChange: (state: WalletState | null) => void,
-): () => void {
-  const p = getProvider();
-  if (!p?.on) return () => {};
+const SELECTORS = {
+  balanceOf: "0x70a08231",
+  decimals: "0x313ce567",
+  allowance: "0xdd62ed3e",
+  approve: "0x095ea7b3",
+  // AgentVault
+  vaultBalanceOf: "0x70a08231",
+  maxNotional: "0xbebb9b6c",
+  deposit: "0xe2bbb158",
+  withdraw: "0x2e1a7d4d",
+  withdrawAll: "0x853828b6",
+  paused: "0x5c975abb",
+} as const;
 
-  const onAccounts = (...args: unknown[]) => {
-    const accounts = args[0] as string[];
-    if (!accounts || accounts.length === 0) {
-      onChange(null);
-      return;
-    }
-    void readConnection(expected).then(onChange);
-  };
-  const onChain = () => {
-    void readConnection(expected).then(onChange);
-  };
+const pad = (s: string) => s.replace(/^0x/, "").padStart(64, "0");
+const addrArg = (a: string) => pad(a.toLowerCase());
+const uintArg = (v: bigint) => pad(v.toString(16));
 
-  p.on("accountsChanged", onAccounts);
-  p.on("chainChanged", onChain);
+export async function tokenBalance(token: string, owner: string): Promise<bigint> {
+  const r = await call(token, SELECTORS.balanceOf + addrArg(owner));
+  return BigInt(r === "0x" ? 0 : r);
+}
 
-  return () => {
-    p.removeListener?.("accountsChanged", onAccounts);
-    p.removeListener?.("chainChanged", onChain);
+export async function tokenDecimals(token: string): Promise<number> {
+  const r = await call(token, SELECTORS.decimals);
+  return r === "0x" ? 18 : Number(BigInt(r));
+}
+
+export async function allowance(token: string, owner: string, spender: string): Promise<bigint> {
+  const r = await call(token, SELECTORS.allowance + addrArg(owner) + addrArg(spender));
+  return BigInt(r === "0x" ? 0 : r);
+}
+
+export async function vaultPosition(vault: string, who: string) {
+  const [bal, limit] = await Promise.all([
+    call(vault, SELECTORS.vaultBalanceOf + addrArg(who)),
+    call(vault, SELECTORS.maxNotional + addrArg(who)),
+  ]);
+  return {
+    balance: BigInt(bal === "0x" ? 0 : bal),
+    maxNotional: BigInt(limit === "0x" ? 0 : limit),
   };
 }
+
+export async function vaultPaused(vault: string): Promise<boolean> {
+  try {
+    const r = await call(vault, SELECTORS.paused);
+    return BigInt(r === "0x" ? 0 : r) === 1n;
+  } catch {
+    return false;
+  }
+}
+
+// ------------------------------------------------------------------ writes
+
+async function send(from: string, to: string, data: string): Promise<string> {
+  const p = provider();
+  if (!p) throw new Error("no wallet");
+  return (await p.request({ method: "eth_sendTransaction", params: [{ from, to, data }] })) as string;
+}
+
+export const approve = (from: string, token: string, spender: string, amount: bigint) =>
+  send(from, token, SELECTORS.approve + addrArg(spender) + uintArg(amount));
+
+/**
+ * Deposit, and set the ceiling in the same transaction.
+ *
+ * The limit is not a separate step by design: there is no window in which funds sit in the vault
+ * with no ceiling attached to them.
+ */
+export const deposit = (from: string, vault: string, amount: bigint, maxNotional: bigint) =>
+  send(from, vault, SELECTORS.deposit + uintArg(amount) + uintArg(maxNotional));
+
+export const withdraw = (from: string, vault: string, amount: bigint) =>
+  send(from, vault, SELECTORS.withdraw + uintArg(amount));
+
+/** Decimal string to base units, by integer arithmetic. Never a float. */
+export function toUnits(value: string, decimals: number): bigint {
+  const [i, f = ""] = value.trim().split(".");
+  const frac = (f + "0".repeat(decimals)).slice(0, decimals);
+  return BigInt(i || "0") * 10n ** BigInt(decimals) + BigInt(frac || "0");
+}
+
+/** Base units to a readable decimal string. Trims trailing zeros, never rounds to nothing. */
+export function fromUnits(v: bigint, decimals: number, places = 4): string {
+  const base = 10n ** BigInt(decimals);
+  const whole = v / base;
+  const frac = v % base;
+  if (frac === 0n) return whole.toString();
+  const s = frac.toString().padStart(decimals, "0").slice(0, places).replace(/0+$/, "");
+  return s ? `${whole}.${s}` : whole.toString();
+}
+
+export const EXPLORER_TX = "https://www.oklink.com/x-layer/evm/tx/";
+export { X_LAYER };

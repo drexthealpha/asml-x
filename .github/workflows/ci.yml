@@ -223,6 +223,13 @@ jobs:
         working-directory: ui-v2
         run: pnpm build
 
+      # THE GATE THAT KEEPS THE PRODUCT HONEST. Fails the build if a token address, price,
+      # balance, APY or holder count is written as a literal anywhere in the frontend, and if any
+      # data file the UI reads cannot say where it came from. Asserted-and-wrong more than once
+      # before this existed.
+      - name: No hardcoded market data
+        run: bash scripts/225-no-hardcoded-data.sh
+
   # ---------------------------------------------------------------------------
   # Browser gates, headless. E11 is about this project's preview pane, NOT about headless Chromium,
   # and treating it as a universal limit was how these came to be skipped.

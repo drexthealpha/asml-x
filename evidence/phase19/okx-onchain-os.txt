@@ -1,0 +1,25 @@
+OKX Onchain OS reachability probe
+Run 2026-08-17 23:54:28 UTC
+DNS pinned per E9. A 000 here means the HOST is unreachable, not that DNS failed.
+
+=== 1. supported chains ===
+  dex/aggregator/supported/chain                             401
+      {"msg":"Request header OK-ACCESS-KEY can not be empty.","code":"50103"}
+      401
+=== 2. tokens on chain 196 ===
+  dex/aggregator/all-tokens?chainId=196                      401
+      {"msg":"Request header OK-ACCESS-KEY can not be empty.","code":"50103"}
+      401
+=== 3. a real quote on 196: 1 WOKB -> USDT ===
+  dex/aggregator/quote chain 196                             401
+      {"msg":"Request header OK-ACCESS-KEY can not be empty.","code":"50103"}
+      401
+=== 4. market price endpoint ===
+  dex/market/price chain 196                                 200
+      {"code":100,"data":{},"detailMsg":"","error_code":"100","error_message":"Request method 'GET' not supported","msg":"Request method 'GET' not supported"}
+      200
+
+=== verdict ===
+A 200 with JSON on any of the above means real market data is reachable and the agent
+can source signals from it. A 401/403 means the endpoint exists but needs API credentials.
+A 000 means unreachable from here even with DNS pinned.

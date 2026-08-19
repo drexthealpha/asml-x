@@ -1,0 +1,28 @@
+OKX Onchain OS market data, keyless probe
+Run 2026-08-17 23:55:16 UTC
+
+=== POST dex/market/price, chain 196 WOKB ===
+  market/price                                   401
+      {"msg":"Request header OK-ACCESS-KEY can not be empty.","code":"50103"}
+      401
+
+=== POST dex/market/price, native OKB (zero address) ===
+  market/price native                            401
+      {"msg":"Request header OK-ACCESS-KEY can not be empty.","code":"50103"}
+      401
+
+=== public OKX ticker for OKB-USDT (no key on v5 market endpoints) ===
+  market/ticker OKB-USDT                         200
+      {"code":"0","msg":"","data":[{"instType":"SPOT","instId":"OKB-USDT","last":"99.17","lastSz":"0.050413","askPx":"99.17","askSz":"1.139681","bidPx":"99.16","bidSz":"18.047994","open24h":"104.13","high24h":"104.99","low24h":"97.29","volCcy24h":"17432717.88627825","vol24h":"170761.840257","ts":"1787010918066","sodUtc0":"104.08","sodUtc8":"103.81"}]}
+      200
+
+=== public OKX candles, for a real price series ===
+  market/candles OKB-USDT 1m                     200
+      {"code":"0","msg":"","data":[["1787010900000","99.18","99.18","99.17","99.17","10.109113","1002.62156299","1002.62156299","0"],["1787010840000","99.22","99.23","99.12","99.18","50.385229","4996.41591022","4996.41591022","1"],["1787010780000","99.22","99.3","99.22","99.22","75.701907","7513.78884054","7513.78884054","1"]]}
+      200
+
+=== public index price ===
+  market/index-tickers BTC-USD                   200
+      {"code":"0","msg":"","data":[{"instId":"BTC-USD","idxPx":"64458.2","high24h":"64558.1","sodUtc0":"62832.5","open24h":"62835.5","low24h":"62685.3","sodUtc8":"64142.9","ts":"1787010919255"}]}
+      200
+

@@ -1,0 +1,10 @@
+```
+UI regenerated from mainnet
+  chain          196 (mainnet)
+  rpc            https://rpc.xlayer.tech
+  contracts      9, including RwaVault and RwaRiskGuard
+  journal kept   32 mainnet entries
+  journal cut    152 testnet entries below block 60000000
+  malformed      0
+  block range    68099276 to 68316610
+```

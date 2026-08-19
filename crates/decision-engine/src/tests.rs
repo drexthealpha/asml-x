@@ -385,3 +385,91 @@ proptest! {
         prop_assert_eq!(a, b);
     }
 }
+
+// ---------------------------------------------------------------- affordability bound
+
+/// The largest quote notional among BUY candidates, or 0 if there are none.
+fn max_buy_notional(cands: &[Candidate]) -> i128 {
+    cands
+        .iter()
+        .filter_map(|c| match c.action {
+            Action::Take {
+                side: Side::Buy,
+                base_amount,
+                price_quote,
+                ..
+            } => Some((base_amount * price_quote) / MICRO),
+            _ => None,
+        })
+        .max()
+        .unwrap_or(0)
+}
+
+#[test]
+fn a_budget_shrinks_buy_candidates_to_what_the_balance_can_pay_for() {
+    // THE BUG THIS PINS. With a real balance of 0.198978 USDT the engine proposed orders worth one
+    // to two whole quote units, the risk gate refused all of them, and no trade ever executed. The
+    // engine was not wrong about the book; it was reasoning about money that did not exist.
+    let e = engine();
+    let book = book_two_sided();
+    let s = signals_from(&book, 4);
+
+    let unbounded = max_buy_notional(&e.generate(&s, &book));
+    assert!(unbounded > 0, "the fixture must produce buy candidates at all");
+
+    let budget = 198_978; // 0.198978 quote units, the real measured balance
+    let bounded = max_buy_notional(&e.generate_within(&s, &book, Some(budget)));
+
+    assert!(bounded <= budget, "a buy must never exceed the budget");
+    assert!(bounded < unbounded, "the budget must actually bind on this fixture");
+}
+
+#[test]
+fn a_budget_never_grows_a_candidate_beyond_what_the_book_offers() {
+    // The bound may only shrink. A limit that could widen would be a second way to authorise a
+    // trade, and the risk gate is meant to be the only one.
+    let e = engine();
+    let book = book_two_sided();
+    let s = signals_from(&book, 4);
+
+    let unbounded = max_buy_notional(&e.generate(&s, &book));
+    let huge = max_buy_notional(&e.generate_within(&s, &book, Some(i128::MAX / 1_000_000)));
+
+    assert_eq!(huge, unbounded, "an enormous budget must change nothing");
+}
+
+#[test]
+fn a_quote_budget_does_not_block_selling_base_already_held() {
+    // A sell spends BASE. Clamping it against a QUOTE balance would forbid an agent with no cash
+    // from ever reducing a position, which is the opposite of risk management.
+    let e = engine();
+    let book = book_two_sided();
+    let s = signals_from(&book, 4);
+
+    let sells = |c: &[Candidate]| {
+        c.iter()
+            .filter(|c| matches!(c.action, Action::Take { side: Side::Sell, .. }))
+            .count()
+    };
+
+    let before = sells(&e.generate(&s, &book));
+    let after = sells(&e.generate_within(&s, &book, Some(0)));
+    assert!(before > 0, "the fixture must produce sell candidates");
+    assert_eq!(before, after, "a zero quote budget must not remove sells");
+}
+
+#[test]
+fn a_budget_too_small_to_buy_anything_produces_no_buys_rather_than_a_zero_sized_one() {
+    // A zero-sized order is not a trade. It has to be absent, not present and empty, or the
+    // journal fills with candidates that could never have executed.
+    let e = engine();
+    let book = book_two_sided();
+    let s = signals_from(&book, 4);
+
+    let cands = e.generate_within(&s, &book, Some(1));
+    for c in &cands {
+        if let Action::Take { base_amount, .. } = c.action {
+            assert!(base_amount > 0, "no candidate may carry a zero size");
+        }
+    }
+}

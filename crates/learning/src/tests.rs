@@ -79,7 +79,7 @@ fn a_learned_parameter_actually_changes_the_decision() {
         free_margin_micro: 1_000 * MICRO,
         ..Default::default()
     };
-    let risk = RiskEngine::new(Limits::conservative_testnet());
+    let risk = RiskEngine::new(Limits::conservative());
     let ctx = RiskContext::healthy_at(5_000);
 
     let low = DecisionEngine::new(
@@ -139,7 +139,7 @@ fn a_learned_parameter_actually_changes_the_decision() {
 /// learning cycle, and there is no API through which it could have changed.
 #[test]
 fn learning_cannot_reach_a_risk_limit_because_it_has_no_type_for_one() {
-    let limits_before = Limits::conservative_testnet();
+    let limits_before = Limits::conservative();
     let mut learner = Learner::new(Params::default());
 
     // Feed a full cycle of outcomes and force an update.
@@ -154,7 +154,7 @@ fn learning_cannot_reach_a_risk_limit_because_it_has_no_type_for_one() {
         "expected a parameter change after 10 outcomes"
     );
 
-    let limits_after = Limits::conservative_testnet();
+    let limits_after = Limits::conservative();
     assert_eq!(
         limits_before, limits_after,
         "risk limits changed across a learning cycle"

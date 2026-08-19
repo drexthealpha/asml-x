@@ -1,0 +1,14 @@
+WOKB, discovered      0xe538905cf8410324e03a5a23c1c177a474d59b2b
+symbol, from contract "WOKB"
+decimals              18
+has deposit()         yes, OKB wraps 1:1
+
+=== balances ===
+deployer OKB          0.004710571645528583
+executor              0x02cA5dA7c7C7d9b9BbbD6C08F26f8C5281C39127
+executor WOKB         0
+
+=== will the aggregator quote a tiny size? ===
+  0.001 WOKB -> USDT: min receive 99432 via PotatoSwap, OkieStableSwap
+  0.002 WOKB -> USDT: min receive 198900 via Uniswap V3
+  0.01 WOKB -> USDT: min receive 994579 via Uniswap V3

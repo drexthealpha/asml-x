@@ -1,0 +1,8 @@
+{
+  "name": "asml-x",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  }
+}

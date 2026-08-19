@@ -56,7 +56,7 @@ screen kept saying `25` and this gate would still pass, because the UI and the c
 each other and both be wrong.
 
 So `ui-v2/public/data/limits.json` is WRITTEN BY `cargo test -p risk-engine
-export_conservative_defaults_for_the_ui` from `Limits::conservative_testnet()`. That test also
+export_conservative_defaults_for_the_ui` from `Limits::conservative()`. That test also
 ASSERTS each value, so an accidental change fails a test naming the number rather than silently
 regenerating the file and letting the UI follow.
 

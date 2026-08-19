@@ -1,0 +1,1229 @@
+{
+  "source": "OKX Onchain OS, per-token detail",
+  "chain_id": 196,
+  "fetched_at_utc": "2026-08-19T05:19:53Z",
+  "tokens": {
+    "DAI": {
+      "symbol": "DAI",
+      "address": "0xc5015b9d9161dca7e18e32f6f25c4ad850731fd4",
+      "price": "1.000077403654402455155245482439531",
+      "holders": "1235",
+      "liquidity": "4.6902079384182959832040",
+      "market_cap": "14863.284511455789709979",
+      "circulating_supply": "14862.134127962066",
+      "high": "",
+      "low": "",
+      "change_5m": "0",
+      "change_1h": "0",
+      "change_4h": "0",
+      "change_24h": "0",
+      "pools": [
+        {
+          "pool": "USDC_Bridged/DAI",
+          "protocol": "DackieSwap",
+          "usd": "2.5600749869294985984",
+          "address": "0x937ecd2b60d38fe85533342e5f292cfa12048635"
+        },
+        {
+          "pool": "USDG/DAI",
+          "protocol": "DackieSwap",
+          "usd": "0.410198",
+          "address": "0x0722699b99dfc509d49b5aec826b04023eef77a0"
+        }
+      ],
+      "lp_burned_percent": "",
+      "bundle_holding_percent": "",
+      "sniper_holding_percent": "",
+      "risk_control_level": "1",
+      "cluster_concentration": "Low",
+      "top100_percent": "0.93142",
+      "same_funder_percent": "0.64667",
+      "honeypot": false,
+      "risk_level": "LOW",
+      "buy_tax": "0.0",
+      "sell_tax": "0.0",
+      "mintable": false,
+      "open_source": true,
+      "low_liquidity": false,
+      "index_price": "0.9997"
+    },
+    "DMCX": {
+      "symbol": "DMCX",
+      "address": "0x848e56ad13b728a668af89459851efd8a89c9f58",
+      "price": "0.002576743683591279",
+      "holders": "402",
+      "liquidity": "11.204099761478081057335043542100485375",
+      "market_cap": "2576330.118928139474535988",
+      "circulating_supply": "999839501.0470878",
+      "high": "",
+      "low": "",
+      "change_5m": "",
+      "change_1h": "",
+      "change_4h": "",
+      "change_24h": "",
+      "pools": [],
+      "lp_burned_percent": "",
+      "bundle_holding_percent": "",
+      "sniper_holding_percent": "",
+      "risk_control_level": "2",
+      "cluster_concentration": "High",
+      "top100_percent": "0.99995",
+      "same_funder_percent": "0.71333",
+      "honeypot": false,
+      "risk_level": "LOW",
+      "buy_tax": "0.0",
+      "sell_tax": "0.0",
+      "mintable": true,
+      "open_source": true,
+      "low_liquidity": false,
+      "index_price": "0"
+    },
+    "ETH": {
+      "symbol": "ETH",
+      "address": "0xe7b000003a45145decf8a28fc755ad5ec5ea025a",
+      "price": "1912.305488976",
+      "holders": "4870",
+      "liquidity": "24355005.204170554451490287510",
+      "market_cap": "18249033.6707239720024416",
+      "circulating_supply": "9542.9489566",
+      "high": "1921.052447098827549235579310304963",
+      "low": "1890.024809030539827051185783238249",
+      "change_5m": "0.02",
+      "change_1h": "0.17",
+      "change_4h": "-0.07",
+      "change_24h": "0.79",
+      "pools": [
+        {
+          "pool": "ETH/aXlrxETH",
+          "protocol": "Aave",
+          "usd": "19987275.56559292384344",
+          "address": "0xe6639ba6c1d79be6d4c776e4c17504538d1719cd"
+        },
+        {
+          "pool": "USDT/ETH",
+          "protocol": "Uniswap",
+          "usd": "1923427.9064375858268975",
+          "address": "0x77ef18adf35f62b2ad442e4370cdbc7fe78b7dcc"
+        },
+        {
+          "pool": "xBETH/ETH",
+          "protocol": "Uniswap",
+          "usd": "1428891.864425435311282",
+          "address": "0x84d4dbeebff5f77c63f36bd0dcb18121aa9ac8fc"
+        },
+        {
+          "pool": "SOL/ETH",
+          "protocol": "Uniswap",
+          "usd": "500764.2445999897346044",
+          "address": "0xc1382e9eb8f3df11d348d1dcca34e246690122a2"
+        },
+        {
+          "pool": "xBTC/ETH",
+          "protocol": "Uniswap",
+          "usd": "469916.4654820672398099",
+          "address": "0xf845c41c0683ce99b8c1f36c46b2d93e1533470c"
+        }
+      ],
+      "lp_burned_percent": "",
+      "bundle_holding_percent": "0.075",
+      "sniper_holding_percent": "",
+      "risk_control_level": "1",
+      "cluster_concentration": "Low",
+      "top100_percent": "0.99476",
+      "same_funder_percent": "0.43333",
+      "honeypot": false,
+      "risk_level": "LOW",
+      "buy_tax": "0",
+      "sell_tax": "0",
+      "mintable": false,
+      "open_source": true,
+      "low_liquidity": false,
+      "index_price": "1911.32"
+    },
+    "FB": {
+      "symbol": "FB",
+      "address": "0x770f030fdbf63ebf1c939de8bcff8943c2c2d454",
+      "price": "0.385306758503768912",
+      "holders": "",
+      "liquidity": "4930.715068123881950317563154701152",
+      "market_cap": "8091441.928579147152",
+      "circulating_supply": "21000000.0",
+      "high": "",
+      "low": "",
+      "change_5m": "",
+      "change_1h": "",
+      "change_4h": "",
+      "change_24h": "",
+      "pools": [
+        {
+          "pool": "FB/WOKB",
+          "protocol": "izumi Finance",
+          "usd": "4930.715068123881950317563154701152",
+          "address": "0x90a8b213031c99b30f501752a1e48037f6e0b8c2"
+        }
+      ],
+      "lp_burned_percent": "",
+      "bundle_holding_percent": "",
+      "sniper_holding_percent": "",
+      "risk_control_level": "4",
+      "cluster_concentration": "High",
+      "top100_percent": "0.99964",
+      "same_funder_percent": "0.93667",
+      "honeypot": false,
+      "risk_level": "HIGH",
+      "buy_tax": "0",
+      "sell_tax": "0",
+      "mintable": false,
+      "open_source": true,
+      "low_liquidity": true,
+      "index_price": "0"
+    },
+    "GPU": {
+      "symbol": "GPU",
+      "address": "0xd624079f9062aab098d28a05bad2f19614e6c5ac",
+      "price": "0.0000833655284755226889508255154735527",
+      "holders": "890",
+      "liquidity": "35356.174307580710146065604459456576843909349701051",
+      "market_cap": "72973.373917309279595616",
+      "circulating_supply": "875342305.76772875",
+      "high": "0.0001161789375773071231721093510314997",
+      "low": "0.00007902524835377564569352462995299458",
+      "change_5m": "0",
+      "change_1h": "-1.71",
+      "change_4h": "-4.19",
+      "change_24h": "-25.59",
+      "pools": [
+        {
+          "pool": "wNVDAx/GPU",
+          "protocol": "Uniswap",
+          "usd": "35353.534447480641864060463179152385843909349701051",
+          "address": "0x6fb9ac933c4a7665d788651d136ab4f0075e6d30"
+        },
+        {
+          "pool": "OKB/GPU",
+          "protocol": "Uniswap V4",
+          "usd": "1.11534591093508105281247459373459592475928998744325",
+          "address": "0x4abdeebb37b8da50bc77b04d28775561652e1d39f86dbbd13bc3ac4cd2e36259"
+        },
+        {
+          "pool": "USDT/GPU",
+          "protocol": "Uniswap V4",
+          "usd": "0.15860029264713620474526187132976867516002997663165",
+          "address": "0xd78db9cc1e89aa7fd4f965b2369502df905c1999e52b7e545d388516ca30e516"
+        },
+        {
+          "pool": "USDG/GPU",
+          "protocol": "Uniswap V4",
+          "usd": "0.1265493016270159990873922037532866277358899664022765",
+          "address": "0x9ca751956d890adec757fdbc2fe2db5ed79c4e210dafe1e5a82a35835f9a0778"
+        },
+        {
+          "pool": "USDT/GPU",
+          "protocol": "Uniswap V4",
+          "usd": "0.0029569512",
+          "address": "0xd133b2a61029696ea21e01697e7a9e64c292fa6db3ce9604cd26367cdaf8ce33"
+        }
+      ],
+      "lp_burned_percent": "",
+      "bundle_holding_percent": "",
+      "sniper_holding_percent": "20.9822",
+      "risk_control_level": "1",
+      "cluster_concentration": "Low",
+      "top100_percent": "0.87594",
+      "same_funder_percent": "0.63333",
+      "honeypot": false,
+      "risk_level": "LOW",
+      "buy_tax": "0",
+      "sell_tax": "0",
+      "mintable": false,
+      "open_source": true,
+      "low_liquidity": false,
+      "index_price": "0.00008336552847552268895082551547355270"
+    },
+    "OKB": {
+      "symbol": "OKB",
+      "address": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+      "price": "101.9614353570476190476190476190476",
+      "holders": "",
+      "liquidity": "85863804.6241844613160068461589543181684355447295146398128",
+      "market_cap": "2128770000",
+      "circulating_supply": "21000000",
+      "high": "103.618639122134663341645885286783",
+      "low": "95.54313310863853172705455522497441",
+      "change_5m": "0.44",
+      "change_1h": "0.77",
+      "change_4h": "-0.33",
+      "change_24h": "4.46",
+      "pools": [
+        {
+          "pool": "WOKB/aXlrWOKB",
+          "protocol": "Aave",
+          "usd": "27334098.587725577076",
+          "address": "0x3ea3a4038fba5757a9a68de920b44698d7326a59"
+        },
+        {
+          "pool": "USDT/WOKB",
+          "protocol": "Uniswap",
+          "usd": "2082960.63472673489968",
+          "address": "0xe3be6a0137f1b0602fc1a4841686f43b340a5082"
+        },
+        {
+          "pool": "DOGSHIT/WOKB",
+          "protocol": "PotatoSwap",
+          "usd": "1067562.88762566377844",
+          "address": "0x409df33801ea3aeca3d28364103fd44a01c56341"
+        },
+        {
+          "pool": "XP/WOKB",
+          "protocol": "PotatoSwap",
+          "usd": "601768.84692576511656",
+          "address": "0xbcd3da22afddbd21e0de316e232dd219b7f32f52"
+        },
+        {
+          "pool": "USDT_Bridged/WOKB",
+          "protocol": "PotatoSwap",
+          "usd": "398019.874754113782212",
+          "address": "0xc71f9e1de80eb505c0cb3bbf90ae6593130e5d25"
+        }
+      ],
+      "lp_burned_percent": "",
+      "bundle_holding_percent": "",
+      "sniper_holding_percent": "",
+      "risk_control_level": "1",
+      "honeypot": false,
+      "risk_level": "LOW",
+      "buy_tax": "0.0",
+      "sell_tax": "0.0",
+      "mintable": false,
+      "open_source": false,
+      "low_liquidity": false,
+      "index_price": "101.52"
+    },
+    "PYUSD": {
+      "symbol": "PYUSD",
+      "address": "0x87b4a8176b3df6b71e26cc095edcaf4db07506b4",
+      "pools": [],
+      "lp_burned_percent": "",
+      "bundle_holding_percent": "",
+      "sniper_holding_percent": "",
+      "risk_control_level": "1",
+      "honeypot": false,
+      "risk_level": "LOW",
+      "buy_tax": null,
+      "sell_tax": null,
+      "mintable": false,
+      "open_source": false,
+      "low_liquidity": false,
+      "index_price": "0.99980534446559875"
+    },
+    "QUICK": {
+      "symbol": "QUICK",
+      "address": "0x68286607a1d43602d880d349187c3c48c0fd05e6",
+      "price": "0.01652064963865398016833394965246043",
+      "holders": "66",
+      "liquidity": "0.809019408340223476011191987090250",
+      "market_cap": "60.483153457995820453",
+      "circulating_supply": "3661.0638673966628",
+      "high": "",
+      "low": "",
+      "change_5m": "0",
+      "change_1h": "0",
+      "change_4h": "0",
+      "change_24h": "0",
+      "pools": [
+        {
+          "pool": "WETH/QUICK",
+          "protocol": "QuickSwap",
+          "usd": "0.80901940834022347601119198709025",
+          "address": "0x2e1ea02ec91aa378b4f603225607c75108006b94"
+        }
+      ],
+      "lp_burned_percent": "",
+      "bundle_holding_percent": "",
+      "sniper_holding_percent": "",
+      "risk_control_level": "3",
+      "cluster_concentration": "Low",
+      "top100_percent": "1.00000",
+      "same_funder_percent": "0.35294",
+      "honeypot": false,
+      "risk_level": "MEDIUM",
+      "buy_tax": null,
+      "sell_tax": null,
+      "mintable": true,
+      "open_source": false,
+      "low_liquidity": true,
+      "index_price": "0.007904821867280554"
+    },
+    "RTX": {
+      "symbol": "RTX",
+      "address": "0x18a4f9d450f46f9dea99da758b4c29ad620aae93",
+      "price": "0.0003708907402809118680091639112351131",
+      "holders": "810",
+      "liquidity": "69328.40063965850682397145330250689591686681878095300",
+      "market_cap": "362571.310625259235242307",
+      "circulating_supply": "977569055.379081413",
+      "high": "0.0006130748531726478112403076812870504",
+      "low": "0.0002298334289673387762811492582166178",
+      "change_5m": "-3.91",
+      "change_1h": "-9.65",
+      "change_4h": "6.7",
+      "change_24h": "-39.96",
+      "pools": [
+        {
+          "pool": "RTX/wNVDAx",
+          "protocol": "DYOR Swap",
+          "usd": "67022.402066441250223105897835537065058851724701681",
+          "address": "0xb8960e3b766ae359a31a409516bcc53b8a1c7bcd"
+        },
+        {
+          "pool": "RTX/USDT",
+          "protocol": "Uniswap V4",
+          "usd": "2262.262500808157689035555466969830858015094079272",
+          "address": "0xd2d15e485c58d0dbee5f27acaafdf376ab28b898c21690c8aa4ff839ab6242a5"
+        },
+        {
+          "pool": "RTX/USDG",
+          "protocol": "Uniswap V4",
+          "usd": "27.165055711309887685395037457166477148787802989008",
+          "address": "0x75eb1b10123bf283b7f504edd567c625334ef33056fc463339499874d97adc25"
+        },
+        {
+          "pool": "RTX/USDG",
+          "protocol": "Uniswap V4",
+          "usd": "16.24025420170031169644142821716807710858853363287",
+          "address": "0xad7a00affd6ba3457bbc99d7238846a02dc13f7fee68ce13059311c65ea800f9"
+        },
+        {
+          "pool": "RTX/USDT",
+          "protocol": "Uniswap V4",
+          "usd": "0.330762496088715837014389935919538040309283907257086",
+          "address": "0x0df64ace12ab3c563b1000eb21d50195f9fd8bc3a57a3d958411deee6a444c51"
+        }
+      ],
+      "lp_burned_percent": "",
+      "bundle_holding_percent": "0.0353",
+      "sniper_holding_percent": "0",
+      "risk_control_level": "1",
+      "cluster_concentration": "Low",
+      "top100_percent": "0.68879",
+      "same_funder_percent": "0.64333",
+      "honeypot": false,
+      "risk_level": "LOW",
+      "buy_tax": "0.03",
+      "sell_tax": "0.03",
+      "mintable": false,
+      "open_source": true,
+      "low_liquidity": false,
+      "index_price": "0.0003708907402809118680091639112351131"
+    },
+    "SOL": {
+      "symbol": "SOL",
+      "address": "0x505000008de8748dbd4422ff4687a4fc9beba15b",
+      "price": "76.95791514464693541293482894344371",
+      "holders": "2203",
+      "liquidity": "4189940.898431461862783212600",
+      "market_cap": "2850350.893205500515450707",
+      "circulating_supply": "37037.78731334",
+      "high": "77.33468221301128565357512420083485",
+      "low": "75.50584347168333333333333333333333",
+      "change_5m": "0.05",
+      "change_1h": "-0.05",
+      "change_4h": "0.14",
+      "change_24h": "1.46",
+      "pools": [
+        {
+          "pool": "SOL/USDT",
+          "protocol": "Uniswap",
+          "usd": "1904299.33530845647",
+          "address": "0x4651300221f345a4c6f566079bd1ddc291049c7d"
+        },
+        {
+          "pool": "xOKSOL/SOL",
+          "protocol": "Uniswap",
+          "usd": "1617568.949638832",
+          "address": "0x97bb2a4ea57b1a20d3b237b2325f56efe25e4ce0"
+        },
+        {
+          "pool": "SOL/ETH",
+          "protocol": "Uniswap",
+          "usd": "500764.2445999897346044",
+          "address": "0xc1382e9eb8f3df11d348d1dcca34e246690122a2"
+        },
+        {
+          "pool": "SOL/aXlrxSOL",
+          "protocol": "Aave",
+          "usd": "164775.19094216432",
+          "address": "0x523dce1b164327818fc5b41278fae41f6b5753fe"
+        },
+        {
+          "pool": "SOL/USDT",
+          "protocol": "Caliber",
+          "usd": "2221.63377386433",
+          "address": "0xd81a7adf81bba96b8b4dd9bc544761315048650d93a0935e8ec08e27da0ef232"
+        }
+      ],
+      "lp_burned_percent": "",
+      "bundle_holding_percent": "0.2091",
+      "sniper_holding_percent": "",
+      "risk_control_level": "1",
+      "cluster_concentration": "Low",
+      "top100_percent": "0.99633",
+      "same_funder_percent": "0.12333",
+      "honeypot": false,
+      "risk_level": "LOW",
+      "buy_tax": "0",
+      "sell_tax": "0",
+      "mintable": false,
+      "open_source": true,
+      "low_liquidity": false,
+      "index_price": "76.93"
+    },
+    "STARCOIN": {
+      "symbol": "STARCOIN",
+      "address": "0xc8a5cf49c92e249e3df18b5a083d8dd5c8878bc4",
+      "price": "0.000110262947751495630935640825142477",
+      "holders": "143",
+      "liquidity": "30656.544055770960921693741060591252104869539724100",
+      "market_cap": "109868.899001674233528695",
+      "circulating_supply": "996426281.376863948",
+      "high": "0.0005501994256322663333164557133593404",
+      "low": "0.000002782149487682444340118246696999283",
+      "change_5m": "0",
+      "change_1h": "0",
+      "change_4h": "19.4",
+      "change_24h": "3863.22",
+      "pools": [
+        {
+          "pool": "wSPCXx/STARCOIN",
+          "protocol": "OkieSwap",
+          "usd": "30577.1703427545026533442410605912521048695397241",
+          "address": "0xfe5819f9c3b968e2f65550b38d5bfcd406a06f4c"
+        },
+        {
+          "pool": "OKB/STARCOIN",
+          "protocol": "Uniswap V4",
+          "usd": "78.471081214757842846411260958311612501796549719309",
+          "address": "0x27a801723370b7676c5678fd8f4237926aae93756a8e2f739ad93336d80ab652"
+        },
+        {
+          "pool": "OKB/STARCOIN",
+          "protocol": "Uniswap V4",
+          "usd": "0.8966147131199203707782304390498041534025499797387",
+          "address": "0x95ff1a1a339e1cb953afe45d007913b218c4efea05d35cbbafb3249c36ae2121"
+        },
+        {
+          "pool": "OKB/STARCOIN",
+          "protocol": "Uniswap V4",
+          "usd": "0.00601708858049794972",
+          "address": "0xca708a86cd9ef1337ac227eca7086c75b9e3d4f6c3184d6ea40d2c035f2288ab"
+        }
+      ],
+      "lp_burned_percent": "",
+      "bundle_holding_percent": "",
+      "sniper_holding_percent": "",
+      "risk_control_level": "3",
+      "cluster_concentration": "Low",
+      "top100_percent": "0.99046",
+      "same_funder_percent": "0.69667",
+      "honeypot": false,
+      "risk_level": "MEDIUM",
+      "buy_tax": "0",
+      "sell_tax": "0",
+      "mintable": false,
+      "open_source": false,
+      "low_liquidity": false,
+      "index_price": "0.0001100403498926964224246162244008652"
+    },
+    "STONE": {
+      "symbol": "STONE",
+      "address": "0x80137510979822322193fc997d400d5a6c747bf7",
+      "pools": [],
+      "lp_burned_percent": "",
+      "bundle_holding_percent": "",
+      "sniper_holding_percent": "",
+      "risk_control_level": "2",
+      "cluster_concentration": "Medium",
+      "top100_percent": "0.99930",
+      "same_funder_percent": "0.35667",
+      "honeypot": false,
+      "risk_level": "LOW",
+      "buy_tax": null,
+      "sell_tax": null,
+      "mintable": true,
+      "open_source": true,
+      "low_liquidity": false,
+      "index_price": "2010.19"
+    },
+    "USDC": {
+      "symbol": "USDC",
+      "address": "0xb6ceceab302e2e4948951ee7843fc24e92933061",
+      "price": "0.9996346983972839107484801873323278",
+      "holders": "1702",
+      "liquidity": "5669059.520890534868348614202459493542392495624284829",
+      "market_cap": "11024957.120163209941802437",
+      "circulating_supply": "11028986.026435",
+      "high": "1.023099663157699569901296833336133",
+      "low": "0.9758905869291101779195460641531436",
+      "change_5m": "-0.05",
+      "change_1h": "-0.03",
+      "change_4h": "-0.05",
+      "change_24h": "0.03",
+      "pools": [
+        {
+          "pool": "USDT/USDC",
+          "protocol": "Uniswap",
+          "usd": "1401100.27049763942",
+          "address": "0xeeeb3c1f61dc3070c675c2670a3f2188a060012d"
+        },
+        {
+          "pool": "USDG/USDC",
+          "protocol": "Uniswap",
+          "usd": "991291.081277",
+          "address": "0xbb9a35f790ea6ea9763b99e885f33bcf95860d40"
+        },
+        {
+          "pool": "USDC/USDT",
+          "protocol": "Curve",
+          "usd": "299809.34244781254",
+          "address": "0x5b3f7f05b79f3ccbe8f33374a578e14dbbb28478"
+        },
+        {
+          "pool": "USDC/wGOOGLx",
+          "protocol": "Uniswap",
+          "usd": "397981.14398242007002910368216274084167665407597722",
+          "address": "0x9f6273e2669cd812e76788b698374c43637c87c2"
+        },
+        {
+          "pool": "wQQQx/USDC",
+          "protocol": "Uniswap",
+          "usd": "393747.39852913656117496509432742",
+          "address": "0x2bd90724ffc80ba22ec7af8cfd2b4b51ff395b04"
+        }
+      ],
+      "lp_burned_percent": "",
+      "bundle_holding_percent": "0.0195",
+      "sniper_holding_percent": "",
+      "risk_control_level": "1",
+      "cluster_concentration": "Medium",
+      "top100_percent": "0.99187",
+      "same_funder_percent": "0.06333",
+      "honeypot": false,
+      "risk_level": "LOW",
+      "buy_tax": "0",
+      "sell_tax": "0",
+      "mintable": false,
+      "open_source": true,
+      "low_liquidity": false,
+      "index_price": "1"
+    },
+    "USDC_Bridged": {
+      "symbol": "USDC_Bridged",
+      "address": "0x74b7f16337b8972027f6196a17a631ac6de26d22",
+      "price": "0.9955311870737451814772570174052011",
+      "holders": "140324",
+      "liquidity": "65573.10606707827291440992",
+      "market_cap": "1768813.966652918245917693",
+      "circulating_supply": "1776753.947661",
+      "high": "1.02443491800407227397979267812623",
+      "low": "0.9751692172417088789066233393864093",
+      "change_5m": "0.07",
+      "change_1h": "0",
+      "change_4h": "0",
+      "change_24h": "-0.35",
+      "pools": [
+        {
+          "pool": "H402/USDC_Bridged",
+          "protocol": "PotatoSwap",
+          "usd": "30771.767266",
+          "address": "0xaaaf8ed89f77586b830c2ec3e95c7c7c7e0c6dd5"
+        },
+        {
+          "pool": "WETH/USDC_Bridged",
+          "protocol": "QuickSwap",
+          "usd": "7826.52214747352830468",
+          "address": "0xac50cd06b1672e9e41e0d5eaaad963ec3e49ea23"
+        },
+        {
+          "pool": "USDT_Bridged/USDC_Bridged",
+          "protocol": "OkieSwap",
+          "usd": "6361.1380786703",
+          "address": "0xe6e352bcc4ab14b1e567042a22a79491a8bc3bdc"
+        },
+        {
+          "pool": "CRAB/USDC_Bridged",
+          "protocol": "QuickSwap",
+          "usd": "1188.900782",
+          "address": "0x8ef8d2ff057f4e469cbe17cb5a25cb2848a18800"
+        },
+        {
+          "pool": "USDC_Bridged/WOKB",
+          "protocol": "PotatoSwap",
+          "usd": "705.48503152248575739",
+          "address": "0x8bc3b18232dcea4e10ecbcde6d56f2c68fe1f3c7"
+        }
+      ],
+      "lp_burned_percent": "",
+      "bundle_holding_percent": "",
+      "sniper_holding_percent": "",
+      "risk_control_level": "1",
+      "cluster_concentration": "Low",
+      "top100_percent": "0.57083",
+      "same_funder_percent": "0.35333",
+      "honeypot": false,
+      "risk_level": "LOW",
+      "buy_tax": "0",
+      "sell_tax": "0",
+      "mintable": true,
+      "open_source": true,
+      "low_liquidity": false,
+      "index_price": "1"
+    },
+    "USDG": {
+      "symbol": "USDG",
+      "address": "0x4ae46a509f6b1d9056937ba4500cb143933d2dc8",
+      "price": "0.9998021355329428810545449137473008",
+      "holders": "90079",
+      "liquidity": "10567953.5077641392351903164212164554242006647053471899508",
+      "market_cap": "268396883.283818516419092582",
+      "circulating_supply": "268450000",
+      "high": "1.024823430340940175829816640851738",
+      "low": "0.9752370814624299573025477747319119",
+      "change_5m": "0.08",
+      "change_1h": "0",
+      "change_4h": "0.07",
+      "change_24h": "0",
+      "pools": [
+        {
+          "pool": "USDG/xBTC",
+          "protocol": "Uniswap",
+          "usd": "1950647.023420035",
+          "address": "0x520f8c07a529ffb5230e76bcb8ea553d664e5b76"
+        },
+        {
+          "pool": "USDG/USDT",
+          "protocol": "Uniswap",
+          "usd": "1998783.38223502456",
+          "address": "0x0cbe0dbe1400e57f371a38bd3b9bc80f7c3676da"
+        },
+        {
+          "pool": "USDG/USDC",
+          "protocol": "Uniswap",
+          "usd": "991291.081277",
+          "address": "0xbb9a35f790ea6ea9763b99e885f33bcf95860d40"
+        },
+        {
+          "pool": "USDG/aXlrUSDG",
+          "protocol": "Aave",
+          "usd": "818469.193008",
+          "address": "0x228765a3c18065c923f23a0ccb6c7cefb3ea2223"
+        },
+        {
+          "pool": "USDG/wSPYx",
+          "protocol": "Uniswap",
+          "usd": "497228.39189511788277028560224064",
+          "address": "0x07c40850d14064d20eb0afdef9574675392f2c11"
+        }
+      ],
+      "lp_burned_percent": "",
+      "bundle_holding_percent": "0.0001",
+      "sniper_holding_percent": "",
+      "risk_control_level": "1",
+      "cluster_concentration": "Low",
+      "top100_percent": "0.97341",
+      "same_funder_percent": "0.46000",
+      "honeypot": false,
+      "risk_level": "LOW",
+      "buy_tax": "0",
+      "sell_tax": "0",
+      "mintable": true,
+      "open_source": true,
+      "low_liquidity": false,
+      "index_price": "1"
+    },
+    "USDT": {
+      "symbol": "USDT",
+      "address": "0x779ded0c9e1022225f8e0630b35a9b54be713736",
+      "price": "0.9992486287481541355998394623921864",
+      "holders": "236927",
+      "liquidity": "86790299.667175841781067074312607304581852618813583102588400000",
+      "market_cap": "112690462.93241510351741381",
+      "circulating_supply": "112775198.974846",
+      "high": "1.022846621297445723884055710668661",
+      "low": "0.9748555002867539453387651781829688",
+      "change_5m": "-0.01",
+      "change_1h": "0.1",
+      "change_4h": "0.02",
+      "change_24h": "0.03",
+      "pools": [
+        {
+          "pool": "USDT/aXlrUSDT0",
+          "protocol": "Aave",
+          "usd": "75293875.34241897344",
+          "address": "0xf356ae412db5df43bd3a10746f7ad4e1c4de4297"
+        },
+        {
+          "pool": "USDT/WOKB",
+          "protocol": "Uniswap",
+          "usd": "2082842.1091398940509",
+          "address": "0xe3be6a0137f1b0602fc1a4841686f43b340a5082"
+        },
+        {
+          "pool": "USDG/USDT",
+          "protocol": "Uniswap",
+          "usd": "1998806.4119640409",
+          "address": "0x0cbe0dbe1400e57f371a38bd3b9bc80f7c3676da"
+        },
+        {
+          "pool": "SOL/USDT",
+          "protocol": "Uniswap",
+          "usd": "1904299.33530845647",
+          "address": "0x4651300221f345a4c6f566079bd1ddc291049c7d"
+        },
+        {
+          "pool": "USDT/ETH",
+          "protocol": "Uniswap",
+          "usd": "1923357.1419041513266164",
+          "address": "0x77ef18adf35f62b2ad442e4370cdbc7fe78b7dcc"
+        }
+      ],
+      "lp_burned_percent": "",
+      "bundle_holding_percent": "0.3255",
+      "sniper_holding_percent": "",
+      "risk_control_level": "1",
+      "cluster_concentration": "Low",
+      "top100_percent": "0.86232",
+      "same_funder_percent": "0.25333",
+      "honeypot": false,
+      "risk_level": "LOW",
+      "buy_tax": "0",
+      "sell_tax": "0",
+      "mintable": true,
+      "open_source": true,
+      "low_liquidity": false,
+      "index_price": "0.99912"
+    },
+    "USDT_Bridged": {
+      "symbol": "USDT_Bridged",
+      "address": "0x1e4a5963abfd975d8c9021ce480b42188849d41d",
+      "price": "0.9949049578679208308837938467568097",
+      "holders": "123925",
+      "liquidity": "580088.84523666535590624509619488832849695",
+      "market_cap": "3547590.425183451695081324",
+      "circulating_supply": "3565758.113002",
+      "high": "1.02404204448897569385884509624198",
+      "low": "0.9745075723167193440882490030555699",
+      "change_5m": "-0.44",
+      "change_1h": "-0.45",
+      "change_4h": "0.06",
+      "change_24h": "-0.43",
+      "pools": [
+        {
+          "pool": "USDT_Bridged/WOKB",
+          "protocol": "PotatoSwap",
+          "usd": "397983.463847161596312",
+          "address": "0xc71f9e1de80eb505c0cb3bbf90ae6593130e5d25"
+        },
+        {
+          "pool": "USDT_Bridged/MiniDoge",
+          "protocol": "PotatoSwap",
+          "usd": "86155.72273831408",
+          "address": "0xf18d01c87d89185e4b92add22eea637d6d7536dd"
+        },
+        {
+          "pool": "USDT_Bridged/USDT",
+          "protocol": "OkieSwap",
+          "usd": "22501.9806798256",
+          "address": "0x7f566d2dff0eb5450126624f6c6f75daecb2196b"
+        },
+        {
+          "pool": "USDT_Bridged/WOKB",
+          "protocol": "RevoSwap",
+          "usd": "22775.5310377941139394",
+          "address": "0xc7545904de04200b3d4676827cdc9977a0d032d5"
+        },
+        {
+          "pool": "USDT_Bridged/USDC_Bridged",
+          "protocol": "OkieSwap",
+          "usd": "6361.1380786703",
+          "address": "0xe6e352bcc4ab14b1e567042a22a79491a8bc3bdc"
+        }
+      ],
+      "lp_burned_percent": "8.3943073809937597250538304282",
+      "bundle_holding_percent": "",
+      "sniper_holding_percent": "",
+      "risk_control_level": "1",
+      "cluster_concentration": "Low",
+      "top100_percent": "0.52840",
+      "same_funder_percent": "0.52667",
+      "honeypot": false,
+      "risk_level": "LOW",
+      "buy_tax": "0",
+      "sell_tax": "0",
+      "mintable": true,
+      "open_source": true,
+      "low_liquidity": false,
+      "index_price": "0.99913"
+    },
+    "USDe": {
+      "symbol": "USDe",
+      "address": "0x5d3a1ff2b6bab83b63cd9ad0787074081a52ef34",
+      "price": "26.56770110709199157195337456194515",
+      "holders": "32",
+      "liquidity": "203.13700978332",
+      "market_cap": "1614.841489060110460777",
+      "circulating_supply": "60.782131",
+      "high": "",
+      "low": "",
+      "change_5m": "0",
+      "change_1h": "0",
+      "change_4h": "0",
+      "change_24h": "0",
+      "pools": [
+        {
+          "pool": "USDe/USDT",
+          "protocol": "Uniswap V4",
+          "usd": "203.13700978332",
+          "address": "0x4455387a399e59dce4545da222ae91678accb219791c50d933cec53cb034bd1c"
+        }
+      ],
+      "lp_burned_percent": "",
+      "bundle_holding_percent": "",
+      "sniper_holding_percent": "",
+      "risk_control_level": "3",
+      "cluster_concentration": "Medium",
+      "top100_percent": "1.00000",
+      "same_funder_percent": "0.50476",
+      "honeypot": false,
+      "risk_level": "MEDIUM",
+      "buy_tax": "0.0",
+      "sell_tax": "0.0",
+      "mintable": false,
+      "open_source": true,
+      "low_liquidity": true,
+      "index_price": "26.56770110709199157195337456194515"
+    },
+    "WBTC": {
+      "symbol": "WBTC",
+      "address": "0xea034fb02eb1808c2cc3adbc15f447b93cbe08e1",
+      "price": "64579.67386363636363636363636363636",
+      "holders": "775",
+      "liquidity": "3024.56371988731148823984",
+      "market_cap": "10776.932627186556818181",
+      "circulating_supply": "0.16687809",
+      "high": "64579.67386363636363636363636363636",
+      "low": "64579.67386363636363636363636363636",
+      "change_5m": "0",
+      "change_1h": "0",
+      "change_4h": "0",
+      "change_24h": "2.1",
+      "pools": [
+        {
+          "pool": "BTA/WBTC",
+          "protocol": "QuickSwap",
+          "usd": "2077.9826520893746049344",
+          "address": "0x7edab072f1c90a798ad9f1b2ca234d98fa8f5c2e"
+        },
+        {
+          "pool": "CRAB/WBTC",
+          "protocol": "QuickSwap",
+          "usd": "747.22256671904755639308",
+          "address": "0xcce6a975677dc332693e3bff46dbc3ab541e2320"
+        },
+        {
+          "pool": "USDT/WBTC",
+          "protocol": "Uniswap V4",
+          "usd": "280.92846357000966390672",
+          "address": "0xfb0b1e6f7c399fd7b91ded63b82bbf6b8dd2cd7985582ea1263473df5ad5b865"
+        },
+        {
+          "pool": "WETH/WBTC",
+          "protocol": "QuickSwap",
+          "usd": "4.2871792273346036476",
+          "address": "0xe47121d706e3aeb4243f58551023c0849cda88ce"
+        },
+        {
+          "pool": "USDT_Bridged/WBTC",
+          "protocol": "Unknown Uniswap",
+          "usd": "2.37910315542904028926",
+          "address": "0x7366b8783e399960245eea4802a35b6a63042075"
+        }
+      ],
+      "lp_burned_percent": "",
+      "bundle_holding_percent": "",
+      "sniper_holding_percent": "",
+      "risk_control_level": "1",
+      "cluster_concentration": "Low",
+      "top100_percent": "0.93974",
+      "same_funder_percent": "0.65333",
+      "honeypot": false,
+      "risk_level": "LOW",
+      "buy_tax": "0.0",
+      "sell_tax": "0.0",
+      "mintable": false,
+      "open_source": true,
+      "low_liquidity": true,
+      "index_price": "64311.268961414155"
+    },
+    "WOKB": {
+      "symbol": "WOKB",
+      "address": "0xe538905cf8410324e03a5a23c1c177a474d59b2b",
+      "price": "102.0300733473684210526315789473684",
+      "holders": "82480",
+      "liquidity": "85863764.9559129535422555461589543181684355447295146398128",
+      "market_cap": "4442491.423617768421052631",
+      "circulating_supply": "43541",
+      "high": "103.618639122134663341645885286783",
+      "low": "95.54313310863853172705455522497441",
+      "change_5m": "0.47",
+      "change_1h": "0.81",
+      "change_4h": "-0.74",
+      "change_24h": "4.62",
+      "pools": [
+        {
+          "pool": "WOKB/aXlrWOKB",
+          "protocol": "Aave",
+          "usd": "27334098.587725577076",
+          "address": "0x3ea3a4038fba5757a9a68de920b44698d7326a59"
+        },
+        {
+          "pool": "USDT/WOKB",
+          "protocol": "Uniswap",
+          "usd": "2082731.84885257522414",
+          "address": "0xe3be6a0137f1b0602fc1a4841686f43b340a5082"
+        },
+        {
+          "pool": "DOGSHIT/WOKB",
+          "protocol": "PotatoSwap",
+          "usd": "1067562.88762566377844",
+          "address": "0x409df33801ea3aeca3d28364103fd44a01c56341"
+        },
+        {
+          "pool": "XP/WOKB",
+          "protocol": "PotatoSwap",
+          "usd": "601658.80850498767404",
+          "address": "0xbcd3da22afddbd21e0de316e232dd219b7f32f52"
+        },
+        {
+          "pool": "USDT_Bridged/WOKB",
+          "protocol": "PotatoSwap",
+          "usd": "397981.724983932706312",
+          "address": "0xc71f9e1de80eb505c0cb3bbf90ae6593130e5d25"
+        }
+      ],
+      "lp_burned_percent": "37.5730892034499948960549053357",
+      "bundle_holding_percent": "0.7973",
+      "sniper_holding_percent": "",
+      "risk_control_level": "1",
+      "cluster_concentration": "Low",
+      "top100_percent": "0.92125",
+      "same_funder_percent": "0.03667",
+      "honeypot": false,
+      "risk_level": "LOW",
+      "buy_tax": "0",
+      "sell_tax": "0",
+      "mintable": false,
+      "open_source": true,
+      "low_liquidity": false,
+      "index_price": "101.53"
+    },
+    "crvUSD": {
+      "symbol": "crvUSD",
+      "address": "0xda8f4eb4503acf5dec5420523637bb5b33a846f6",
+      "pools": [],
+      "lp_burned_percent": "",
+      "bundle_holding_percent": "",
+      "sniper_holding_percent": "",
+      "risk_control_level": "3",
+      "honeypot": false,
+      "risk_level": "MEDIUM",
+      "buy_tax": null,
+      "sell_tax": null,
+      "mintable": true,
+      "open_source": false,
+      "low_liquidity": false,
+      "index_price": "0"
+    },
+    "sUSDe": {
+      "symbol": "sUSDe",
+      "address": "0x211cc4dd073734da055fbf44a2b4667d5e5fe5d2",
+      "pools": [],
+      "lp_burned_percent": "",
+      "bundle_holding_percent": "",
+      "sniper_holding_percent": "",
+      "risk_control_level": "2",
+      "cluster_concentration": "High",
+      "top100_percent": "0.99955",
+      "same_funder_percent": "0.23667",
+      "honeypot": false,
+      "risk_level": "LOW",
+      "buy_tax": null,
+      "sell_tax": null,
+      "mintable": false,
+      "open_source": true,
+      "low_liquidity": false,
+      "index_price": "1.2418333900122872"
+    },
+    "xBETH": {
+      "symbol": "xBETH",
+      "address": "0xafeab3b85b6a56cf5f02317f0f7a23340eb983d7",
+      "price": "1938.336326958394248182561852700323",
+      "holders": "",
+      "liquidity": "824974.64641297423259105105891920438800984",
+      "market_cap": "17930915.217700098968077659",
+      "circulating_supply": "9250.67284161",
+      "high": "1938.336326958394248182561852700323",
+      "low": "1917.352742856691718464174723195638",
+      "change_5m": "0",
+      "change_1h": "0",
+      "change_4h": "0",
+      "change_24h": "1.15",
+      "pools": [
+        {
+          "pool": "xBETH/ETH",
+          "protocol": "Uniswap",
+          "usd": "824934.61580194911670105105891920438800984",
+          "address": "0x84d4dbeebff5f77c63f36bd0dcb18121aa9ac8fc"
+        },
+        {
+          "pool": "USDT/xBETH",
+          "protocol": "Uniswap V4",
+          "usd": "40.030611025115890465318667992146435456",
+          "address": "0x2b3864b3db3582c51e1b1f5d8c52fb27e3e77a697c0f6b653a53edaae89b3dd3"
+        },
+        {
+          "pool": "xBETH/aXlrxBETH",
+          "protocol": "Aave",
+          "usd": "",
+          "address": "0xe9e78053f1ef084f8cd01dbe8cce95c6b0944d32"
+        }
+      ],
+      "lp_burned_percent": "",
+      "bundle_holding_percent": "",
+      "sniper_holding_percent": "",
+      "risk_control_level": "1",
+      "cluster_concentration": "High",
+      "top100_percent": "1.00000",
+      "same_funder_percent": "0.40000",
+      "honeypot": false,
+      "risk_level": "LOW",
+      "buy_tax": null,
+      "sell_tax": null,
+      "mintable": false,
+      "open_source": true,
+      "low_liquidity": false,
+      "index_price": "1935.61940389257990299024"
+    },
+    "xBTC": {
+      "symbol": "xBTC",
+      "address": "0xb7c00000bcdeef966b20b3d884b98e64d2b06b4f",
+      "price": "64342.33967109518548834866428927138",
+      "holders": "2046",
+      "liquidity": "36124872.514289208278521644660",
+      "market_cap": "20392975.248224948408263261",
+      "circulating_supply": "316.9448819",
+      "high": "65348.038",
+      "low": "63993.06342894",
+      "change_5m": "0",
+      "change_1h": "0.14",
+      "change_4h": "-0.23",
+      "change_24h": "0.33",
+      "pools": [
+        {
+          "pool": "xBTC/aXlrxBTC",
+          "protocol": "Aave",
+          "usd": "33671513.948007792",
+          "address": "0xf5f9d4e9e2afe7e0b193d291befb41d61930464e"
+        },
+        {
+          "pool": "USDG/xBTC",
+          "protocol": "Uniswap",
+          "usd": "1950647.023420035",
+          "address": "0x520f8c07a529ffb5230e76bcb8ea553d664e5b76"
+        },
+        {
+          "pool": "xBTC/ETH",
+          "protocol": "Uniswap",
+          "usd": "469916.4654820672398099",
+          "address": "0xf845c41c0683ce99b8c1f36c46b2d93e1533470c"
+        },
+        {
+          "pool": "USDT/xBTC",
+          "protocol": "Uniswap",
+          "usd": "25137.651997669",
+          "address": "0x6cf6a073dddd6fdd74b1b9f149621e85f01aacb9"
+        },
+        {
+          "pool": "USDT/xBTC",
+          "protocol": "Uniswap",
+          "usd": "5923.39866757754",
+          "address": "0x5fcfb33c9ab1665fee892eb2af163e863a874d73"
+        }
+      ],
+      "lp_burned_percent": "",
+      "bundle_holding_percent": "0.0405",
+      "sniper_holding_percent": "",
+      "risk_control_level": "1",
+      "cluster_concentration": "Low",
+      "top100_percent": "0.99355",
+      "same_funder_percent": "0.28333",
+      "honeypot": false,
+      "risk_level": "LOW",
+      "buy_tax": "0.0",
+      "sell_tax": "0.0",
+      "mintable": true,
+      "open_source": true,
+      "low_liquidity": false,
+      "index_price": "64300.4"
+    },
+    "xOKSOL": {
+      "symbol": "xOKSOL",
+      "address": "0x14a686103854dab7b8801e31979caa595835b25d",
+      "price": "77.4506249204817806447372436344345",
+      "holders": "",
+      "liquidity": "808862.91808645107163749428310873536",
+      "market_cap": "1138054.980369762100945016",
+      "circulating_supply": "14693.94186991",
+      "high": "",
+      "low": "",
+      "change_5m": "0",
+      "change_1h": "0",
+      "change_4h": "0",
+      "change_24h": "0",
+      "pools": [
+        {
+          "pool": "xOKSOL/SOL",
+          "protocol": "Uniswap",
+          "usd": "808826.27129971780163749428310873536",
+          "address": "0x97bb2a4ea57b1a20d3b237b2325f56efe25e4ce0"
+        },
+        {
+          "pool": "xOKSOL/USDT",
+          "protocol": "Uniswap V4",
+          "usd": "36.64678673327",
+          "address": "0xe14d47967f5cdf8c0fd699b29b2cc81e0eb5a5de60c7c2253174c6f8c87c8036"
+        },
+        {
+          "pool": "xOKSOL/aXlrxOKSOL",
+          "protocol": "Aave",
+          "usd": "",
+          "address": "0x38811564090aab7bb455c5b771e26201a3535a01"
+        }
+      ],
+      "lp_burned_percent": "",
+      "bundle_holding_percent": "",
+      "sniper_holding_percent": "",
+      "risk_control_level": "1",
+      "cluster_concentration": "High",
+      "top100_percent": "1.00000",
+      "same_funder_percent": "0.39000",
+      "honeypot": false,
+      "risk_level": "LOW",
+      "buy_tax": "0",
+      "sell_tax": "0",
+      "mintable": false,
+      "open_source": true,
+      "low_liquidity": false,
+      "index_price": "79.23828283465722821176"
+    }
+  }
+}

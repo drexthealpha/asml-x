@@ -1,0 +1,11 @@
+=== 1. no builder address set (default) ===
+  out 102034738  min 102024534  venues Uniswap V3
+
+=== 2. builder address set, 0.1% ===
+  out 101932721  min 101922527  venues Uniswap V3
+
+=== 3. an absurd rate is clamped, not forwarded ===
+  requested 99%, forwarded 1.0%  (OKX permits up to 3%; this refuses above 1%)
+
+A builder fee appears only when the operator sets an address. A fee nobody asked for is a
+fee taken from a user who was not told.

@@ -1,0 +1,14 @@
+guard 0x5311C01f6BcFFd78F0C42EC88cce4eba658CD4Ed
+vault 0x9B3fd14D7f5f843edd8977196026EFBE98Eede2b
+
+maxDivergenceBps()         0xf9de4776  guard -> 0x000000000000000000000000000000000000000000000000000000000000012c
+maxOracleAge()             0x7c87a993  guard -> 0x0000000000000000000000000000000000000000000000000000000000000e10
+windowBufferSeconds()      0x65f1fd4f  guard -> 0x000000000000000000000000000000000000000000000000000000000000a8c0
+owner()                    0x8da5cb5b  guard -> 0x0000000000000000000000007bdd2d0d1728df5bef8faae8de85c3dd21a5de46
+paused()                   0x5c975abb  guard -> revert
+asset()                    0x38d52e0f  guard -> revert
+
+--- vault ---
+paused()                   vault -> 0x0000000000000000000000000000000000000000000000000000000000000000
+asset()                    vault -> revert
+owner()                    vault -> revert

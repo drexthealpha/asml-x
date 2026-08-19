@@ -1,56 +1,74 @@
 {
-  "chain_id": 1952,
-  "rpc_url": "https://testrpc.xlayer.tech",
-  "explorer_base": "https://www.oklink.com/x-layer-testnet/tx/",
-  "source": "docs/verified/deployments.md",
-  "verified_by": "bash scripts/67-verify-deployments.sh",
+  "chain_id": 196,
+  "chain_name": "X Layer",
+  "network": "mainnet",
+  "rpc_url": "https://rpc.xlayer.tech",
+  "explorer_base": "https://www.oklink.com/x-layer/evm/tx/",
+  "explorer_address_base": "https://www.oklink.com/x-layer/evm/address/",
+  "deploy_block": 68098775,
+  "source": "deployments-mainnet.json",
+  "verified_by": "bash scripts/210-mainnet-ui.sh",
   "deployments": [
     {
-      "name": "MockERC20 tBASE",
-      "address": "0x8FB4B7899EdE2D2015E9E03C9baFF9632C0bec84",
-      "role": "TEST token, base asset",
+      "name": "aQUOTE",
+      "address": "0x12dcbE73416CDFe6de0681286C25ACe81B4644C0",
+      "role": "Quote asset the vault accounts in",
       "self_deployed": true,
       "explicit_standin_marker": false
     },
     {
-      "name": "MockERC20 tQUOTE",
-      "address": "0x5069c6C619EE23a8e2EBa15b4B95F7EE16869501",
-      "role": "TEST token, quote asset",
+      "name": "aBASE",
+      "address": "0xEC23954ef24b22600C3b72C61CCE99cbe19A5AF5",
+      "role": "Base asset the agent trades",
       "self_deployed": true,
       "explicit_standin_marker": false
     },
     {
       "name": "OrderBookVenue",
-      "address": "0xd79276538A39ae5247e7a0d33D40AaD849e09B4D",
-      "role": "escrowed limit order book",
+      "address": "0x7065781018E015779d42bcC3eEA7429F8e479a3F",
+      "role": "Execution venue",
       "self_deployed": true,
       "explicit_standin_marker": false
     },
     {
       "name": "RiskGuard",
-      "address": "0x977A77aF8891187C73c7cdBd145B6fD57A0D0a47",
-      "role": "binding exposure caps and kill switch",
+      "address": "0x9D22e538a72a5d2c9A28D08c27999216A78343C9",
+      "role": "On-chain limit store. Limits can only tighten",
       "self_deployed": true,
       "explicit_standin_marker": false
     },
     {
       "name": "BatchExecutor",
-      "address": "0x954A0B68B81dD4028631a7D1B98d80bf2a563142",
-      "role": "atomic multi-leg execution",
+      "address": "0x7092050F3C4e72A2df8610ae2CC8c39DcA3B7f52",
+      "role": "Submits approved actions, and only approved actions",
       "self_deployed": true,
       "explicit_standin_marker": false
     },
     {
       "name": "FeeCollector",
-      "address": "0x2e0727C36c9F720E8d31C5eB3a3748A683610e38",
-      "role": "usage fee on executed notional, 50 bps, immutable 100 bps ceiling",
+      "address": "0x7ff884C412a1A2c416e931C59889e5335C5EFa0D",
+      "role": "Usage fee, capped at 100 bps by the contract",
       "self_deployed": true,
       "explicit_standin_marker": false
     },
     {
       "name": "AgentVault",
-      "address": "0x3e938422f11D53b62F6Fe4afa2e4f52B1aFF4382",
-      "role": "user custody: agent may trade, never withdraw",
+      "address": "0xE64b6e937Fd0d855161A5F6F0Aa1A3E01CB54c24",
+      "role": "Your deposits. Withdrawal works while paused",
+      "self_deployed": true,
+      "explicit_standin_marker": false
+    },
+    {
+      "name": "RwaVault",
+      "address": "0x9B3fd14D7f5f843edd8977196026EFBE98Eede2b",
+      "role": "The RWA vault, live on mainnet",
+      "self_deployed": true,
+      "explicit_standin_marker": false
+    },
+    {
+      "name": "RwaRiskGuard",
+      "address": "0x5311C01f6BcFFd78F0C42EC88cce4eba658CD4Ed",
+      "role": "RWA-specific refusals, including the peg band",
       "self_deployed": true,
       "explicit_standin_marker": false
     }
