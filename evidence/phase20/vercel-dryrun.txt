@@ -1,33 +1,33 @@
 === cloning the working tree as Vercel would clone the repo ===
-  files: 811
+  files: 823
 
 === the config Vercel will read ===
-  packageManager   (none)
-  installCommand   npm install -g pnpm@10.34.5
-  buildCommand     cd ui-v2 && pnpm install --frozen-lockfile && pnpm build
+  packageManager   pnpm@10.33.2
+  installCommand   npx --yes pnpm@10.33.2 --version
+  buildCommand     cd ui-v2 && npx --yes pnpm@10.33.2 install --frozen-lockfile && npx --yes pnpm@10.33.2 run build
   lockfile         lockfileVersion: '9.0'
 
+WRONG PNPM: this is the image pnpm, not the pinned one
+  shadowed  so only an explicitly pinned binary can succeed
 === 1. install command ===
-
-1 package is looking for funding
-  run `npm fund` for details
-  pnpm now: 10.33.2
+10.33.2
+  pnpm now: missing
 
 === 2. build command, frozen lockfile, no cache ===
 dist/assets/property-CnFDNXw5.js               17.20 kB │ gzip:   6.41 kB
-dist/assets/index-EhnoBX0C.js                  97.87 kB │ gzip:  27.00 kB
-dist/assets/basic-Bz76CTK-.js                 107.59 kB │ gzip:  28.56 kB
-dist/assets/w3m-modal-BwTj-Yh-.js             166.02 kB │ gzip:  34.70 kB
-dist/assets/index-B2YbDNq9.js                 239.78 kB │ gzip:  74.04 kB
-dist/assets/index-D4t45Zk0.js                 426.66 kB │ gzip: 133.50 kB
-dist/assets/index-BM0D9T3g.js                 467.07 kB │ gzip: 142.72 kB
-dist/assets/core-CL0-q8aR.js                  655.46 kB │ gzip: 197.21 kB
+dist/assets/index-81vjBNCP.js                  97.87 kB │ gzip:  27.01 kB
+dist/assets/basic-Y_r5i5K1.js                 107.59 kB │ gzip:  28.56 kB
+dist/assets/w3m-modal-D5tMtP6M.js             166.02 kB │ gzip:  34.70 kB
+dist/assets/index-Cogmd4dG.js                 239.78 kB │ gzip:  74.04 kB
+dist/assets/index-DJPsBsTT.js                 429.44 kB │ gzip: 134.08 kB
+dist/assets/index-BzqpiSc0.js                 467.07 kB │ gzip: 142.72 kB
+dist/assets/core-BvrujEws.js                  655.46 kB │ gzip: 197.21 kB
 
 (!) Some chunks are larger than 500 kB after minification. Consider:
 - Using dynamic import() to code-split the application
 - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
 - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
-✓ built in 34.56s
+✓ built in 29.54s
 
 GATE: PASS  Vercel's exact build succeeds from a clean tree
 

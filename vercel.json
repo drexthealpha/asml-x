@@ -1,8 +1,8 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "cd ui-v2 && pnpm install --frozen-lockfile && pnpm build",
+  "buildCommand": "cd ui-v2 && npx --yes pnpm@10.33.2 install --frozen-lockfile && npx --yes pnpm@10.33.2 run build",
   "outputDirectory": "ui-v2/dist",
-  "installCommand": "npm install -g pnpm@10.33.2",
+  "installCommand": "npx --yes pnpm@10.33.2 --version",
   "framework": null,
   "github": {
     "silent": true

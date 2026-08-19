@@ -24,12 +24,19 @@ rm -rf "$WORK"
 mkdir -p "$WORK"
 
 echo "=== cloning the working tree as Vercel would clone the repo ==="
-# Files only, no node_modules, no dist, no git history. `git archive` gives exactly the tracked
-# content, which is what Vercel receives.
-git -C "$REPO" archive --format=tar HEAD 2>/dev/null | tar -x -C "$WORK" || {
-  echo "no commit yet; copying the tracked file list instead"
-  git -C "$REPO" ls-files -z | tar --null -T - -cf - | tar -x -C "$WORK"
-}
+# THE WORKING TREE, not HEAD. An earlier version archived HEAD, so it tested the last commit and
+# reported PASS on config that was already fixed in the working tree, or FAIL on a fix not yet
+# committed. The point of this gate is to check what is ABOUT to be pushed.
+#
+# Tracked files only: no node_modules, no dist, no git history, which is what Vercel receives.
+git -C "$REPO" ls-files -z | while IFS= read -r -d "" f; do
+  mkdir -p "$WORK/$(dirname "$f")"
+  cp "$REPO/$f" "$WORK/$f" 2>/dev/null || true
+done
+# Untracked-but-staged additions matter too, since they will be in the push.
+git -C "$REPO" diff --cached --name-only --diff-filter=A 2>/dev/null | while IFS= read -r f; do
+  [ -f "$REPO/$f" ] && mkdir -p "$WORK/$(dirname "$f")" && cp "$REPO/$f" "$WORK/$f"
+done
 echo "  files: $(find "$WORK" -type f | wc -l)"
 
 echo
@@ -44,6 +51,20 @@ echo "  buildCommand     $BC"
 echo "  lockfile         $LV"
 
 echo
+# PRETEND AN OLD PNPM IS ALREADY ON THE PATH, which is the condition on Vercel that the first two
+# dry runs missed. The image ships its own pnpm, so a build command that says "pnpm" gets THEIRS,
+# not the one the install step fetched. Shadowing the name here reproduces that exactly: a run
+# that passes now passes because the version is pinned to the binary, not to the PATH.
+SHADOW="$WORK/.shadow"
+mkdir -p "$SHADOW"
+printf '#!/bin/sh
+echo "WRONG PNPM: this is the image pnpm, not the pinned one" >&2
+exit 1
+' > "$SHADOW/pnpm"
+chmod +x "$SHADOW/pnpm"
+export PATH="$SHADOW:$PATH"
+echo "  shadowed `pnpm` so only an explicitly pinned binary can succeed"
+
 echo "=== 1. install command ==="
 cd "$WORK"
 eval "$IC" 2>&1 | tail -3
