@@ -25,14 +25,11 @@ import {
   Loader2,
   Lock,
   ShieldCheck,
-  QrCode,
-  Wallet as WalletIcon,
 } from "lucide-react";
 import {
   EXPLORER_TX,
   allowance,
   approve,
-  connect,
   deposit,
   fromUnits,
   provider,
@@ -49,6 +46,8 @@ import {
   type WalletError,
 } from "../lib/wallet";
 import { connectWalletConnect } from "../lib/walletconnect";
+import { ConnectPicker } from "./connect-picker";
+import type { Discovered } from "../lib/wallets";
 import { loadChain, type Chain, type Feed } from "../lib/feed";
 import { Badge, Card, cn } from "./ui";
 
@@ -233,13 +232,35 @@ export function Vault() {
     }
   };
 
-  const doConnect = async () => {
-    setBusy("connect");
+  /**
+   * Connect through the wallet the user actually chose.
+   *
+   * WHY NOT `window.ethereum`. With two extensions installed, `window.ethereum` is whichever one
+   * loaded last. Someone clicks "OKX Wallet" and MetaMask opens. EIP-6963 hands back the specific
+   * provider that announced itself under that name, and registering it makes every later read and
+   * write in this component use it.
+   */
+  const doPick = async (w: Discovered) => {
+    setBusy(w.id);
     setErr(null);
-    const r = await connect();
-    setBusy(null);
-    if (r.ok) setWallet(r.wallet);
-    else setErr(r.error);
+    try {
+      setProvider(w.provider);
+      const accounts = (await w.provider.request({ method: "eth_requestAccounts" })) as string[];
+      if (!accounts?.length) throw new Error("no account was returned");
+      setWallet(await readWallet());
+    } catch (e) {
+      // The chosen provider failed, so it must not stay registered: leaving it would send the next
+      // attempt to a wallet the user could not connect.
+      setProvider(null);
+      const m = e instanceof Error ? e.message : String(e);
+      setErr(
+        /reject|denied|cancel/i.test(m)
+          ? { message: "You cancelled the connection.", next: `Press ${w.name} again when ready.` }
+          : { message: `${w.name} could not connect.`, next: m },
+      );
+    } finally {
+      setBusy(null);
+    }
   };
 
   const doDeposit = async () => {
@@ -320,33 +341,17 @@ export function Vault() {
   // MetaMask mobile and every other WalletConnect wallet by QR or deep link, so the majority of
   // visitors now have a route. The extension option is offered second, as the desktop fallback.
   if (!wallet) {
-    const hasExtension = provider() !== null;
     return (
       <Card title="Your money">
-        <div className="px-4 py-5 grid gap-2">
-          {/* BOTH ROUTES, ALWAYS OFFERED. An earlier version promoted the QR flow to the primary
-              button whenever no extension was detected, which told a desktop visitor with a
-              wallet in another browser that their only option was a phone. Browser wallet stays
-              first because it is one click; the QR flow is always available beside it. */}
-          <Button onClick={() => void doConnect()} busy={busy === "connect"}>
-            <WalletIcon size={15} />
-            Connect wallet
-          </Button>
-          <Button
-            onClick={() => void doConnectWc()}
-            busy={busy === "walletconnect"}
-            tone="quiet"
-          >
-            <QrCode size={15} />
-            Scan a QR code instead
-          </Button>
-          <p className="text-xs text-ink-faint mt-1 leading-relaxed">
-            {hasExtension
-              ? "Connecting only shows your balance. Nothing moves until you deposit, and you can withdraw whenever you want."
-              : "No wallet extension here. Scan the code with OKX Wallet, MetaMask, or any WalletConnect wallet."}
+        <div className="px-4 py-4">
+          <p className="text-sm text-ink mb-3">Choose a wallet</p>
+          <ConnectPicker onPick={(w) => void doPick(w)} onWalletConnect={() => void doConnectWc()} busy={busy} />
+          <p className="text-xs text-ink-faint mt-3 leading-relaxed">
+            Connecting only shows your balance. Nothing moves until you deposit, and you can
+            withdraw whenever you want.
           </p>
           {err ? (
-            <div className="mt-1 flex items-start gap-2">
+            <div className="mt-3 flex items-start gap-2">
               <AlertCircle size={14} className="text-critical shrink-0 mt-0.5" />
               <div>
                 <p className="text-xs text-ink">{err.message}</p>

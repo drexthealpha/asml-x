@@ -1,23 +1,33 @@
 /**
- * Every token on X Layer, priced and route-checked. The hosted equivalent of `okx_universe.py`.
+ * Every token on X Layer, priced and route-checked.
  *
- * WHY IT MIRRORS THE PYTHON RATHER THAN SIMPLIFYING IT. The local feed and the hosted one must
- * produce the same shape, or the UI behaves differently depending on where it is served from and
- * every bug becomes "which environment". So this returns the same fields, with the same absence
- * rules: a token with no price is `null`, never zero, and one the router declines carries the
- * router's own words.
+ * WHY THIS WAS REWRITTEN. The first version fired one quote per token, twenty-two of them, inside a
+ * single serverless invocation. Vercel's Hobby functions have a ten second wall clock, so most of
+ * those calls were cut off and the endpoint reported four routable tokens where the local feed
+ * finds sixteen. Nothing errored. The page rendered "cannot trade" against tokens that trade fine.
+ *
+ * TWO CHANGES:
+ *   1. Prices come from ONE batch POST for all tokens, not one call each.
+ *   2. Routability is checked for a BOUNDED set, and every other token is marked `unchecked`
+ *      rather than `not routable`. Those are different claims and only one of them was measured.
+ *
+ * That distinction is the point. Saying "we did not check" is honest; saying "cannot trade" about
+ * a token nobody looked at is a false statement about someone's money.
  */
 
 import { CHAIN, get, post, requireCreds, send } from "./_okx.js";
+import { PATHS, batch } from "./_paths.js";
+
+/** How many tokens get a live route check per invocation, inside the function's time budget. */
+const ROUTE_CHECK_LIMIT = 10;
 
 export default async function handler(req, res) {
   const c = requireCreds(res);
   if (!c) return;
 
-  const listed = await get(`/api/v6/dex/aggregator/all-tokens?chainIndex=${CHAIN}`, c);
+  const listed = await get(PATHS.allTokens(CHAIN).path, c);
   if (!listed) return send(res, 502, { error: "could not read the chain token list" });
 
-  // Addresses are DISCOVERED here too. Not one is written into this file.
   const tokens = [];
   const seen = new Set();
   for (const t of listed) {
@@ -32,34 +42,41 @@ export default async function handler(req, res) {
     });
   }
 
-  const quoteSymbol = "USDT";
-  const quote = tokens.find((t) => t.symbol === quoteSymbol);
-  if (!quote) return send(res, 502, { error: `chain ${CHAIN} does not list ${quoteSymbol}` });
+  const quote = tokens.find((t) => t.symbol === "USDT");
+  if (!quote) return send(res, 502, { error: `chain ${CHAIN} does not list USDT` });
 
-  // Prices in batches, the same 20 at a time the local feed uses.
+  // ONE batch call for every price.
+  const { path: pricePath } = PATHS.price();
+  const priceRows = await post(pricePath, batch(CHAIN, tokens.map((t) => t.address)), c);
   const prices = new Map();
-  for (let i = 0; i < tokens.length; i += 20) {
-    const body = tokens
-      .slice(i, i + 20)
-      .map((t) => ({ chainIndex: CHAIN, tokenContractAddress: t.address }));
-    const rows = await post("/api/v6/dex/market/price", body, c);
-    for (const r of rows || []) {
-      if (r.price) prices.set(r.tokenContractAddress.toLowerCase(), r.price);
-    }
+  for (const r of priceRows || []) {
+    if (r?.price) prices.set(r.tokenContractAddress.toLowerCase(), r.price);
   }
 
-  // Routability, one real quote per token, in parallel. A serverless function has a wall clock,
-  // so these run concurrently rather than in the sequential loop the local script can afford.
+  // Route checks for the most liquid subset only, so the function finishes. Tokens with a price
+  // are checked first: an unpriced token is not tradable regardless of routing.
+  const ordered = [...tokens].sort((a, b) => {
+    const ap = prices.has(a.address.toLowerCase()) ? 0 : 1;
+    const bp = prices.has(b.address.toLowerCase()) ? 0 : 1;
+    return ap - bp;
+  });
+  const toCheck = new Set(ordered.slice(0, ROUTE_CHECK_LIMIT).map((t) => t.address));
+
   const rows = await Promise.all(
     tokens.map(async (t) => {
       const price = prices.get(t.address.toLowerCase()) ?? null;
+
       if (t.address.toLowerCase() === quote.address.toLowerCase()) {
-        return { ...t, price, routable: true, venues: [], note: "this is the quote asset" };
+        return { ...t, price, routable: true, checked: true, venues: [], note: "this is the quote asset" };
       }
+      if (!toCheck.has(t.address)) {
+        // NOT the same as "cannot trade". Nobody looked.
+        return { ...t, price, routable: null, checked: false, venues: [], note: null };
+      }
+
       const one = 10n ** BigInt(t.decimals);
       const q = await get(
-        `/api/v6/dex/aggregator/quote?chainIndex=${CHAIN}&amount=${one}` +
-          `&fromTokenAddress=${t.address}&toTokenAddress=${quote.address}`,
+        PATHS.quote(CHAIN, t.address, quote.address, one.toString()).path,
         c,
       );
       const venues = [];
@@ -71,6 +88,7 @@ export default async function handler(req, res) {
         ...t,
         price,
         routable: Boolean(q?.length),
+        checked: true,
         venues,
         note: q?.length ? null : "the router did not return a route",
       };
@@ -78,13 +96,16 @@ export default async function handler(req, res) {
   );
 
   send(res, 200, {
-    source: "OKX Onchain OS, signed in a Vercel function",
+    source: "OKX Onchain OS, signed in a Vercel function, verified paths",
     chain_id: Number(CHAIN),
     chain_name: "X Layer",
-    quote_symbol: quoteSymbol,
+    quote_symbol: "USDT",
     fetched_at_utc: new Date().toISOString().replace(/\.\d+Z$/, "Z"),
     token_count: rows.length,
-    tradable_count: rows.filter((r) => r.routable && r.price).length,
+    priced_count: rows.filter((r) => r.price).length,
+    // Only tokens actually checked can be counted as tradable.
+    tradable_count: rows.filter((r) => r.routable === true && r.price).length,
+    route_checked: rows.filter((r) => r.checked).length,
     tokens: rows,
   });
 }

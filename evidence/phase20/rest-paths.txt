@@ -1,0 +1,16 @@
+Paths the Vercel functions depend on
+
+  GET   all-tokens             22 rows
+  POST  market/price           1 rows
+  GET   market/price AS GET       (optional)
+  GET   market/index-price        (optional)
+  GET   index-price               (optional)
+  POST  market/index-price        (optional)
+  GET   market/token/price-info    (optional)
+  GET   market/price-info         (optional)
+  POST  market/price-info      1 rows
+  GET   aggregator/quote       1 rows
+  GET   defi/explore/product/list NOTHING   (optional)
+  GET   defi/product/list      NOTHING   (optional)
+
+GATE: PASS  every required path returns data
