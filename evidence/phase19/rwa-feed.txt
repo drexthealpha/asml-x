@@ -1,12 +1,12 @@
 Real-world assets on X Layer mainnet, priced by OKX Onchain OS
-Run 2026-08-19T05:22:22Z
+Run 2026-08-20T04:47:47Z
 
 {
   "source": "OKX Onchain OS DEX market price, signed",
   "endpoint": "POST /api/v6/dex/market/price",
   "chain_id": 196,
   "chain_name": "X Layer mainnet",
-  "fetched_at_utc": "2026-08-19T05:22:22Z",
+  "fetched_at_utc": "2026-08-20T04:47:47Z",
   "divergence_limit_bps": "300",
   "divergence_limit_verified_on_chain": true,
   "instruments": [
@@ -21,30 +21,30 @@ Run 2026-08-19T05:22:22Z
       "symbol": "USDG",
       "address": "0x4ae46a509f6b1d9056937ba4500cb143933d2dc8",
       "plain": "Global Dollar. Backed by cash reserves.",
-      "price": "0.999667",
-      "quoted_at_ms": "1787116940363",
+      "price": "0.999886",
+      "quoted_at_ms": "1787201256647",
       "reference": "1.00",
-      "divergence_bps": "-3.33",
+      "divergence_bps": "-1.14",
       "status": "within_band"
     },
     {
       "symbol": "USDC",
       "address": "0xb6ceceab302e2e4948951ee7843fc24e92933061",
       "plain": "Backed by cash and short-dated US Treasuries.",
-      "price": "0.998987",
-      "quoted_at_ms": "1787116940363",
+      "price": "0.999774",
+      "quoted_at_ms": "1787201256647",
       "reference": "1.00",
-      "divergence_bps": "-10.13",
+      "divergence_bps": "-2.26",
       "status": "within_band"
     },
     {
       "symbol": "USDT",
       "address": "0x779ded0c9e1022225f8e0630b35a9b54be713736",
       "plain": "The largest dollar token. Reserve-backed, including Treasuries.",
-      "price": "0.999453",
-      "quoted_at_ms": "1787116940363",
+      "price": "1.001029",
+      "quoted_at_ms": "1787201256647",
       "reference": "1.00",
-      "divergence_bps": "-5.47",
+      "divergence_bps": "10.29",
       "status": "within_band"
     },
     {
@@ -52,7 +52,7 @@ Run 2026-08-19T05:22:22Z
       "address": "0xc5015b9d9161dca7e18e32f6f25c4ad850731fd4",
       "plain": "Backed by a basket of collateral held in contracts.",
       "price": "1.000077",
-      "quoted_at_ms": "1787116940363",
+      "quoted_at_ms": "1787201256647",
       "reference": "1.00",
       "divergence_bps": "0.77",
       "status": "within_band"
@@ -69,7 +69,7 @@ Run 2026-08-19T05:22:22Z
       "address": "0x5d3a1ff2b6bab83b63cd9ad0787074081a52ef34",
       "plain": "A synthetic dollar. Held steady by hedging, not by reserves, so it can move.",
       "price": "26.567701",
-      "quoted_at_ms": "1787116940363",
+      "quoted_at_ms": "1787201256647",
       "reference": "1.00",
       "status": "untradeable",
       "router_says": "The value difference from this transaction`s quote route is higher than 90%, which may lead to a risk of loss to user assets."

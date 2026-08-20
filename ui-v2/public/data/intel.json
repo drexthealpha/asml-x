@@ -2,32 +2,32 @@
   "source": "OKX Onchain OS: social sentiment, news, smart-money signals",
   "chain_id": 196,
   "period": "1h",
-  "fetched_at_utc": "2026-08-19T05:22:17Z",
+  "fetched_at_utc": "2026-08-20T04:47:27Z",
   "sentiment": [
     {
       "symbol": "BTC",
-      "mentions": "40",
-      "news_mentions": "8",
-      "x_mentions": "32",
-      "bullish": "15",
+      "mentions": "110",
+      "news_mentions": "3",
+      "x_mentions": "107",
+      "bullish": "83",
       "bearish": "6",
-      "neutral": "19",
-      "bullish_ratio": "0.38",
-      "label": "neutral"
+      "neutral": "21",
+      "bullish_ratio": "0.75",
+      "label": "bullish"
     },
     {
       "symbol": "ETH",
-      "mentions": "11",
-      "news_mentions": "1",
-      "x_mentions": "10",
-      "bullish": "3",
-      "bearish": "1",
-      "neutral": "7",
-      "bullish_ratio": "0.27",
-      "label": "neutral"
+      "mentions": "40",
+      "news_mentions": "3",
+      "x_mentions": "37",
+      "bullish": "32",
+      "bearish": "2",
+      "neutral": "6",
+      "bullish_ratio": "0.80",
+      "label": "bullish"
     },
     {
-      "symbol": "OKB",
+      "symbol": "USDT",
       "mentions": "1",
       "news_mentions": "0",
       "x_mentions": "1",
@@ -38,30 +38,33 @@
       "label": "neutral"
     },
     {
-      "symbol": "USDT",
+      "symbol": "USDC",
       "mentions": "3",
       "news_mentions": "0",
       "x_mentions": "3",
       "bullish": "1",
-      "bearish": "1",
-      "neutral": "1",
-      "bullish_ratio": "0.33",
-      "label": "mixed"
-    },
-    {
-      "symbol": "USDC",
-      "mentions": "2",
-      "news_mentions": "0",
-      "x_mentions": "2",
-      "bullish": "0",
       "bearish": "0",
       "neutral": "2",
-      "bullish_ratio": "0.00",
+      "bullish_ratio": "0.33",
       "label": "neutral"
     }
   ],
   "news": [],
   "smart_money": [
+    {
+      "symbol": "XDOG",
+      "name": "XDOG",
+      "address": "0x0cc24c51bf89c00c5affbfcf5e856c25ecbdb48e",
+      "wallets": "3",
+      "wallet_type": "3",
+      "amount_usd": "3055.555800000000000000",
+      "price": "0.004739504894022292999711018398198647",
+      "holders": "36304",
+      "market_cap_usd": "4161944.822828503976829429",
+      "top10_holder_percent": "8.6639",
+      "sold_ratio_percent": "0",
+      "timestamp": "1787138968517"
+    },
     {
       "symbol": "STARCOIN",
       "name": "StarCoin",
@@ -70,8 +73,8 @@
       "wallet_type": "3",
       "amount_usd": "3498.475399148176104203",
       "price": "0.0002275658462348960605239074389487294",
-      "holders": "142",
-      "market_cap_usd": "109647.096644988485958428",
+      "holders": "147",
+      "market_cap_usd": "130963.225625237292887161",
       "top10_holder_percent": "20.7069",
       "sold_ratio_percent": "85.56",
       "timestamp": "1787037408525"
@@ -84,8 +87,8 @@
       "wallet_type": "3",
       "amount_usd": "1821.348968765841893420",
       "price": "0.0002166977323075603220838007074266708",
-      "holders": "142",
-      "market_cap_usd": "109647.096644988485958428",
+      "holders": "147",
+      "market_cap_usd": "130963.225625237292887161",
       "top10_holder_percent": "20.7069",
       "sold_ratio_percent": "85.56",
       "timestamp": "1787037252456"
@@ -98,10 +101,10 @@
       "wallet_type": "1",
       "amount_usd": "1094.497353776049607585",
       "price": "0.00008024522171473774030683135966573278",
-      "holders": "142",
-      "market_cap_usd": "109647.096644988485958428",
+      "holders": "147",
+      "market_cap_usd": "130963.225625237292887161",
       "top10_holder_percent": "20.7069",
-      "sold_ratio_percent": "100",
+      "sold_ratio_percent": "91.91",
       "timestamp": "1787036811393"
     },
     {
@@ -112,10 +115,10 @@
       "wallet_type": "1",
       "amount_usd": "1245.270162723421940914",
       "price": "0.0006140505954341339926231908982765908",
-      "holders": "809",
-      "market_cap_usd": "356200.418795277586735187",
-      "top10_holder_percent": "12.4041",
-      "sold_ratio_percent": "92.1",
+      "holders": "3099",
+      "market_cap_usd": "699429.82771370946366136",
+      "top10_holder_percent": "10.3022",
+      "sold_ratio_percent": "97.72",
       "timestamp": "1786987127390"
     },
     {
@@ -126,10 +129,10 @@
       "wallet_type": "1",
       "amount_usd": "2576.513279252204452032",
       "price": "0.0008290863985132237941048446618371435",
-      "holders": "809",
-      "market_cap_usd": "356200.418795277586735187",
-      "top10_holder_percent": "12.4041",
-      "sold_ratio_percent": "92.1",
+      "holders": "3099",
+      "market_cap_usd": "699429.82771370946366136",
+      "top10_holder_percent": "10.3022",
+      "sold_ratio_percent": "97.72",
       "timestamp": "1786971890288"
     },
     {
@@ -140,10 +143,10 @@
       "wallet_type": "3",
       "amount_usd": "13503.428650701163318300",
       "price": "0.000522583866968402871881595827269555",
-      "holders": "809",
-      "market_cap_usd": "356200.418795277586735187",
-      "top10_holder_percent": "12.4041",
-      "sold_ratio_percent": "85.4",
+      "holders": "3099",
+      "market_cap_usd": "699429.82771370946366136",
+      "top10_holder_percent": "10.3022",
+      "sold_ratio_percent": "86.68",
       "timestamp": "1786969813516"
     },
     {
@@ -154,10 +157,10 @@
       "wallet_type": "1",
       "amount_usd": "1148.910911980731878047",
       "price": "0.000953168616004825520444167457711771",
-      "holders": "809",
-      "market_cap_usd": "356200.418795277586735187",
-      "top10_holder_percent": "12.4041",
-      "sold_ratio_percent": "92.1",
+      "holders": "3099",
+      "market_cap_usd": "699429.82771370946366136",
+      "top10_holder_percent": "10.3022",
+      "sold_ratio_percent": "97.72",
       "timestamp": "1786853489458"
     },
     {
@@ -168,10 +171,10 @@
       "wallet_type": "1",
       "amount_usd": "1208.621041544205889354",
       "price": "0.000918326715862194147672551792297047",
-      "holders": "809",
-      "market_cap_usd": "356200.418795277586735187",
-      "top10_holder_percent": "12.4041",
-      "sold_ratio_percent": "92.1",
+      "holders": "3099",
+      "market_cap_usd": "699429.82771370946366136",
+      "top10_holder_percent": "10.3022",
+      "sold_ratio_percent": "97.72",
       "timestamp": "1786808561382"
     },
     {
@@ -182,10 +185,10 @@
       "wallet_type": "1",
       "amount_usd": "2701.958611352100615452",
       "price": "0.001302008185898889170952523494260706",
-      "holders": "809",
-      "market_cap_usd": "356200.418795277586735187",
-      "top10_holder_percent": "12.4041",
-      "sold_ratio_percent": "92.1",
+      "holders": "3099",
+      "market_cap_usd": "699429.82771370946366136",
+      "top10_holder_percent": "10.3022",
+      "sold_ratio_percent": "97.72",
       "timestamp": "1786757207336"
     },
     {
@@ -196,9 +199,9 @@
       "wallet_type": "1",
       "amount_usd": "1935.511979954604537539",
       "price": "0.0001434719242012327045536272632613273",
-      "holders": "890",
-      "market_cap_usd": "72973.373917309279595616",
-      "top10_holder_percent": "14.5218",
+      "holders": "1024",
+      "market_cap_usd": "200209.809062719379103712",
+      "top10_holder_percent": "13.6908",
       "sold_ratio_percent": "100",
       "timestamp": "1786702346400"
     },
@@ -210,10 +213,10 @@
       "wallet_type": "1",
       "amount_usd": "1099.495522167773188013",
       "price": "0.0006993496543586447879501086204564139",
-      "holders": "809",
-      "market_cap_usd": "356200.418795277586735187",
-      "top10_holder_percent": "12.4041",
-      "sold_ratio_percent": "92.1",
+      "holders": "3099",
+      "market_cap_usd": "699429.82771370946366136",
+      "top10_holder_percent": "10.3022",
+      "sold_ratio_percent": "97.72",
       "timestamp": "1786699574390"
     }
   ],

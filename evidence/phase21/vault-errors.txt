@@ -1,0 +1,40 @@
+=== error selectors, with their real signatures ===
+  ZeroAmount()                             0x1f2a2005
+  ZeroAddress()                            0xd92e233d
+  NotAgent()                               0x0d9ab13f
+  NotOwner()                               0x30cd7471
+  Reentrancy()                             0xab143c06
+  TransferFailed()                         0x90b8ec18
+  NothingCommitted()                       0x835a24b1
+  DepositorPaused(address)                 0xaed11bd2
+  ExceedsUserLimit(uint256,uint256)        0x38888fc7
+  InsufficientBalance(uint256,uint256)     0xcf479181
+  ShortDeposit(uint256,uint256)            0xed5553ef
+
+=== how pause is actually stored, from the source ===
+84:    mapping(address => bool) public paused;
+101:    event PauseSet(address indexed depositor, bool paused);
+115:    error DepositorPaused(address depositor);
+218:    /// DELIBERATELY NOT GATED ON `paused`. A depositor can withdraw in full while paused, and that
+262:    function setPaused(bool paused_) external {
+263:        paused[msg.sender] = paused_;
+264:        emit PauseSet(msg.sender, paused_);
+282:    /// paused, and the notional must be within that depositor's own ceiling.
+285:        if (paused[depositor]) revert DepositorPaused(depositor);
+
+=== every public mapping and variable ===
+  address public immutable
+  address public agent
+  address public immutable
+  address public owner
+  mapping(address => uint256) public balanceOf
+  mapping(address => uint256) public maxNotional
+  mapping(address => bool) public paused
+  mapping(address => uint256) public committed
+  uint256 public totalDeposits
+  uint256 public totalCommitted
+
+=== live values for the deployer ===
+  maxNotional(address)(uint256)      5000000000000000000 [5e18]
+  balanceOf(address)(uint256)        0
+  paused(address)(bool)              false

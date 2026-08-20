@@ -1,0 +1,36 @@
+ASML-X product gate
+target http://127.0.0.1:4173
+api    http://127.0.0.1:8787
+
+=== 1. every endpoint answers with real data ===
+  PASS  /api/rwastate  4 populated
+  PASS  /api/contracts  6 populated
+  PASS  /api/universe  18 populated
+  PASS  /api/onchainos  8 populated
+  PASS  /api/rwa  5 populated
+
+=== 2. every user-facing contract has a write path, not only a read ===
+  PASS  AgentVault.deposit
+  PASS  AgentVault.withdraw
+  PASS  AgentVault.withdrawAll
+  PASS  AgentVault.setMaxNotional
+  PASS  AgentVault.setPaused
+  PASS  FeeCollector.quoteFee
+  PASS  RiskGuard.maxGross
+  PASS  RiskGuard.killed
+
+=== 3. the RWA surface carries deep datapoints ===
+  PASS  the company it is a claim on: 14/14
+  PASS  the risk flags: 14/14
+  PASS  holder concentration: 14/14
+  PASS  contract facts: 14/14
+  PASS  market figures: 14/14
+  PASS  real company names: 14/14
+  PASS  counterfeit check present: 14/14
+=== 4. failure is never rendered as data ===
+  PASS  explicit unavailable states in the bundle (4 of 4 phrases)
+=== 5. the wallet picker prefers OKX ===
+  PASS  EIP-6963 discovery present
+  PASS  OKX is named in the picker
+
+GATE: PASS

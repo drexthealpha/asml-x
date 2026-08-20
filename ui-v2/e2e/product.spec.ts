@@ -15,7 +15,16 @@
 
 import { expect, test, type Page } from "@playwright/test";
 
-const SURFACES = ["Trade", "Your agent", "Assets", "Markets", "Insights"] as const;
+const SURFACES = [
+  "Your limits",
+  "Trade",
+  "Your agent",
+  "Real assets",
+  "Assets",
+  "Markets",
+  "Insights",
+  "Contracts",
+] as const;
 
 async function openSurface(page: Page, name: string) {
   await page.getByRole("button", { name, exact: true }).click();
@@ -80,7 +89,7 @@ test.describe("the product a stranger meets", () => {
   });
 
   test("token rows open a detail panel on every surface", async ({ page }) => {
-    for (const s of ["Trade", "Assets", "Markets", "Insights"]) {
+    for (const s of ["Trade", "Real assets", "Assets", "Markets", "Insights"]) {
       await openSurface(page, s);
       const rows = page.locator("main button").filter({ hasNotText: /^$/ });
       const count = await rows.count();
@@ -106,6 +115,29 @@ test.describe("the product a stranger meets", () => {
     await openSurface(page, "Trade");
     // Without a wallet the surface must still explain itself rather than render a dead end.
     await expect(page.locator("main")).toContainText(/Connect wallet|Your money/i);
+  });
+
+  test("the limit control is on the landing surface, not buried", async ({ page }) => {
+    // The single promise this product makes was a text field in a sidebar behind a wallet
+    // connection. It is now the first thing on the first surface.
+    await openSurface(page, "Your limits");
+    await expect(page.locator("main")).toContainText(/Your limit/i);
+    await expect(page.locator("main")).toContainText(/only ever lowered|can only be lowered|only be lowered/i);
+  });
+
+  test("the deep RWA record is present, not just a price", async ({ page }) => {
+    await openSurface(page, "Real assets");
+    const rows = page.locator("main button").filter({ hasText: /available/ });
+    expect(await rows.count(), "no real-world assets listed").toBeGreaterThan(0);
+    await rows.first().click();
+    const d = page.getByRole("dialog");
+    await expect(d).toBeVisible({ timeout: 5000 });
+    // The company it is a claim on is what makes it a real-world asset rather than a ticker.
+    await expect(d).toContainText(/THE COMPANY/i);
+    await expect(d).toContainText(/Exchange/i);
+    await expect(d).toContainText(/RISK CHECKS/i);
+    await expect(d).toContainText(/CONCENTRATION/i);
+    await page.keyboard.press("Escape");
   });
 
   test("prices refresh rather than sitting still", async ({ page }) => {

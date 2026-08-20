@@ -1,0 +1,19 @@
+guard rules read from chain 196
+  max divergence   300 bps
+  max oracle age   3600 s
+  window buffer    43200 s
+  issuer paused    False
+
+9 tokenized equities found
+  AAPLx      UNKNOWN  $309.44756  liq $   336,834 <- Not near a redemption window
+  GLDx       REFUSED  $399.58903  liq $       947 <- Enough liquidity to get out
+  GSx        REFUSED  $1040.2483  liq $         0 <- Enough liquidity to get out
+  NDAQx      REFUSED  $96.735712  liq $         0 <- Enough liquidity to get out
+  NVDAx      UNKNOWN  $220.13678  liq $   511,739 <- Not near a redemption window
+  QQQx       UNKNOWN  $717.31503  liq $   393,851 <- Not near a redemption window
+  TSLAx      UNKNOWN  $337.09161  liq $   959,914 <- Not near a redemption window
+  xStocks    UNKNOWN  $0.0000113  liq $     9,338 <- Not near a redemption window
+  xStocks    UNKNOWN  $0.0000034  liq $     2,880 <- Not near a redemption window
+
+0 approved, 3 refused
+wrote /mnt/c/Users/zulab/OneDrive/Desktop/ASML-X/ui-v2/public/data/rwa-verdicts.json

@@ -28,6 +28,8 @@ import {
 } from "lucide-react";
 import { POLL, ago, loadRwaState, usePolled, type RwaState } from "../lib/feed";
 import { Badge, Card, Show } from "./ui";
+import { LimitControl } from "./limit-control";
+import { Deposit } from "./deposit";
 
 /** The four rules the deployed RWA guard enforces, each with its live value. */
 function RwaRules({ s }: { s: RwaState }) {
@@ -65,7 +67,10 @@ export function Limits({ onConnect }: { onConnect?: () => void }) {
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-6 grid gap-4 lg:grid-cols-[minmax(0,1fr)_24rem]">
       <div className="min-w-0 flex flex-col gap-4">
-        {/* THE PROMISE, FIRST, in one sentence a person finishes. */}
+        <LimitControl onNeedWallet={onConnect} />
+        <Deposit />
+
+        {/* THE PROMISE, in one sentence a person finishes. */}
         <Card title="The limit you set">
           <div className="px-4 py-5">
             <p className="text-lg text-ink leading-snug max-w-[42ch]">

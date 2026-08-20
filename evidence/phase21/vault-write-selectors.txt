@@ -1,0 +1,42 @@
+AgentVault 0xE64b6e937Fd0d855161A5F6F0Aa1A3E01CB54c24
+
+=== writes ===
+  deposit(uint256,uint256)           0xe2bbb158
+  withdraw(uint256)                  0x2e1a7d4d
+  withdrawAll()                      0x853828b6
+  setMaxNotional(uint256)            0xea279302
+  setPaused(bool)                    0x16c38b3c
+  approve(address,uint256)           0x095ea7b3
+
+=== reads, each with its live value ===
+  maxNotional(address)     0xbebb9b6c  -> 5000000000000000000 [5e18]
+  balanceOf(address)       0x70a08231  -> 0
+  totalDeposits()          0x7d882097  -> 0x0000000000000000000000000000000000000000000000000000000000000000
+  totalCommitted()         0x1d3231d4  -> 0x0000000000000000000000000000000000000000000000000000000000000000
+  isSolvent()              0x5ce23950  -> 0x0000000000000000000000000000000000000000000000000000000000000001
+  paused()                 0x5c975abb  -> revert
+  asset()                  0x38d52e0f  -> 0x00000000000000000000000012dcbe73416cdfe6de0681286c25ace81b4644c0
+  owner()                  0x8da5cb5b  -> 0x0000000000000000000000007bdd2d0d1728df5bef8faae8de85c3dd21a5de46
+
+=== errors the UI must decode rather than show as hex ===
+  ZeroAmount()                 0x1f2a2005
+  NotDepositor()               0x3cc50b45
+  InsufficientBalance()        0xf4d678b8
+  LimitCanOnlyTighten()        0xacb51e11
+  Paused()                     0x9e87fac8
+  ReentrantCall()              0x37ed32e8
+  ZeroAddress()                0xd92e233d
+  Insolvent()                  0xfc220038
+
+=== the real error names in the contract source ===
+  error DepositorPaused(address depositor)
+  error ExceedsUserLimit(uint256 requested, uint256 limit)
+  error InsufficientBalance(uint256 requested, uint256 available)
+  error NotAgent()
+  error NotOwner()
+  error NothingCommitted()
+  error Reentrancy()
+  error ShortDeposit(uint256 expected, uint256 received)
+  error TransferFailed()
+  error ZeroAddress()
+  error ZeroAmount()

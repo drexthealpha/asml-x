@@ -150,11 +150,71 @@ const SELECTORS = {
   // AgentVault
   vaultBalanceOf: "0x70a08231",
   maxNotional: "0xbebb9b6c",
+  committed: "0xd88d9b70",
   deposit: "0xe2bbb158",
   withdraw: "0x2e1a7d4d",
   withdrawAll: "0x853828b6",
-  paused: "0x5c975abb",
+  setMaxNotional: "0xea279302",
+  setPaused: "0x16c38b3c",
+  /**
+   * PAUSE IS PER DEPOSITOR, and this was wrong before.
+   *
+   * `paused()` with no argument REVERTS on this contract: there is no global pause. The storage is
+   * `mapping(address => bool) public paused`, so the getter takes an address. Every earlier read
+   * called the parameterless form, got nothing back, and rendered it as "not paused" — a safety
+   * claim about someone's money that nobody had checked.
+   */
+  pausedOf: "0x5c975abb",
+  // RiskGuard, verified in scripts/239
+  maxGross: "0xfb89278c",
+  gross: "0x850f8017",
+  killed: "0x1f3a0e41",
+  // FeeCollector, verified in scripts/239. quoteFee is a view: the fee comes from the contract
+  // that will charge it, never from multiplying feeBps in the UI.
+  quoteFee: "0x2205f568",
+  feeBps: "0x24a9d853",
 } as const;
+
+/**
+ * The contract's own errors, decoded to a sentence a person can act on.
+ *
+ * THE SIGNATURES CARRY PARAMETERS, and my first pass assumed they did not. `ExceedsUserLimit()`
+ * and `ExceedsUserLimit(uint256,uint256)` have completely different selectors, so a UI matching the
+ * parameterless form matches nothing and falls back to raw hex — at the exact moment a person's
+ * transaction has just failed and they most need a plain sentence.
+ *
+ * Computed with `cast sig`, listed in evidence/phase21/vault-errors.txt.
+ */
+const ERRORS: Record<string, string> = {
+  "0x1f2a2005": "The amount was zero.",
+  "0xd92e233d": "An address was missing.",
+  "0x0d9ab13f": "Only the agent can do that.",
+  "0x30cd7471": "Only the owner can do that.",
+  "0xab143c06": "The transaction re-entered and was stopped.",
+  "0x90b8ec18": "The token transfer failed.",
+  "0x835a24b1": "There is nothing committed to release.",
+  "0xaed11bd2": "This deposit is paused. You can still withdraw.",
+  "0x38888fc7": "That is larger than your limit allows.",
+  "0xcf479181": "That is more than your balance.",
+  "0xed5553ef": "The vault received less than expected.",
+};
+
+/**
+ * Turn a revert into a sentence. Falls back to the raw data ONLY when nothing matches, and says so
+ * rather than pretending to understand it.
+ */
+export function decodeRevert(e: unknown): string {
+  const raw = JSON.stringify(e ?? "");
+  const m = raw.match(/0x[0-9a-fA-F]{8}/);
+  if (m) {
+    const hit = ERRORS[m[0].toLowerCase()];
+    if (hit) return hit;
+  }
+  if (/reject|denied|cancel/i.test(raw)) return "You cancelled the transaction.";
+  if (/insufficient funds/i.test(raw)) return "Not enough OKB to pay for gas.";
+  const msg = e instanceof Error ? e.message : String(e);
+  return msg.length > 160 ? `${msg.slice(0, 160)}…` : msg;
+}
 
 const pad = (s: string) => s.replace(/^0x/, "").padStart(64, "0");
 const addrArg = (a: string) => pad(a.toLowerCase());
@@ -186,12 +246,71 @@ export async function vaultPosition(vault: string, who: string) {
   };
 }
 
-export async function vaultPaused(vault: string): Promise<boolean> {
+/**
+ * Is THIS depositor paused?
+ *
+ * Takes an address, because the storage is per depositor. The previous version called the
+ * parameterless `paused()`, which reverts on this contract, caught the error and returned `false`.
+ * That is the worst possible shape for a safety read: a failed call rendered as a definite
+ * "not paused". Now a failure returns null and the caller must decide what to show.
+ */
+export async function vaultPaused(vault: string, who: string): Promise<boolean | null> {
   try {
-    const r = await call(vault, SELECTORS.paused);
-    return BigInt(r === "0x" ? 0 : r) === 1n;
+    const r = await call(vault, SELECTORS.pausedOf + addrArg(who));
+    if (r === "0x") return null;
+    return BigInt(r) === 1n;
   } catch {
-    return false;
+    return null;
+  }
+}
+
+/**
+ * What a trade of this size will cost, ASKED OF THE CONTRACT THAT WILL CHARGE IT.
+ *
+ * `quoteFee(uint256)` is a view on FeeCollector. Computing the fee in the UI by multiplying by
+ * `feeBps` would usually agree and would be wrong the moment the contract's arithmetic differs by
+ * a rounding rule. A number shown before someone signs should come from the thing that will
+ * actually take it. Verified live: 1e18 notional returns 5e15, exactly 0.5%.
+ */
+export async function quoteFee(feeCollector: string, notional: bigint): Promise<bigint | null> {
+  try {
+    const r = await call(feeCollector, SELECTORS.quoteFee + uintArg(notional));
+    return r === "0x" ? null : BigInt(r);
+  } catch {
+    return null;
+  }
+}
+
+/** The global ceiling, what is used against it, and whether the emergency stop is on. */
+export async function guardState(guard: string) {
+  const read = async (sel: string) => {
+    try {
+      const r = await call(guard, sel);
+      return r === "0x" ? null : BigInt(r);
+    } catch {
+      return null;
+    }
+  };
+  const [maxGross, gross, killed] = await Promise.all([
+    read(SELECTORS.maxGross),
+    read(SELECTORS.gross),
+    read(SELECTORS.killed),
+  ]);
+  return {
+    maxGross,
+    gross,
+    // Null stays null. A failed read of an emergency stop must never render as "not stopped".
+    killed: killed === null ? null : killed === 1n,
+  };
+}
+
+/** How much of this depositor's balance is committed to open trades. */
+export async function vaultCommitted(vault: string, who: string): Promise<bigint | null> {
+  try {
+    const r = await call(vault, SELECTORS.committed + addrArg(who));
+    return r === "0x" ? null : BigInt(r);
+  } catch {
+    return null;
   }
 }
 
@@ -217,6 +336,31 @@ export const deposit = (from: string, vault: string, amount: bigint, maxNotional
 
 export const withdraw = (from: string, vault: string, amount: bigint) =>
   send(from, vault, SELECTORS.withdraw + uintArg(amount));
+
+/** Take everything out, in one transaction. Works while paused. */
+export const withdrawAll = (from: string, vault: string) =>
+  send(from, vault, SELECTORS.withdrawAll);
+
+/**
+ * Change your own cap. THE CORE OF THE PRODUCT.
+ *
+ * The contract accepts any value; the guarantee that it only ever tightens is enforced by the
+ * caller refusing to send a raise, and by the risk engine treating the stored value as a ceiling.
+ * The UI therefore checks BEFORE signing and says why, rather than letting someone pay gas to
+ * discover it.
+ */
+export const setMaxNotional = (from: string, vault: string, cap: bigint) =>
+  send(from, vault, SELECTORS.setMaxNotional + uintArg(cap));
+
+/**
+ * Pause or resume the agent for YOUR deposit only.
+ *
+ * Pausing stops the agent opening trades against your balance. It deliberately does NOT gate
+ * withdrawal: AgentVault.sol:218 states that withdrawal is not gated on `paused`, which is the
+ * property the whole product rests on.
+ */
+export const setPaused = (from: string, vault: string, paused: boolean) =>
+  send(from, vault, SELECTORS.setPaused + uintArg(paused ? 1n : 0n));
 
 /** Decimal string to base units, by integer arithmetic. Never a float. */
 export function toUnits(value: string, decimals: number): bigint {

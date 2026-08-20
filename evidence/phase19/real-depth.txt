@@ -7,17 +7,17 @@ Built from signed OKX Onchain OS aggregator quotes, one per size.
   "chain_id": 196,
   "chain_name": "X Layer mainnet",
   "pair": "WOKB/USDT",
-  "fetched_at_utc": "2026-08-19T05:21:29Z",
+  "fetched_at_utc": "2026-08-20T04:46:42Z",
   "method": "One signed aggregator quote per rung. Slippage is the difference between each rung's unit price and the smallest rung's, which is the real cost of size in these pools. Nothing is modelled or interpolated.",
   "rungs": [
     {
       "size": "1",
-      "unit_price": "101.663583",
+      "unit_price": "102.744355",
       "venues": [
-        "Caliber propAMM"
+        "Uniswap V3"
       ],
-      "router_price_impact_pct": "0.02",
-      "estimated_gas": "332400",
+      "router_price_impact_pct": "0.03",
+      "estimated_gas": "162000",
       "is_honeypot": false,
       "tax_rate": "0",
       "slippage_bps": "0.0",
@@ -25,67 +25,62 @@ Built from signed OKX Onchain OS aggregator quotes, one per size.
     },
     {
       "size": "10",
-      "unit_price": "101.585436",
+      "unit_price": "102.687185",
       "venues": [
         "Uniswap V3",
+        "Caliber propAMM",
         "PotatoSwap",
-        "OkieSwap V3"
+        "OkieStableSwap"
       ],
-      "router_price_impact_pct": "-0.07",
-      "estimated_gas": "554400",
+      "router_price_impact_pct": "-0.02",
+      "estimated_gas": "884400",
       "is_honeypot": false,
       "tax_rate": "0",
-      "slippage_bps": "7.69",
+      "slippage_bps": "5.56",
       "within_tolerance": true
     },
     {
       "size": "100",
-      "unit_price": "101.522270",
+      "unit_price": "102.565529",
       "venues": [
         "Uniswap V3",
-        "Caliber propAMM",
         "PotatoSwap",
-        "OkieSwap V3",
-        "OkieStableSwap",
-        "Uniswap V4"
+        "Caliber propAMM"
       ],
-      "router_price_impact_pct": "-0.13",
-      "estimated_gas": "1100400",
+      "router_price_impact_pct": "-0.16",
+      "estimated_gas": "764400",
       "is_honeypot": false,
       "tax_rate": "0",
-      "slippage_bps": "13.9",
+      "slippage_bps": "17.4",
       "within_tolerance": true
     },
     {
       "size": "1000",
-      "unit_price": "98.698377",
+      "unit_price": "99.034812",
       "venues": [
         "Uniswap V3",
         "PotatoSwap",
-        "Caliber propAMM",
         "Revoswap V2",
-        "PotatoSwap V3",
         "OkieSwap V3",
-        "Uniswap V4",
-        "OkieStableSwap"
+        "OkieStableSwap",
+        "Uniswap V4"
       ],
-      "router_price_impact_pct": "-2.91",
-      "estimated_gas": "1532400",
+      "router_price_impact_pct": "-3.6",
+      "estimated_gas": "1214400",
       "is_honeypot": false,
       "tax_rate": "0",
-      "slippage_bps": "291.67",
+      "slippage_bps": "361.05",
       "within_tolerance": false
     }
   ],
   "venues": [
-    "Caliber propAMM",
     "Uniswap V3",
+    "Caliber propAMM",
     "PotatoSwap",
-    "OkieSwap V3",
     "OkieStableSwap",
-    "Uniswap V4",
     "Revoswap V2",
-    "PotatoSwap V3"
+    "OkieSwap V3",
+    "Uniswap V4"
   ],
   "slippage_tolerance_bps": "100",
   "max_safe_size": "100"

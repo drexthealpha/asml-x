@@ -3,7 +3,7 @@
   "chain_id": 196,
   "chain_name": "X Layer",
   "quote_symbol": "USDT",
-  "fetched_at_utc": "2026-08-19T05:20:18Z",
+  "fetched_at_utc": "2026-08-20T04:45:23Z",
   "token_count": 22,
   "tradable_count": 16,
   "tokens": [
@@ -16,9 +16,7 @@
       "routable": true,
       "venues": [
         "DackieSwap V2",
-        "OkieStableSwap",
-        "LFGSwap",
-        "Uniswap V3"
+        "OkieStableSwap"
       ],
       "note": null
     },
@@ -31,8 +29,7 @@
       "routable": true,
       "venues": [
         "PotatoSwap",
-        "LFGSwap",
-        "Revoswap V2",
+        "Inswap",
         "OkieStableSwap"
       ],
       "note": null
@@ -42,10 +39,12 @@
       "name": "Ethereum",
       "address": "0xe7b000003a45145decf8a28fc755ad5ec5ea025a",
       "decimals": 18,
-      "price": "1912.405400419852057432736216926765",
+      "price": "2249.541311334191334191334191334191",
       "routable": true,
       "venues": [
-        "ElfomoFi"
+        "ElfomoFi",
+        "Uniswap V3",
+        "Uniswap V4"
       ],
       "note": null
     },
@@ -58,7 +57,8 @@
       "routable": true,
       "venues": [
         "iZUMi",
-        "PotatoSwap",
+        "QuickSwap V3",
+        "Native",
         "Uniswap V4"
       ],
       "note": null
@@ -68,7 +68,7 @@
       "name": "X Layer",
       "address": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
       "decimals": 18,
-      "price": "101.5630982378036388410688396710096",
+      "price": "102.6145063054545454545454545454545",
       "routable": true,
       "venues": [
         "Uniswap V3"
@@ -104,10 +104,11 @@
       "name": "Solana",
       "address": "0x505000008de8748dbd4422ff4687a4fc9beba15b",
       "decimals": 9,
-      "price": "76.95791514464693541293482894344371",
+      "price": "84.51663280002245508574647104098683",
       "routable": true,
       "venues": [
-        "Uniswap V3"
+        "Uniswap V3",
+        "Uniswap V4"
       ],
       "note": null
     },
@@ -126,11 +127,10 @@
       "name": "USDC",
       "address": "0xb6ceceab302e2e4948951ee7843fc24e92933061",
       "decimals": 6,
-      "price": "0.9999965694143773448049014375341714",
+      "price": "0.9998960333747449044237718988139116",
       "routable": true,
       "venues": [
-        "Uniswap V3",
-        "Uniswap V4"
+        "Uniswap V3"
       ],
       "note": null
     },
@@ -139,7 +139,7 @@
       "name": "USD Coin",
       "address": "0x74b7f16337b8972027f6196a17a631ac6de26d22",
       "decimals": 6,
-      "price": "0.9955311870737451814772570174052011",
+      "price": "0.9990224981891462930220316152905293",
       "routable": true,
       "venues": [
         "OkieStableSwap"
@@ -151,7 +151,7 @@
       "name": "Global Dollar",
       "address": "0x4ae46a509f6b1d9056937ba4500cb143933d2dc8",
       "decimals": 6,
-      "price": "1.000002464800384508339187894673915",
+      "price": "1.000981445535291616035303120711551",
       "routable": true,
       "venues": [
         "Uniswap V4"
@@ -163,7 +163,7 @@
       "name": "USD\u20ae0",
       "address": "0x779ded0c9e1022225f8e0630b35a9b54be713736",
       "decimals": 6,
-      "price": "0.9993533394779030089498110733868785",
+      "price": "0.9963693497084984888686306116224211",
       "routable": true,
       "venues": [],
       "note": "this is the quote asset"
@@ -173,7 +173,7 @@
       "name": "Tether USD",
       "address": "0x1e4a5963abfd975d8c9021ce480b42188849d41d",
       "decimals": 6,
-      "price": "0.9949049578679208308837938467568097",
+      "price": "0.9976315995976572810478031659521041",
       "routable": true,
       "venues": [
         "OkieStableSwap"
@@ -205,7 +205,7 @@
       "name": "Wrapped OKB",
       "address": "0xe538905cf8410324e03a5a23c1c177a474d59b2b",
       "decimals": 18,
-      "price": "101.9805101604444444444444444444444",
+      "price": "102.8013627889908256880733944954128",
       "routable": true,
       "venues": [
         "Uniswap V3"
@@ -237,11 +237,12 @@
       "name": "OKX Wrapped Staked ETH",
       "address": "0xafeab3b85b6a56cf5f02317f0f7a23340eb983d7",
       "decimals": 18,
-      "price": "1938.336326958394248182561852700323",
+      "price": "2280.175777408809530729760082194959",
       "routable": true,
       "venues": [
         "Uniswap V3",
-        "ElfomoFi"
+        "ElfomoFi",
+        "Uniswap V4"
       ],
       "note": null
     },
@@ -250,13 +251,10 @@
       "name": "OKX Wrapped BTC",
       "address": "0xb7c00000bcdeef966b20b3d884b98e64d2b06b4f",
       "decimals": 8,
-      "price": "64342.33967109518548834866428927138",
+      "price": "69275.01056803170409511228533685601",
       "routable": true,
       "venues": [
-        "Caliber propAMM",
         "Uniswap V3",
-        "BinaryFiEvm",
-        "CurveNG",
         "Uniswap V4"
       ],
       "note": null
@@ -266,10 +264,11 @@
       "name": "OKX Wrapped Staked SOL",
       "address": "0x14a686103854dab7b8801e31979caa595835b25d",
       "decimals": 9,
-      "price": "77.4506249204817806447372436344345",
+      "price": "78.94527430887675277028939707921838",
       "routable": true,
       "venues": [
-        "Uniswap V3"
+        "Uniswap V3",
+        "Uniswap V4"
       ],
       "note": null
     }

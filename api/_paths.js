@@ -73,6 +73,31 @@ export const PATHS = {
       `&search=${encodeURIComponent(query)}&limit=${limit}`,
   }),
 
+  /**
+   * POST. 28 risk fields per token, including `isCounterfeitStockToken` — OKX telling you a token
+   * claiming to be a share is not one. On an RWA surface that is the single most important flag.
+   *
+   * THE BODY SHAPE IS UNOBVIOUS AND WAS WRONG TWICE. The prefix is `/api/v6/security`, not
+   * `/api/v6/dex/...`, the body needs a `source` field, and the token keys are `chainId` and
+   * `contractAddress` — NOT the `chainIndex` / `tokenContractAddress` every other endpoint uses.
+   * Every wrong combination returned code 50036 with no data, which a caller reads as "no risk
+   * information for this token" rather than "you addressed it wrongly". Read out of
+   * cli/src/commands/security.rs.
+   */
+  tokenScan: () => ({ method: "POST", path: "/api/v6/security/token-scan" }),
+
+  /** GET. Advanced token info: creator, dev holdings, LP burn, tags, and the stock profile. */
+  advancedInfo: (chain, address) => ({
+    method: "GET",
+    path: `/api/v6/dex/market/token/advanced-info?chainIndex=${chain}&tokenContractAddress=${address}`,
+  }),
+
+  /** GET. Holder clustering and top-100 concentration. */
+  clusterOverview: (chain, address) => ({
+    method: "GET",
+    path: `/api/v6/dex/market/token/cluster/overview?chainIndex=${chain}&tokenContractAddress=${address}`,
+  }),
+
   /** GET. Top pools for one token. */
   tokenLiquidity: (chain, address) => ({
     method: "GET",

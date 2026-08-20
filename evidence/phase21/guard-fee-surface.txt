@@ -1,0 +1,45 @@
+=== who can call kill() ===
+    // ---------------------------------------------------------------------
+    // Agent surface. Can halt, can record, can never loosen.
+    // ---------------------------------------------------------------------
+
+    /// @notice Either role may engage the kill switch. Halting is always allowed,
+    ///         even when already halted, because a monitor that cannot halt is
+    ///         worse than useless.
+    function kill(string calldata reason) external {
+        if (msg.sender != owner && !isAgent[msg.sender]) revert NotAgent();
+        killed = true;
+        killReason = reason;
+        emit Killed(msg.sender, reason);
+    }
+
+    /// @notice Record new exposure from a fill. Reverts if any cap would break,
+    ///         which is invariants 1 and 2.
+    /// @dev `virtual` so RwaRiskGuard can layer instrument-specific refusals on top
+    ///      without reimplementing the cap arithmetic that is already formally
+    ///      proven and mutation-tested. Extending rather than forking keeps the
+    ///      Phase 3 theorems valid for the RWA path too.
+    function addExposure(bytes32 market, uint256 amount) external virtual onlyAgent notKilled {
+        _addExposureChecked(market, amount);
+    }
+
+=== selectors ===
+  kill(string)               0xeaa2b2f6
+  killed()                   0x1f3a0e41
+  maxGross()                 0xfb89278c
+  gross()                    0x850f8017
+  marketCap(bytes32)         0x0a5294e9
+  quoteFee(uint256)          0x2205f568
+  feeBps()                   0x24a9d853
+  treasury()                 0x61d027b3
+  chargeCount()              0x134e0cdd
+
+=== quoteFee, live, for real amounts ===
+  notional 1000000000000000000      fee 5000000000000000 [5e15]
+  notional 5000000000000000000      fee 25000000000000000 [2.5e16]
+  notional 100000000000000000000    fee 500000000000000000 [5e17]
+
+=== guard state ===
+  maxGross()(uint256)    1000000000000000000000 [1e21]
+  gross()(uint256)       14962500000000000000 [1.496e19]
+  killed()(bool)         false

@@ -2,7 +2,7 @@
   "source": "eth_call against the deployed RWA contracts on X Layer mainnet",
   "chain_id": 196,
   "explorer": "https://www.oklink.com/x-layer/evm/address/",
-  "fetched_at_utc": "2026-08-19T06:46:35Z",
+  "fetched_at_utc": "2026-08-20T04:47:07Z",
   "guard_address": "0x5311C01f6BcFFd78F0C42EC88cce4eba658CD4Ed",
   "vault_address": "0x9B3fd14D7f5f843edd8977196026EFBE98Eede2b",
   "guard_owner": "0x7bdd2d0d1728df5bef8faae8de85c3dd21a5de46",

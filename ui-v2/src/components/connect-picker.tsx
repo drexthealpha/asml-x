@@ -17,7 +17,7 @@
 
 import { useEffect, useState } from "react";
 import { ExternalLink, Loader2, QrCode, Wallet as WalletIcon } from "lucide-react";
-import { INSTALL_LINKS, discoverInjected, rank, type Discovered } from "../lib/wallets";
+import { INSTALL_LINKS, discoverInjected, isOkx, rank, type Discovered } from "../lib/wallets";
 import { cn } from "./ui";
 
 export function ConnectPicker({
@@ -56,7 +56,7 @@ export function ConnectPicker({
             "flex items-center gap-3 px-3 py-2.5 rounded border hair text-left",
             "hover:bg-raised disabled:opacity-50",
             // OKX first AND visually primary: it is the one that works here without setup.
-            w.id === "com.okex.wallet" && "bg-approved/10 border-approved/30",
+            isOkx(w) && "bg-approved/10 border-approved/30",
           )}
         >
           {w.icon ? (
@@ -65,7 +65,7 @@ export function ConnectPicker({
             <WalletIcon size={18} className="text-ink-faint shrink-0" />
           )}
           <span className="text-sm text-ink flex-1">{w.name}</span>
-          {w.id === "com.okex.wallet" ? (
+          {isOkx(w) ? (
             <span className="text-xs text-approved shrink-0">works with X Layer</span>
           ) : (
             <span className="text-xs text-ink-faint shrink-0">installed</span>

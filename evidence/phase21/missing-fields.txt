@@ -1,0 +1,64 @@
+TSLAx 0x8ad3c73f833d3f9a523ab01476625f269aeb7cf0
+
+=== advanced-info, every key it returns ===
+  bundleHoldingPercent         
+  chainIndex                   196
+  createTime                   
+  creatorAddress               
+  devCreateTokenCount          
+  devHoldingPercent            
+  devLaunchedTokenCount        0
+  devRugPullTokenCount         
+  isInternal                   False
+  lpBurnedPercent              
+  progress                     
+  protocolId                   
+  riskControlLevel             1
+  sniperHoldingPercent         
+  snipersClearAddressCount     
+  snipersTotal                 
+  stockProfile                 {'companyName': 'Tesla, Inc.', 'exchange': 'Nasdaq
+  suspiciousHoldingPercent     
+  tokenContractAddress         0x8ad3c73f833d3f9a523ab01476625f269aeb7cf0
+  tokenTags                    ['rwaXstock']
+  top10HoldPercent             78.7312
+  totalFee                     0.207613092731095144
+
+=== security token-scan, every key it returns ===
+  buyTaxes                     None
+  chainId                      196
+  isAirdropScam                False
+  isChainSupported             True
+  isCounterfeit                False
+  isCounterfeitStockToken      False
+  isDumping                    False
+  isFakeLiquidity              False
+  isFundLinkage                False
+  isHasAssetEditAuth           False
+  isHasBlockingHis             False
+  isHasFrozenAuth              False
+  isHoneypot                   False
+  isLiquidityRemoval           False
+  isLowLiquidity               False
+  isMintable                   False
+  isNotOpenSource              False
+  isNotRenounced               False
+  isOverIssued                 False
+  isPump                       False
+  isRubbishAirdrop             False
+  isVeryHighLpHolderProp       False
+  isVeryLowLpBurn              False
+  isWash                       False
+  isWash2                      False
+  riskLevel                    LOW
+  sellTaxes                    None
+  tokenAddress                 0x8ad3c73f833d3f9a523ab01476625f269aeb7cf0
+
+=== basic-info, in case the contract facts live there instead ===
+  chainIndex                   196
+  decimal                      18
+  tagList                      {'communityRecognized': False}
+  tokenContractAddress         0x8ad3c73f833d3f9a523ab01476625f269aeb7cf0
+  tokenLogoUrl                 https://static.oklink.com/cdn/web3/currency/token/
+  tokenName                    Tesla xStock
+  tokenSymbol                  TSLAx

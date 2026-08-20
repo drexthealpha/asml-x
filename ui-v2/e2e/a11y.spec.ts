@@ -14,7 +14,16 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
-const SURFACES = ["Trade", "Your agent", "Assets", "Markets", "Insights"] as const;
+const SURFACES = [
+  "Your limits",
+  "Trade",
+  "Your agent",
+  "Real assets",
+  "Assets",
+  "Markets",
+  "Insights",
+  "Contracts",
+] as const;
 
 for (const surface of SURFACES) {
   test(`${surface} has no serious accessibility violations`, async ({ page }) => {

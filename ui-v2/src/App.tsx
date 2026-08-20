@@ -21,9 +21,10 @@ import { IntelView } from "./components/intel";
 import { AgentView } from "./components/agent";
 import { Limits } from "./components/limits";
 import { Machine } from "./components/machine";
+import { Rwa } from "./components/rwa";
 import { cn } from "./components/ui";
 
-type Tab = "limits" | "trade" | "agent" | "assets" | "markets" | "intel" | "machine";
+type Tab = "limits" | "trade" | "agent" | "assets" | "markets" | "intel" | "machine" | "rwa";
 
 /** The reticle from the brand spec: crosshair, ring, core, live pulse. Drawn, not an image. */
 function Emblem({ live }: { live: boolean }) {
@@ -84,6 +85,7 @@ export default function App() {
                 ["limits", "Your limits"],
                 ["trade", "Trade"],
                 ["agent", "Your agent"],
+                ["rwa", "Real assets"],
                 ["assets", "Assets"],
                 ["markets", "Markets"],
                 ["intel", "Insights"],
@@ -128,6 +130,8 @@ export default function App() {
           <Trade />
         ) : tab === "agent" ? (
           <AgentView />
+        ) : tab === "rwa" ? (
+          <Rwa />
         ) : tab === "assets" ? (
           <Assets />
         ) : tab === "machine" ? (

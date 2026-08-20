@@ -2,7 +2,7 @@
   "source": "eth_call against the deployed contracts on X Layer mainnet",
   "chain_id": 196,
   "explorer": "https://www.oklink.com/x-layer/evm/address/",
-  "fetched_at_utc": "2026-08-19T07:46:47Z",
+  "fetched_at_utc": "2026-08-20T04:47:31Z",
   "contracts": [
     {
       "name": "Safety limits",

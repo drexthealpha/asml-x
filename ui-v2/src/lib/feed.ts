@@ -289,6 +289,7 @@ export const POLL = {
   intel: 30000,
   detail: 60000,
   rwastate: 45000,
+  rwafull: 90000,
   contracts: 30000,
   activity: 8000,
 } as const;
@@ -502,3 +503,59 @@ export interface Contracts {
 }
 
 export const loadContracts = () => get<Contracts>("contracts.json", "contracts");
+
+/**
+ * A tokenized real-world asset, with EVERY field Onchain OS returned.
+ *
+ * The nested objects are deliberately untyped beyond `Record`: the point of this feed is that
+ * nothing is dropped, and naming forty fields here would recreate the curated subset the feed
+ * exists to avoid. The UI renders whatever keys arrive.
+ */
+export interface RwaAsset {
+  symbol: string;
+  name: string;
+  address: string;
+  decimals: number;
+  logo?: string;
+  explorer_url?: string;
+  tags: string[];
+  /** companyName, exchange, industry, listingDate, stockCode, stockType */
+  stock: Record<string, string>;
+  /** the full advanced-info response */
+  advanced: Record<string, unknown>;
+  /** holder clustering and concentration */
+  cluster: Record<string, unknown>;
+  /** 24 risk flags from OKX's own scanner */
+  security: Record<string, unknown>;
+  /** the full price-info response */
+  market: Record<string, unknown>;
+  pools: Record<string, unknown>[];
+  holders_list: Record<string, unknown>[];
+  candles: { t: number; c: string; h: string; l: string; o: string }[];
+  price: string | null;
+  index_price: string | null;
+  divergence_bps: string | null;
+  price_time?: string;
+}
+
+export interface RwaFull {
+  chain_id: number;
+  fetched_at_utc: string;
+  issuer: string;
+  backing: string;
+  identified_by: string;
+  count: number;
+  instruments: RwaAsset[];
+}
+
+export const loadRwaFull = () => get<RwaFull>("rwa-full.json", "rwafull");
+
+/** A camelCase API key as a person would read it: `isCounterfeitStockToken` -> "counterfeit". */
+export function humanKey(k: string): string {
+  return k
+    .replace(/^is/, "")
+    .replace(/([A-Z])/g, " $1")
+    .trim()
+    .toLowerCase()
+    .replace(/^./, (c) => c.toUpperCase());
+}

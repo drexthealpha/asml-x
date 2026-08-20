@@ -97,11 +97,27 @@ export function discoverInjected(timeoutMs = 350): Promise<Discovered[]> {
  */
 const PREFERRED = ["com.okex.wallet", "io.metamask", "com.trustwallet.app", "com.bitget.web3"];
 
+/**
+ * Is this OKX Wallet?
+ *
+ * MATCHED ON NAME OR rdns, NOT ON A GUESSED CONSTANT. The first version tested `id ===
+ * "com.okex.wallet"`, a string written from memory. If OKX announces anything else, the check
+ * silently fails: OKX drops to the bottom of the list with a generic label, which is exactly the
+ * behaviour being fixed. A guessed identifier that produces a wrong ORDER rather than an error is
+ * the same class of bug as the guessed API paths.
+ *
+ * The wallet's own announced name is the reliable signal, and the rdns is kept as a second route.
+ */
+export function isOkx(w: Discovered): boolean {
+  return /okx|okex/i.test(w.name) || /okx|okex/i.test(w.id);
+}
+
 export function rank(wallets: Discovered[]): Discovered[] {
   return [...wallets].sort((a, b) => {
+    // OKX first however it identifies itself, then the rest of the preference list.
+    if (isOkx(a) !== isOkx(b)) return isOkx(a) ? -1 : 1;
     const ai = PREFERRED.indexOf(a.id);
     const bi = PREFERRED.indexOf(b.id);
-    // Anything not in the list sorts after everything that is, alphabetically among themselves.
     const av = ai === -1 ? PREFERRED.length : ai;
     const bv = bi === -1 ? PREFERRED.length : bi;
     return av - bv || a.name.localeCompare(b.name);

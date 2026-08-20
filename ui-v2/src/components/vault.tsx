@@ -56,7 +56,7 @@ interface Position {
   vaultBalance: bigint;
   maxNotional: bigint;
   decimals: number;
-  paused: boolean;
+  paused: boolean | null;
 }
 
 function Button({
@@ -171,7 +171,7 @@ export function Vault() {
       const [walletBalance, p, paused] = await Promise.all([
         tokenBalance(assetAddr, wallet.address),
         vaultPosition(vaultAddr, wallet.address),
-        vaultPaused(vaultAddr),
+        vaultPaused(vaultAddr, wallet.address),
       ]);
       setPos({
         walletBalance,

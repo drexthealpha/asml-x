@@ -1,0 +1,599 @@
+{
+  "source": "RwaRiskGuard parameters read from chain 196, evaluated against live OKX data",
+  "chain_id": 196,
+  "fetched_at_utc": "2026-08-19T09:42:07Z",
+  "guard_address": "0x5311C01f6BcFFd78F0C42EC88cce4eba658CD4Ed",
+  "vault_address": "0x9B3fd14D7f5f843edd8977196026EFBE98Eede2b",
+  "explorer": "https://www.oklink.com/x-layer/evm/address/",
+  "issuer": "Backed Finance",
+  "backing": "Each xStock is issued one-for-one against the real share, held with a regulated custodian under Swiss DLT law.",
+  "approved_count": 0,
+  "refused_count": 3,
+  "instruments": [
+    {
+      "symbol": "AAPLx",
+      "name": "Apple xStock",
+      "address": "0x9d275685dc284c8eb1c79f6aba7a63dc75ec890a",
+      "company": "Apple",
+      "price": "309.4475642376297208980161021758189",
+      "index_price": "309.4475642376297208980161021758189",
+      "divergence_bps": "0.00",
+      "liquidity_usd": 336834.0840023933,
+      "market_cap": "5984204.35493696084443088",
+      "holders": "1048",
+      "change_24h": "0.33",
+      "rules": [
+        {
+          "id": "divergence",
+          "label": "Price tracks its reference",
+          "source": "RwaRiskGuard.maxDivergenceBps",
+          "limit": "3.00%",
+          "actual": "0.000%",
+          "pass": true,
+          "plain": "The pool price and the independent reference must agree. If they drift apart, the token has come loose from the share it represents."
+        },
+        {
+          "id": "freshness",
+          "label": "The price is recent",
+          "source": "RwaRiskGuard.maxOracleAge",
+          "limit": "60 min",
+          "actual": "9s old",
+          "pass": true,
+          "plain": "A stale price is how an agent trades yesterday's market."
+        },
+        {
+          "id": "window",
+          "label": "Not near a redemption window",
+          "source": "RwaRiskGuard.windowBufferSeconds",
+          "limit": "12 h",
+          "actual": null,
+          "pass": null,
+          "plain": "Redemption windows move the price for reasons the market cannot see. The buffer is enforced on chain at execution; the issuer's schedule is not in this feed."
+        },
+        {
+          "id": "issuer",
+          "label": "The issuer has not halted",
+          "source": "RwaVault.paused",
+          "limit": "not paused",
+          "actual": "active",
+          "pass": true,
+          "plain": "If whoever issues the token halts it, the agent stops too."
+        },
+        {
+          "id": "liquidity",
+          "label": "Enough liquidity to get out",
+          "source": "market, not a contract rule",
+          "limit": "$1,000",
+          "actual": "$336,834",
+          "pass": true,
+          "plain": "A position you cannot exit is not a position."
+        }
+      ],
+      "verdict": {
+        "state": "unknown",
+        "by": "Not near a redemption window",
+        "detail": "window"
+      }
+    },
+    {
+      "symbol": "GLDx",
+      "name": "Gold xStock",
+      "address": "0x2380f2673c640fb67e2d6b55b44c62f0e0e69da9",
+      "company": "Gold",
+      "price": "399.589031",
+      "index_price": "399.589031000000000000",
+      "divergence_bps": "0.00",
+      "liquidity_usd": 947.0013595516331,
+      "market_cap": "5816010.93079106286509846",
+      "holders": "16",
+      "change_24h": "-0.75",
+      "rules": [
+        {
+          "id": "divergence",
+          "label": "Price tracks its reference",
+          "source": "RwaRiskGuard.maxDivergenceBps",
+          "limit": "3.00%",
+          "actual": "0.000%",
+          "pass": true,
+          "plain": "The pool price and the independent reference must agree. If they drift apart, the token has come loose from the share it represents."
+        },
+        {
+          "id": "freshness",
+          "label": "The price is recent",
+          "source": "RwaRiskGuard.maxOracleAge",
+          "limit": "60 min",
+          "actual": "9s old",
+          "pass": true,
+          "plain": "A stale price is how an agent trades yesterday's market."
+        },
+        {
+          "id": "window",
+          "label": "Not near a redemption window",
+          "source": "RwaRiskGuard.windowBufferSeconds",
+          "limit": "12 h",
+          "actual": null,
+          "pass": null,
+          "plain": "Redemption windows move the price for reasons the market cannot see. The buffer is enforced on chain at execution; the issuer's schedule is not in this feed."
+        },
+        {
+          "id": "issuer",
+          "label": "The issuer has not halted",
+          "source": "RwaVault.paused",
+          "limit": "not paused",
+          "actual": "active",
+          "pass": true,
+          "plain": "If whoever issues the token halts it, the agent stops too."
+        },
+        {
+          "id": "liquidity",
+          "label": "Enough liquidity to get out",
+          "source": "market, not a contract rule",
+          "limit": "$1,000",
+          "actual": "$947",
+          "pass": false,
+          "plain": "A position you cannot exit is not a position."
+        }
+      ],
+      "verdict": {
+        "state": "refused",
+        "by": "Enough liquidity to get out",
+        "detail": "liquidity"
+      }
+    },
+    {
+      "symbol": "GSx",
+      "name": "Goldman Sachs xStock",
+      "address": "0x3ee7e9b3a992fd23cd1c363b0e296856b04ab149",
+      "company": "Goldman Sachs",
+      "price": "1040.2483675",
+      "index_price": "1040.248367500000000000",
+      "divergence_bps": "0.00",
+      "liquidity_usd": 0.0,
+      "market_cap": "6034337.916265907542774845",
+      "holders": "12",
+      "change_24h": "-0.44",
+      "rules": [
+        {
+          "id": "divergence",
+          "label": "Price tracks its reference",
+          "source": "RwaRiskGuard.maxDivergenceBps",
+          "limit": "3.00%",
+          "actual": "0.000%",
+          "pass": true,
+          "plain": "The pool price and the independent reference must agree. If they drift apart, the token has come loose from the share it represents."
+        },
+        {
+          "id": "freshness",
+          "label": "The price is recent",
+          "source": "RwaRiskGuard.maxOracleAge",
+          "limit": "60 min",
+          "actual": "9s old",
+          "pass": true,
+          "plain": "A stale price is how an agent trades yesterday's market."
+        },
+        {
+          "id": "window",
+          "label": "Not near a redemption window",
+          "source": "RwaRiskGuard.windowBufferSeconds",
+          "limit": "12 h",
+          "actual": null,
+          "pass": null,
+          "plain": "Redemption windows move the price for reasons the market cannot see. The buffer is enforced on chain at execution; the issuer's schedule is not in this feed."
+        },
+        {
+          "id": "issuer",
+          "label": "The issuer has not halted",
+          "source": "RwaVault.paused",
+          "limit": "not paused",
+          "actual": "active",
+          "pass": true,
+          "plain": "If whoever issues the token halts it, the agent stops too."
+        },
+        {
+          "id": "liquidity",
+          "label": "Enough liquidity to get out",
+          "source": "market, not a contract rule",
+          "limit": "$1,000",
+          "actual": "$0",
+          "pass": false,
+          "plain": "A position you cannot exit is not a position."
+        }
+      ],
+      "verdict": {
+        "state": "refused",
+        "by": "Enough liquidity to get out",
+        "detail": "liquidity"
+      }
+    },
+    {
+      "symbol": "NDAQx",
+      "name": "Nasdaq Inc. xStock",
+      "address": "0x378958e63e196e29047db1f9899b1c3b52375cfb",
+      "company": "Nasdaq Inc.",
+      "price": "96.7357125",
+      "index_price": "96.735712500000000000",
+      "divergence_bps": "0.00",
+      "liquidity_usd": 0.0,
+      "market_cap": "6552800.169348010754728125",
+      "holders": "1",
+      "change_24h": "-0.02",
+      "rules": [
+        {
+          "id": "divergence",
+          "label": "Price tracks its reference",
+          "source": "RwaRiskGuard.maxDivergenceBps",
+          "limit": "3.00%",
+          "actual": "0.000%",
+          "pass": true,
+          "plain": "The pool price and the independent reference must agree. If they drift apart, the token has come loose from the share it represents."
+        },
+        {
+          "id": "freshness",
+          "label": "The price is recent",
+          "source": "RwaRiskGuard.maxOracleAge",
+          "limit": "60 min",
+          "actual": "9s old",
+          "pass": true,
+          "plain": "A stale price is how an agent trades yesterday's market."
+        },
+        {
+          "id": "window",
+          "label": "Not near a redemption window",
+          "source": "RwaRiskGuard.windowBufferSeconds",
+          "limit": "12 h",
+          "actual": null,
+          "pass": null,
+          "plain": "Redemption windows move the price for reasons the market cannot see. The buffer is enforced on chain at execution; the issuer's schedule is not in this feed."
+        },
+        {
+          "id": "issuer",
+          "label": "The issuer has not halted",
+          "source": "RwaVault.paused",
+          "limit": "not paused",
+          "actual": "active",
+          "pass": true,
+          "plain": "If whoever issues the token halts it, the agent stops too."
+        },
+        {
+          "id": "liquidity",
+          "label": "Enough liquidity to get out",
+          "source": "market, not a contract rule",
+          "limit": "$1,000",
+          "actual": "$0",
+          "pass": false,
+          "plain": "A position you cannot exit is not a position."
+        }
+      ],
+      "verdict": {
+        "state": "refused",
+        "by": "Enough liquidity to get out",
+        "detail": "liquidity"
+      }
+    },
+    {
+      "symbol": "NVDAx",
+      "name": "NVIDIA xStock",
+      "address": "0xc845b2894dbddd03858fd2d643b4ef725fe0849d",
+      "company": "NVIDIA",
+      "price": "220.1367832003534340542590438501224",
+      "index_price": "220.3594460940108354014000063336498",
+      "divergence_bps": "-10.10",
+      "liquidity_usd": 511739.0965930911,
+      "market_cap": "6125950.606473791649054917",
+      "holders": "2208",
+      "change_24h": "0.24",
+      "rules": [
+        {
+          "id": "divergence",
+          "label": "Price tracks its reference",
+          "source": "RwaRiskGuard.maxDivergenceBps",
+          "limit": "3.00%",
+          "actual": "-0.101%",
+          "pass": true,
+          "plain": "The pool price and the independent reference must agree. If they drift apart, the token has come loose from the share it represents."
+        },
+        {
+          "id": "freshness",
+          "label": "The price is recent",
+          "source": "RwaRiskGuard.maxOracleAge",
+          "limit": "60 min",
+          "actual": "9s old",
+          "pass": true,
+          "plain": "A stale price is how an agent trades yesterday's market."
+        },
+        {
+          "id": "window",
+          "label": "Not near a redemption window",
+          "source": "RwaRiskGuard.windowBufferSeconds",
+          "limit": "12 h",
+          "actual": null,
+          "pass": null,
+          "plain": "Redemption windows move the price for reasons the market cannot see. The buffer is enforced on chain at execution; the issuer's schedule is not in this feed."
+        },
+        {
+          "id": "issuer",
+          "label": "The issuer has not halted",
+          "source": "RwaVault.paused",
+          "limit": "not paused",
+          "actual": "active",
+          "pass": true,
+          "plain": "If whoever issues the token halts it, the agent stops too."
+        },
+        {
+          "id": "liquidity",
+          "label": "Enough liquidity to get out",
+          "source": "market, not a contract rule",
+          "limit": "$1,000",
+          "actual": "$511,739",
+          "pass": true,
+          "plain": "A position you cannot exit is not a position."
+        }
+      ],
+      "verdict": {
+        "state": "unknown",
+        "by": "Not near a redemption window",
+        "detail": "window"
+      }
+    },
+    {
+      "symbol": "QQQx",
+      "name": "Nasdaq xStock",
+      "address": "0xa753a7395cae905cd615da0b82a53e0560f250af",
+      "company": "Nasdaq",
+      "price": "717.315035",
+      "index_price": "717.315035000000000000",
+      "divergence_bps": "0.00",
+      "liquidity_usd": 393851.35042503796,
+      "market_cap": "5875184.97456125268539896",
+      "holders": "214",
+      "change_24h": "-0.52",
+      "rules": [
+        {
+          "id": "divergence",
+          "label": "Price tracks its reference",
+          "source": "RwaRiskGuard.maxDivergenceBps",
+          "limit": "3.00%",
+          "actual": "0.000%",
+          "pass": true,
+          "plain": "The pool price and the independent reference must agree. If they drift apart, the token has come loose from the share it represents."
+        },
+        {
+          "id": "freshness",
+          "label": "The price is recent",
+          "source": "RwaRiskGuard.maxOracleAge",
+          "limit": "60 min",
+          "actual": "9s old",
+          "pass": true,
+          "plain": "A stale price is how an agent trades yesterday's market."
+        },
+        {
+          "id": "window",
+          "label": "Not near a redemption window",
+          "source": "RwaRiskGuard.windowBufferSeconds",
+          "limit": "12 h",
+          "actual": null,
+          "pass": null,
+          "plain": "Redemption windows move the price for reasons the market cannot see. The buffer is enforced on chain at execution; the issuer's schedule is not in this feed."
+        },
+        {
+          "id": "issuer",
+          "label": "The issuer has not halted",
+          "source": "RwaVault.paused",
+          "limit": "not paused",
+          "actual": "active",
+          "pass": true,
+          "plain": "If whoever issues the token halts it, the agent stops too."
+        },
+        {
+          "id": "liquidity",
+          "label": "Enough liquidity to get out",
+          "source": "market, not a contract rule",
+          "limit": "$1,000",
+          "actual": "$393,851",
+          "pass": true,
+          "plain": "A position you cannot exit is not a position."
+        }
+      ],
+      "verdict": {
+        "state": "unknown",
+        "by": "Not near a redemption window",
+        "detail": "window"
+      }
+    },
+    {
+      "symbol": "TSLAx",
+      "name": "Tesla xStock",
+      "address": "0x8ad3c73f833d3f9a523ab01476625f269aeb7cf0",
+      "company": "Tesla",
+      "price": "337.0916102152357409907102226132989",
+      "index_price": "337.428417131910107886029405658838",
+      "divergence_bps": "-9.98",
+      "liquidity_usd": 959913.586468525,
+      "market_cap": "4814338.895174547591693971",
+      "holders": "461",
+      "change_24h": "1.06",
+      "rules": [
+        {
+          "id": "divergence",
+          "label": "Price tracks its reference",
+          "source": "RwaRiskGuard.maxDivergenceBps",
+          "limit": "3.00%",
+          "actual": "-0.100%",
+          "pass": true,
+          "plain": "The pool price and the independent reference must agree. If they drift apart, the token has come loose from the share it represents."
+        },
+        {
+          "id": "freshness",
+          "label": "The price is recent",
+          "source": "RwaRiskGuard.maxOracleAge",
+          "limit": "60 min",
+          "actual": "9s old",
+          "pass": true,
+          "plain": "A stale price is how an agent trades yesterday's market."
+        },
+        {
+          "id": "window",
+          "label": "Not near a redemption window",
+          "source": "RwaRiskGuard.windowBufferSeconds",
+          "limit": "12 h",
+          "actual": null,
+          "pass": null,
+          "plain": "Redemption windows move the price for reasons the market cannot see. The buffer is enforced on chain at execution; the issuer's schedule is not in this feed."
+        },
+        {
+          "id": "issuer",
+          "label": "The issuer has not halted",
+          "source": "RwaVault.paused",
+          "limit": "not paused",
+          "actual": "active",
+          "pass": true,
+          "plain": "If whoever issues the token halts it, the agent stops too."
+        },
+        {
+          "id": "liquidity",
+          "label": "Enough liquidity to get out",
+          "source": "market, not a contract rule",
+          "limit": "$1,000",
+          "actual": "$959,914",
+          "pass": true,
+          "plain": "A position you cannot exit is not a position."
+        }
+      ],
+      "verdict": {
+        "state": "unknown",
+        "by": "Not near a redemption window",
+        "detail": "window"
+      }
+    },
+    {
+      "symbol": "xStocks",
+      "name": "xStocks",
+      "address": "0xdec2975ff2f100a6c89132a7a86fbda922af2024",
+      "company": "xStocks",
+      "price": "0.00001131707175196762995232722356193207",
+      "index_price": "0.00001131707175196762995232722356193207",
+      "divergence_bps": "0.00",
+      "liquidity_usd": 9338.039586905767,
+      "market_cap": "10657.744009888618901577",
+      "holders": "111",
+      "change_24h": "-9.18",
+      "rules": [
+        {
+          "id": "divergence",
+          "label": "Price tracks its reference",
+          "source": "RwaRiskGuard.maxDivergenceBps",
+          "limit": "3.00%",
+          "actual": "0.000%",
+          "pass": true,
+          "plain": "The pool price and the independent reference must agree. If they drift apart, the token has come loose from the share it represents."
+        },
+        {
+          "id": "freshness",
+          "label": "The price is recent",
+          "source": "RwaRiskGuard.maxOracleAge",
+          "limit": "60 min",
+          "actual": "9s old",
+          "pass": true,
+          "plain": "A stale price is how an agent trades yesterday's market."
+        },
+        {
+          "id": "window",
+          "label": "Not near a redemption window",
+          "source": "RwaRiskGuard.windowBufferSeconds",
+          "limit": "12 h",
+          "actual": null,
+          "pass": null,
+          "plain": "Redemption windows move the price for reasons the market cannot see. The buffer is enforced on chain at execution; the issuer's schedule is not in this feed."
+        },
+        {
+          "id": "issuer",
+          "label": "The issuer has not halted",
+          "source": "RwaVault.paused",
+          "limit": "not paused",
+          "actual": "active",
+          "pass": true,
+          "plain": "If whoever issues the token halts it, the agent stops too."
+        },
+        {
+          "id": "liquidity",
+          "label": "Enough liquidity to get out",
+          "source": "market, not a contract rule",
+          "limit": "$1,000",
+          "actual": "$9,338",
+          "pass": true,
+          "plain": "A position you cannot exit is not a position."
+        }
+      ],
+      "verdict": {
+        "state": "unknown",
+        "by": "Not near a redemption window",
+        "detail": "window"
+      }
+    },
+    {
+      "symbol": "xStocks",
+      "name": "xStocks",
+      "address": "0x3d315e59292d6fcdefdf000d7d1a3ce325317777",
+      "company": "xStocks",
+      "price": "0.000003422089042163800646236555546765288",
+      "index_price": "0.000003422089042163800646236555546765288",
+      "divergence_bps": "0.00",
+      "liquidity_usd": 2879.6925834578565,
+      "market_cap": "3422.089042163800646236",
+      "holders": "7",
+      "change_24h": "-8.79",
+      "rules": [
+        {
+          "id": "divergence",
+          "label": "Price tracks its reference",
+          "source": "RwaRiskGuard.maxDivergenceBps",
+          "limit": "3.00%",
+          "actual": "0.000%",
+          "pass": true,
+          "plain": "The pool price and the independent reference must agree. If they drift apart, the token has come loose from the share it represents."
+        },
+        {
+          "id": "freshness",
+          "label": "The price is recent",
+          "source": "RwaRiskGuard.maxOracleAge",
+          "limit": "60 min",
+          "actual": "9s old",
+          "pass": true,
+          "plain": "A stale price is how an agent trades yesterday's market."
+        },
+        {
+          "id": "window",
+          "label": "Not near a redemption window",
+          "source": "RwaRiskGuard.windowBufferSeconds",
+          "limit": "12 h",
+          "actual": null,
+          "pass": null,
+          "plain": "Redemption windows move the price for reasons the market cannot see. The buffer is enforced on chain at execution; the issuer's schedule is not in this feed."
+        },
+        {
+          "id": "issuer",
+          "label": "The issuer has not halted",
+          "source": "RwaVault.paused",
+          "limit": "not paused",
+          "actual": "active",
+          "pass": true,
+          "plain": "If whoever issues the token halts it, the agent stops too."
+        },
+        {
+          "id": "liquidity",
+          "label": "Enough liquidity to get out",
+          "source": "market, not a contract rule",
+          "limit": "$1,000",
+          "actual": "$2,880",
+          "pass": true,
+          "plain": "A position you cannot exit is not a position."
+        }
+      ],
+      "verdict": {
+        "state": "unknown",
+        "by": "Not near a redemption window",
+        "detail": "window"
+      }
+    }
+  ]
+}
